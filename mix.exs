@@ -30,8 +30,6 @@ defmodule Blockchain.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:ecto_mnesia, ">= 0.0.0"},
-      {:ecto, "~> 2.1"},
       {:credo, "~> 0.7.4", only: [:dev, :test], runtime: false}
     ]
   end
