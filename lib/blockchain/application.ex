@@ -8,10 +8,15 @@ defmodule Blockchain.Application do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
+    port = System.get_env("PORT") || 4040
+
     # Define workers and child supervisors to be supervised
     children = [
-      # Starts a worker by calling: Blockchain.Worker.start_link(arg1, arg2, arg3)
+      # Starts a worker by calling: Blockchain.Worker.start_link(a1, a2, a3)
       # worker(Blockchain.Worker, [arg1, arg2, arg3]),
+      worker(Blockchain.Chain, []),
+      supervisor(Task.Supervisor, [[name: Blockchain.P2PServer.TaskSupervisor]]),
+      worker(Task, [Blockchain.P2PServer, :accept, [port]])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
