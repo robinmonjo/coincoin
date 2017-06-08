@@ -5,7 +5,16 @@ defmodule Blockchain.P2P.Command do
   @response_blockchain "response_blockchain" # to receive a blockchain (all the chain or only latest block in an array)
 
   def parse(data) do
-    case Poison.decode!(data) do
+    case Poison.decode(data) do
+      {:ok, json} ->
+        parse_cmd(json)
+      {:error, {reason, _, _}} ->
+        {:error, reason}
+    end
+  end
+
+  def parse_cmd(json) do
+    case json do
       %{"type" => @query_latest} ->
         {:ok, @query_latest}
       %{"type" => @query_all} ->

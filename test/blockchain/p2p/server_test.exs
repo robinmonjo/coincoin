@@ -15,6 +15,8 @@ defmodule Blockchain.P2P.ServerTest do
     assert send_and_recv(socket, ~s({"type": "query_all"}\n)) == "sending back the entire chain\n"
     assert send_and_recv(socket, ~s({"type": "response_blockchain"}\n)) == "handling incoming blockchain\n"
     assert send_and_recv(socket, ~s({"type": "unknown"}\n)) == "unknown type\n"
+
+    assert send_and_recv(socket, "not valid json\n") == "invalid json\n"
   end
 
   test "open connection are stored in clients", %{socket: _socket} do

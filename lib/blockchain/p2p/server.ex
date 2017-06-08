@@ -48,6 +48,10 @@ defmodule Blockchain.P2P.Server do
     :gen_tcp.send(socket, "unknown type\n")
   end
 
+  defp write_line(socket, {:error, :invalid}) do
+    :gen_tcp.send(socket, "invalid json\n")
+  end
+
   # The connection was closed, exit politely.
   defp write_line(socket, {:error, :closed}), do: socket_died(socket, :shutdown)
 
