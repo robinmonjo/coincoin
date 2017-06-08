@@ -19,3 +19,9 @@ be found at [https://hexdocs.pm/blockchain](https://hexdocs.pm/blockchain).
 
 
 https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
+
+next steps
+
+- define a protocol for nodes to communicate
+- implement this protocol using gen_tcp + protobuff
+- keep going
