@@ -2,6 +2,7 @@ defmodule Blockchain.P2P.ServerTest do
   use ExUnit.Case
 
   alias Blockchain.P2P.{Server, Clients}
+  alias Blockchain.{Chain, Block}
 
   setup do
     :ok = Clients.remove_all()
@@ -11,8 +12,17 @@ defmodule Blockchain.P2P.ServerTest do
 
   test "server interaction", %{socket: socket} do
     assert send_and_recv(socket, ~s({"type": "ping"}\n)) == "pong\n"
-    assert send_and_recv(socket, ~s({"type": "query_latest"}\n)) == "sending back latest block\n"
-    assert send_and_recv(socket, ~s({"type": "query_all"}\n)) == "sending back the entire chain\n"
+
+    # query latest block
+    response = send_and_recv(socket, ~s({"type": "query_latest"}\n))
+    blocks = Poison.decode!(response, as: [%Block{}])
+    assert blocks == [Chain.latest_block()]
+
+    # query all
+    response = send_and_recv(socket, ~s({"type": "query_all"}\n))
+    blocks = Poison.decode!(response, as: [%Block{}])
+    assert blocks == Chain.all_blocks()
+
     assert send_and_recv(socket, ~s({"type": "response_blockchain"}\n)) == "handling incoming blockchain\n"
     assert send_and_recv(socket, ~s({"type": "unknown"}\n)) == "unknown type\n"
 

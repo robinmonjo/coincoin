@@ -1,4 +1,7 @@
 defmodule Blockchain.P2P.Command do
+
+  alias Blockchain.Chain
+
   @ping "ping"
   @query_latest "query_latest" # to request latest block
   @query_all "query_all" # to request all the blockchain
@@ -33,11 +36,13 @@ defmodule Blockchain.P2P.Command do
   end
 
   def run(@query_latest) do
-    {:ok, "sending back latest block\n"}
+    payload = Poison.encode!([Chain.latest_block()])
+    {:ok, payload <> "\n"}
   end
 
   def run(@query_all) do
-    {:ok, "sending back the entire chain\n"}
+    payload = Poison.encode!(Chain.all_blocks())
+    {:ok, payload <> "\n"}
   end
 
   def run({@response_blockchain, _chain}) do
