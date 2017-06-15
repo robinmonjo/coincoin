@@ -1,7 +1,5 @@
-require Logger
-
 defmodule Blockchain.Op do
-  alias Blockchain.{Chain, Block}
+  alias Blockchain.Chain
 
   def determine_action(received_chain) do
     latest_block_held = Chain.latest_block()

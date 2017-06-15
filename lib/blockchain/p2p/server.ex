@@ -20,7 +20,10 @@ defmodule Blockchain.P2P.Server do
 
   defp loop_acceptor(socket) do
     {:ok, client} = :gen_tcp.accept(socket)
-    {:ok, pid} = Task.Supervisor.start_child(Blockchain.P2P.Server.TaskSupervisor, fn -> serve(client) end)
+    {:ok, pid} =
+      Task.Supervisor.start_child(Blockchain.P2P.Server.TaskSupervisor, fn ->
+        serve(client)
+      end)
     :ok = :gen_tcp.controlling_process(client, pid)
     Clients.add(client)
     loop_acceptor(socket)
@@ -28,35 +31,31 @@ defmodule Blockchain.P2P.Server do
 
   defp serve(socket) do
     msg =
-      with {:ok, data} <- read_line(socket),
+      with {:ok, data} <- :gen_tcp.recv(socket, 0),
            {:ok, command} <- Command.parse(data),
            do: Command.run(command)
 
-    write_line(socket, msg)
+    write(socket, msg)
     serve(socket)
   end
 
-  defp read_line(socket) do
-    :gen_tcp.recv(socket, 0)
-  end
-
-  defp write_line(socket, {:ok, text}) do
+  defp write(socket, {:ok, text}) do
     :gen_tcp.send(socket, text)
   end
 
-  defp write_line(socket, {:error, :unknown_type}) do
+  defp write(socket, {:error, :unknown_type}) do
     :gen_tcp.send(socket, "unknown type")
   end
 
-  defp write_line(socket, {:error, :invalid}) do
+  defp write(socket, {:error, :invalid}) do
     :gen_tcp.send(socket, "invalid json")
   end
 
   # The connection was closed, exit politely.
-  defp write_line(socket, {:error, :closed}), do: socket_died(socket, :shutdown)
+  defp write(socket, {:error, :closed}), do: socket_died(socket, :shutdown)
 
   # Unknown error. Write to the client and exit.
-  defp write_line(socket, {:error, error}), do: socket_died(socket, error)
+  defp write(socket, {:error, error}), do: socket_died(socket, error)
 
   defp socket_died(socket, exit_status) do
     Clients.remove(socket)
@@ -65,7 +64,7 @@ defmodule Blockchain.P2P.Server do
 
   def broadcast(data) do
     for c <- Clients.get_all() do
-      case write_line(c, {:ok, data}) do
+      case write(c, {:ok, data}) do
         {:error, _} ->
           # client is not reachable, forget it
           Clients.remove(c)
