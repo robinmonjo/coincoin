@@ -1,6 +1,6 @@
 defmodule Blockchain.P2P.Command do
 
-  alias Blockchain.Chain
+  alias Blockchain.{Chain, Op, Block}
 
   @ping "ping"
   @query_latest "query_latest" # to request latest block
@@ -8,7 +8,7 @@ defmodule Blockchain.P2P.Command do
   @response_blockchain "response_blockchain" # to receive a blockchain (all the chain or only latest block in an array)
 
   def parse(data) do
-    case Poison.decode(data) do
+    case Poison.decode(data, as: %{"chain" => [%Block{}]}) do
       {:ok, json} ->
         parse_cmd(json)
       {:error, {reason, _, _}} ->
@@ -22,8 +22,8 @@ defmodule Blockchain.P2P.Command do
         {:ok, @query_latest}
       %{"type" => @query_all} ->
         {:ok, @query_all}
-      %{"type" => @response_blockchain} ->
-        {:ok, {@response_blockchain, "some payload"}}
+      %{"type" => @response_blockchain, "chain" => chain_payload} ->
+        {:ok, {@response_blockchain, chain_payload}}
       %{"type" => @ping} ->
         {:ok, @ping}
       _ ->
@@ -32,20 +32,21 @@ defmodule Blockchain.P2P.Command do
   end
 
   def run(@ping) do
-    {:ok, "pong\n"}
+    {:ok, "pong"}
   end
 
   def run(@query_latest) do
     payload = Poison.encode!([Chain.latest_block()])
-    {:ok, payload <> "\n"}
+    {:ok, payload}
   end
 
   def run(@query_all) do
     payload = Poison.encode!(Chain.all_blocks())
-    {:ok, payload <> "\n"}
+    {:ok, payload}
   end
 
-  def run({@response_blockchain, _chain}) do
-    {:ok, "handling incoming blockchain\n"}
+  def run({@response_blockchain, chain}) do
+    action = Op.determine_action(chain)
+    {:ok, Atom.to_string(action)}
   end
 end

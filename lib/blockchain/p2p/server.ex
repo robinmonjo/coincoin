@@ -13,7 +13,7 @@ defmodule Blockchain.P2P.Server do
     # 4. `reuseaddr: true` - allows us to reuse the address if the listener crashes
     #
     {:ok, socket} = :gen_tcp.listen(port,
-                      [:binary, packet: :line, active: false, reuseaddr: true])
+                      [:binary, packet: 4, active: false, reuseaddr: true])
     Logger.info fn -> "Accepting connections on port #{port}" end
     loop_acceptor(socket)
   end
@@ -45,11 +45,11 @@ defmodule Blockchain.P2P.Server do
   end
 
   defp write_line(socket, {:error, :unknown_type}) do
-    :gen_tcp.send(socket, "unknown type\n")
+    :gen_tcp.send(socket, "unknown type")
   end
 
   defp write_line(socket, {:error, :invalid}) do
-    :gen_tcp.send(socket, "invalid json\n")
+    :gen_tcp.send(socket, "invalid json")
   end
 
   # The connection was closed, exit politely.

@@ -11,6 +11,7 @@ defmodule Blockchain.Block do
   ]
 
   # @enforce_keys @mandatory_keys --> this is causing issues with Poinson decoding
+  @derive [Poison.Encoder]
   defstruct @mandatory_keys ++ [:hash]
 
   def genesis_block do
@@ -24,10 +25,13 @@ defmodule Blockchain.Block do
   end
 
   def generate_next_block(data) do
-    previous_block = Chain.latest_block
+    generate_next_block(data, Chain.latest_block)
+  end
+
+  def generate_next_block(data, %Block{} = latest_block) do
     b = %Block {
-      index: previous_block.index + 1,
-      previous_hash: previous_block.hash,
+      index: latest_block.index + 1,
+      previous_hash: latest_block.hash,
       timestamp: System.system_time(:second),
       data: data
     }

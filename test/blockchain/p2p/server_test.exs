@@ -1,5 +1,6 @@
 defmodule Blockchain.P2P.ServerTest do
   use ExUnit.Case
+  import Blockchain.Fixtures
 
   alias Blockchain.P2P.{Server, Clients}
   alias Blockchain.{Chain, Block}
@@ -10,23 +11,40 @@ defmodule Blockchain.P2P.ServerTest do
     {:ok, socket: socket}
   end
 
-  test "server interaction", %{socket: socket} do
-    assert send_and_recv(socket, ~s({"type": "ping"}\n)) == "pong\n"
+  test "server interaction, queries", %{socket: socket} do
+    assert send_and_recv(socket, json_payload("ping")) == "pong"
 
     # query latest block
-    response = send_and_recv(socket, ~s({"type": "query_latest"}\n))
+    response = send_and_recv(socket, json_payload("query_latest"))
     blocks = Poison.decode!(response, as: [%Block{}])
     assert blocks == [Chain.latest_block()]
 
     # query all
-    response = send_and_recv(socket, ~s({"type": "query_all"}\n))
+    response = send_and_recv(socket, json_payload("query_all"))
     blocks = Poison.decode!(response, as: [%Block{}])
     assert blocks == Chain.all_blocks()
 
-    assert send_and_recv(socket, ~s({"type": "response_blockchain"}\n)) == "handling incoming blockchain\n"
-    assert send_and_recv(socket, ~s({"type": "unknown"}\n)) == "unknown type\n"
+    # unknown, bad json
+    assert send_and_recv(socket, json_payload("unknown")) == "unknown type"
+    assert send_and_recv(socket, "not valid json") == "invalid json"
+  end
 
-    assert send_and_recv(socket, "not valid json\n") == "invalid json\n"
+  test "server interaction, response", %{socket: socket} do
+    remote_chain = mock_blockchain(10)
+
+    [block | _] = remote_chain
+    assert send_and_recv(socket, json_payload("response_blockchain", [block])) == "query_all_chain"
+
+    [block | chain] = remote_chain
+    assert Chain.replace_chain(chain) == :ok
+    assert send_and_recv(socket, json_payload("response_blockchain", [block])) == "append_block"
+
+    assert Chain.replace_chain(remote_chain) == :ok
+    [_ | chain] = remote_chain
+    assert send_and_recv(socket, json_payload("response_blockchain", chain)) == "nothing"
+
+    assert Chain.replace_chain([Block.genesis_block()])
+    assert send_and_recv(socket, json_payload("response_blockchain", remote_chain)) == "replace_chain"
   end
 
   test "open connection are stored in clients", %{socket: _socket} do
@@ -40,29 +58,12 @@ defmodule Blockchain.P2P.ServerTest do
     {:ok, socket1} = open_connection_and_ping()
     n = length(Clients.get_all())
     assert n == 2
-    payload = "test\n"
+    payload = "test"
     Server.broadcast(payload)
     for s <- [socket, socket1], do: assert recv(s) == payload
   end
 
-  defp open_connection do
-    opts = [:binary, packet: :line, active: false]
-    :gen_tcp.connect('localhost', 4040, opts)
-  end
-
-  defp open_connection_and_ping do
-    {:ok, socket} = open_connection()
-    assert send_and_recv(socket, ~s({"type": "ping"}\n)) == "pong\n"
-    {:ok, socket}
-  end
-
-  defp send_and_recv(socket, payload) do
-    :ok = :gen_tcp.send(socket, payload)
-    recv(socket)
-  end
-
-  defp recv(socket) do
-    {:ok, data} = :gen_tcp.recv(socket, 0, 1000)
-    data
-  end
+  defp json_payload(%{} = payload), do: Poison.encode!(payload)
+  defp json_payload(type), do: json_payload(%{ type: type })
+  defp json_payload(type, chain), do: json_payload(%{ type: type, chain: chain })
 end

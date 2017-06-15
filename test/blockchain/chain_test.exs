@@ -1,5 +1,6 @@
 defmodule Blockchain.ChainTest do
   use ExUnit.Case, async: false
+  import Blockchain.Fixtures
 
   alias Blockchain.{Chain, Block}
 
@@ -29,5 +30,34 @@ defmodule Blockchain.ChainTest do
 
     invalid_block = %{valid_block | hash: "not the good hash"}
     assert {:error, "invalid block hash"} = Chain.add_block(invalid_block)
+  end
+
+  test "should validate a blockchain" do
+    invalid_genesis_block = %Block{
+      index: 1,
+      previous_hash: "0",
+      timestamp: 1_465_154_705,
+      data: "genesis block"
+    }
+    refute Chain.validate_chain([invalid_genesis_block])
+
+    genesis_block = Block.genesis_block()
+    chain = [genesis_block]
+
+    invalid_next_block = %Block{
+      index: 1,
+      previous_hash: "wrong",
+      timestamp: 1_465_154_706,
+      data: "first block"
+    }
+    refute Chain.validate_chain([invalid_next_block | chain])
+
+    assert Chain.validate_chain(mock_blockchain(3))
+  end
+
+  test "should replace the blockchain" do
+    new_chain = mock_blockchain(6)
+    :ok = Chain.replace_chain(new_chain)
+    assert Chain.all_blocks() == new_chain
   end
 end
