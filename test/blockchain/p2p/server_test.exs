@@ -2,11 +2,11 @@ defmodule Blockchain.P2P.ServerTest do
   use ExUnit.Case
   import Blockchain.Fixtures
 
-  alias Blockchain.P2P.{Server, Clients}
+  alias Blockchain.P2P.{Server, Peers}
   alias Blockchain.{Chain, Block}
 
   setup do
-    :ok = Clients.remove_all()
+    :ok = Peers.remove_all()
     {:ok, socket} = open_connection_and_ping()
     {:ok, socket: socket}
   end
@@ -50,13 +50,13 @@ defmodule Blockchain.P2P.ServerTest do
   test "open connection are stored in clients", %{socket: _socket} do
     {:ok, _socket1} = open_connection_and_ping()
     {:ok, _socket2} = open_connection_and_ping()
-    n = length(Clients.get_all())
+    n = length(Peers.get_all())
     assert n == 3
   end
 
   test "broadcast", %{socket: socket} do
     {:ok, socket1} = open_connection_and_ping()
-    n = length(Clients.get_all())
+    n = length(Peers.get_all())
     assert n == 2
     payload = "test"
     Server.broadcast(payload)

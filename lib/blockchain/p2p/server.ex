@@ -3,7 +3,7 @@ require Logger
 defmodule Blockchain.P2P.Server do
   @moduledoc "TCP server to handle communications between peers"
 
-  alias Blockchain.P2P.{Clients, Command}
+  alias Blockchain.P2P.{Peers, Command}
 
   # Servers
   def accept(port) do
@@ -28,7 +28,7 @@ defmodule Blockchain.P2P.Server do
         serve(client)
       end)
     :ok = :gen_tcp.controlling_process(client, pid)
-    Clients.add(client)
+    Peers.add(client)
     loop_acceptor(socket)
   end
 
@@ -61,16 +61,16 @@ defmodule Blockchain.P2P.Server do
   defp write(socket, {:error, error}), do: socket_died(socket, error)
 
   defp socket_died(socket, exit_status) do
-    Clients.remove(socket)
+    Peers.remove(socket)
     exit(exit_status)
   end
 
   def broadcast(data) do
-    for c <- Clients.get_all() do
-      case write(c, {:ok, data}) do
+    for p <- Peers.get_all() do
+      case write(p, {:ok, data}) do
         {:error, _} ->
           # client is not reachable, forget it
-          Clients.remove(c)
+          Peers.remove(p)
         _ ->
           :ok
       end
