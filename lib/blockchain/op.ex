@@ -1,4 +1,6 @@
 defmodule Blockchain.Op do
+  @moduledoc "Operation on the blockchain"
+
   alias Blockchain.Chain
 
   def determine_action(received_chain) do

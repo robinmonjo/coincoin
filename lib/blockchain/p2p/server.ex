@@ -1,6 +1,8 @@
 require Logger
 
 defmodule Blockchain.P2P.Server do
+  @moduledoc "TCP server to handle communications between peers"
+
   alias Blockchain.P2P.{Clients, Command}
 
   # Servers
@@ -10,7 +12,8 @@ defmodule Blockchain.P2P.Server do
     # 1. `:binary` - receives data as binaries (instead of lists)
     # 2. `packet: :line` - receives data line by line
     # 3. `active: false` - blocks on `:gen_tcp.recv/2` until data is available
-    # 4. `reuseaddr: true` - allows us to reuse the address if the listener crashes
+    # 4. `reuseaddr: true` - allows us to reuse the address if the listener
+    #                        crashes
     #
     {:ok, socket} = :gen_tcp.listen(port,
                       [:binary, packet: 4, active: false, reuseaddr: true])

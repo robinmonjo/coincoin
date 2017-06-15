@@ -10,7 +10,7 @@ defmodule Blockchain.Block do
     :data
   ]
 
-  # @enforce_keys @mandatory_keys --> this is causing issues with Poinson decoding
+  # @enforce_keys @mandatory_keys ! this is causing issues with Poinson decoding
   @derive [Poison.Encoder]
   defstruct @mandatory_keys ++ [:hash]
 

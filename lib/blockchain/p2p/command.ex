@@ -1,11 +1,19 @@
 defmodule Blockchain.P2P.Command do
+  @moduledoc "TCP server command parsing and execution"
 
   alias Blockchain.{Chain, Op, Block}
 
+  # simple ping
   @ping "ping"
-  @query_latest "query_latest" # to request latest block
-  @query_all "query_all" # to request all the blockchain
-  @response_blockchain "response_blockchain" # to receive a blockchain (all the chain or only latest block in an array)
+
+  # to request latest block
+  @query_latest "query_latest"
+
+  # to request all the blockchain
+  @query_all "query_all"
+
+  # to receive a blockchain (all the chain or only latest block in an array)
+  @response_blockchain "response_blockchain"
 
   def parse(data) do
     case Poison.decode(data, as: %{"chain" => [%Block{}]}) do

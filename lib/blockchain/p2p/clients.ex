@@ -1,4 +1,6 @@
 defmodule Blockchain.P2P.Clients do
+  @moduledoc "Agent that stores a list of connected peers"
+
   def start_link do
     Agent.start_link(fn -> [] end, name: __MODULE__)
   end

@@ -18,7 +18,9 @@ defmodule Blockchain.Application do
 
       # P2P processes
       worker(Blockchain.P2P.Clients, []),
-      supervisor(Task.Supervisor, [[name: Blockchain.P2P.Server.TaskSupervisor]]),
+      supervisor(Task.Supervisor, [
+        [name: Blockchain.P2P.Server.TaskSupervisor]
+      ]),
       worker(Task, [Blockchain.P2P.Server, :accept, [port]])
     ]
 
