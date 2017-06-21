@@ -2,6 +2,8 @@
 
 A "naive blockchain" implementation in Elixir inspired by [this JS implementation](https://github.com/lhartikk/naivechain)
 
+**This is a work in progress**
+
 # TODO
 
 - [ ] query all blocks when connecting to a peer
