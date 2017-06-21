@@ -1,60 +1,74 @@
+require Logger
+
 defmodule Blockchain.P2P.Command do
-  @moduledoc "TCP server command parsing and execution"
+  @moduledoc "TCP server commands"
 
-  alias Blockchain.{Chain, Op, Block}
+  alias Blockchain.{Chain, Block, P2P.Payload, P2P.Server}
 
-  # simple ping
-  @ping "ping"
-
-  # to request latest block
-  @query_latest "query_latest"
-
-  # to request all the blockchain
-  @query_all "query_all"
-
-  # to receive a blockchain (all the chain or only latest block in an array)
-  @response_blockchain "response_blockchain"
-
-  def parse(data) do
-    case Poison.decode(data, as: %{"chain" => [%Block{}]}) do
-      {:ok, json} ->
-        parse_cmd(json)
-      {:error, {reason, _, _}} ->
-        {:error, reason}
+  def handle(data) do
+    case Payload.decode(data) do
+      {:ok, payload} ->
+        handle_payload(payload)
+      {:error, _reason} = err ->
+        err
     end
   end
 
-  def parse_cmd(json) do
-    case json do
-      %{"type" => @query_latest} ->
-        {:ok, @query_latest}
-      %{"type" => @query_all} ->
-        {:ok, @query_all}
-      %{"type" => @response_blockchain, "chain" => chain_payload} ->
-        {:ok, {@response_blockchain, chain_payload}}
-      %{"type" => @ping} ->
-        {:ok, @ping}
-      _ ->
-        {:error, :unknown_type}
-    end
-  end
-
-  def run(@ping) do
+  defp handle_payload(%Payload{type: "ping"}) do
     {:ok, "pong"}
   end
 
-  def run(@query_latest) do
-    payload = Poison.encode!([Chain.latest_block()])
-    {:ok, payload}
+  defp handle_payload(%Payload{type: "query_latest"}) do
+    Logger.info fn -> "asking for latest block" end
+    response =
+      [Chain.latest_block()]
+      |> Payload.response_blockchain()
+      |> Payload.encode!()
+    {:ok, response}
   end
 
-  def run(@query_all) do
-    payload = Poison.encode!(Chain.all_blocks())
-    {:ok, payload}
+  defp handle_payload(%Payload{type: "query_all"}) do
+    Logger.info fn -> "asking for all blocks" end
+    response =
+      Chain.all_blocks()
+      |> Payload.response_blockchain()
+      |> Payload.encode!()
+    {:ok, response}
   end
 
-  def run({@response_blockchain, chain}) do
-    action = Op.determine_action(chain)
-    {:ok, Atom.to_string(action)}
+  defp handle_payload(%Payload{type: "response_blockchain", data: received_chain}) do
+    latest_block_held = Chain.latest_block()
+    [latest_block_received | _] = received_chain
+
+    cond do
+      latest_block_held.index >= latest_block_received.index ->
+        Logger.info fn -> "received blockchain is no longer, doing nothing" end
+        :ok
+      latest_block_held.hash == latest_block_received.previous_hash ->
+        Logger.info fn -> "adding new block" end
+        :ok = Chain.add_block(latest_block_received)
+        broadcast_new_block(latest_block_received)
+        :ok
+      length(received_chain) == 1 ->
+        Logger.info fn -> "asking for all blocks" end
+        response =
+          Payload.query_all()
+          |> Payload.encode!()
+        {:ok, response}
+      true ->
+        Logger.info fn -> "replacing my chain" end
+        Chain.replace_chain(received_chain)
+    end
+  end
+
+  defp handle_payload(_) do
+    {:error, :unknown_type}
+  end
+
+  def broadcast_new_block(%Block{} = block) do
+    Logger.info fn -> "broadcasting new block" end
+    Payload.response_blockchain([block])
+    |> Payload.encode!()
+    |> Server.broadcast()
   end
 end

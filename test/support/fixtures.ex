@@ -1,5 +1,5 @@
 defmodule Blockchain.Fixtures do
-  alias Blockchain.Block
+  alias Blockchain.{Block, P2P.Payload}
 
   # mock a valid blockchain of n elements + genesis block
   def mock_blockchain(n), do: mock_blockchain([Block.genesis_block()], n)
@@ -18,7 +18,10 @@ defmodule Blockchain.Fixtures do
 
   def open_connection_and_ping do
     {:ok, socket} = open_connection()
-    "pong" = send_and_recv(socket, ~s({"type": "ping"}))
+    ping =
+      Payload.ping()
+      |> Payload.encode!()
+    "pong" = send_and_recv(socket, ping)
     {:ok, socket}
   end
 
@@ -31,6 +34,4 @@ defmodule Blockchain.Fixtures do
     {:ok, data} = :gen_tcp.recv(socket, 0, 1000)
     data
   end
-
-
 end

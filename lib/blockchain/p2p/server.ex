@@ -15,65 +15,62 @@ defmodule Blockchain.P2P.Server do
     # 4. `reuseaddr: true` - allows us to reuse the address if the listener
     #                        crashes
     #
-    {:ok, socket} = :gen_tcp.listen(port,
+    {:ok, listen_socket} = :gen_tcp.listen(port,
                       [:binary, packet: 4, active: false, reuseaddr: true])
-    Logger.info fn -> "Accepting connections on port #{port}" end
-    loop_acceptor(socket)
+    Logger.info fn -> "accepting connections on port #{port}" end
+    loop_acceptor(listen_socket)
   end
 
-  defp loop_acceptor(socket) do
-    {:ok, client} = :gen_tcp.accept(socket)
+  defp loop_acceptor(listen_socket) do
+    {:ok, socket} = :gen_tcp.accept(listen_socket)
+    handle_socket(socket)
+    loop_acceptor(listen_socket)
+  end
+
+  def handle_socket(socket) do
+    Peers.add(socket)
     {:ok, pid} =
       Task.Supervisor.start_child(Blockchain.P2P.Server.TaskSupervisor, fn ->
-        serve(client)
+        serve(socket)
       end)
-    :ok = :gen_tcp.controlling_process(client, pid)
-    Peers.add(client)
-    loop_acceptor(socket)
+    :ok = :gen_tcp.controlling_process(socket, pid)
   end
 
   defp serve(socket) do
-    msg =
-      with {:ok, data} <- :gen_tcp.recv(socket, 0),
-           {:ok, command} <- Command.parse(data),
-           do: Command.run(command)
-
-    write(socket, msg)
-    serve(socket)
-  end
-
-  defp write(socket, {:ok, text}) do
-    :gen_tcp.send(socket, text)
-  end
-
-  defp write(socket, {:error, :unknown_type}) do
-    :gen_tcp.send(socket, "unknown type")
-  end
-
-  defp write(socket, {:error, :invalid}) do
-    :gen_tcp.send(socket, "invalid json")
-  end
-
-  # The connection was closed, exit politely.
-  defp write(socket, {:error, :closed}), do: socket_died(socket, :shutdown)
-
-  # Unknown error. Write to the client and exit.
-  defp write(socket, {:error, error}), do: socket_died(socket, error)
-
-  defp socket_died(socket, exit_status) do
-    Peers.remove(socket)
-    exit(exit_status)
+    case :gen_tcp.recv(socket, 0) do
+      {:ok, data} ->
+        handle_incoming_data(socket, data)
+        serve(socket)
+      {:error, _} ->
+        Logger.info fn -> "socket died" end
+        Peers.remove(socket)
+        exit(:shutdown)
+    end
   end
 
   def broadcast(data) do
     for p <- Peers.get_all() do
-      case write(p, {:ok, data}) do
+      case :gen_tcp.send(p, data) do
         {:error, _} ->
           # client is not reachable, forget it
+          Logger.info fn -> "socket not reachable, forgeting it" end
           Peers.remove(p)
         _ ->
           :ok
       end
+    end
+  end
+
+  defp handle_incoming_data(socket, data) do
+    case Command.handle(data) do
+      {:ok, response} ->
+        :gen_tcp.send(socket, response)
+      :ok ->
+        :ok
+      {:error, :unknown_type} ->
+        :gen_tcp.send(socket, "unknown type")
+      {:error, :invalid} ->
+        :gen_tcp.send(socket, "invalid json")
     end
   end
 end

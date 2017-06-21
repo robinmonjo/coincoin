@@ -25,3 +25,5 @@ next steps
 - define a protocol for nodes to communicate
 - implement this protocol using gen_tcp + protobuff
 - keep going
+
+Reprendre en utilisant la librairie socket qui semble très bien.
