@@ -14,7 +14,7 @@ defmodule Blockchain.ChainTest do
     assert first_block == b
   end
 
-  test "should add a block if valid" do
+  test "add a block if valid" do
     valid_block = Block.generate_next_block("some data")
     assert :ok = Chain.add_block(valid_block)
   end
@@ -32,7 +32,7 @@ defmodule Blockchain.ChainTest do
     assert {:error, "invalid block hash"} = Chain.add_block(invalid_block)
   end
 
-  test "should validate a blockchain" do
+  test "validate a blockchain" do
     invalid_genesis_block = %Block{
       index: 1,
       previous_hash: "0",
@@ -55,7 +55,7 @@ defmodule Blockchain.ChainTest do
     assert Chain.validate_chain(mock_blockchain(3))
   end
 
-  test "should replace the blockchain" do
+  test "replace the blockchain" do
     new_chain = mock_blockchain(6)
     :ok = Chain.replace_chain(new_chain)
     assert Chain.all_blocks() == new_chain
