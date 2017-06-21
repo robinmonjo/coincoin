@@ -71,7 +71,7 @@ defmodule Blockchain.Chain do
     end
   end
 
-  def validate_chain(blockchain) when length(blockchain) == 0, do: false # should at least have a genesis bloc
+  def validate_chain(blockchain) when length(blockchain) == 0, do: false # should at least have a genesis block
 
   def validate_chain(blockchain) when length(blockchain) == 1 do
     [genesis_block | _] = blockchain
