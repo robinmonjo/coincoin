@@ -2,8 +2,7 @@ defmodule Blockchain.P2P.CommandTest do
   use ExUnit.Case
   import Blockchain.Fixtures
 
-  alias Blockchain.P2P.{Command, Payload}
-  alias Blockchain.{Chain, Block}
+  alias Blockchain.{Chain, Block, P2P.Command, P2P.Payload}
 
   setup do
     :ok

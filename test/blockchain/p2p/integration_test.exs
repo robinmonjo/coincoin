@@ -2,8 +2,7 @@ defmodule Blockchain.P2P.IntegrationTest do
   use ExUnit.Case
   import Blockchain.Fixtures
 
-  alias Blockchain.P2P.{Server, Peers, Payload}
-  alias Blockchain.Chain
+  alias Blockchain.{Chain, P2P.Server, P2P.Peers, P2P.Payload}
 
   setup do
     :ok = Peers.remove_all()
