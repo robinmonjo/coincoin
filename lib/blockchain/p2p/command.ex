@@ -67,7 +67,8 @@ defmodule Blockchain.P2P.Command do
 
   def broadcast_new_block(%Block{} = block) do
     Logger.info fn -> "broadcasting new block" end
-    Payload.response_blockchain([block])
+    [block]
+    |> Payload.response_blockchain()
     |> Payload.encode!()
     |> Server.broadcast()
   end
