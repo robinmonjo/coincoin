@@ -12,7 +12,7 @@ defmodule Blockchain.Chain do
     GenServer.start_link(__MODULE__, [Block.genesis_block()], name: __MODULE__)
   end
 
-  def init(initial_chain) do
+  def init([%Block{}] = initial_chain) do
     {:ok, initial_chain}
   end
 

@@ -3,16 +3,14 @@ defmodule Blockchain.Block do
 
   alias Blockchain.{Block, Chain}
 
-  @mandatory_keys [
+  @derive [Poison.Encoder]
+  defstruct [
     :index,
     :previous_hash,
     :timestamp,
-    :data
+    :data,
+    :hash
   ]
-
-  # @enforce_keys @mandatory_keys ! this is causing issues with Poinson decoding
-  @derive [Poison.Encoder]
-  defstruct @mandatory_keys ++ [:hash]
 
   def genesis_block do
     b = %Block{

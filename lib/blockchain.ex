@@ -19,6 +19,6 @@ defmodule Blockchain do
 
   # list connected peers
   def list_peers do
-    Peers.get_all()
+    Enum.map Peers.get_all(), &(:inet.peernames(&1))
   end
 end
