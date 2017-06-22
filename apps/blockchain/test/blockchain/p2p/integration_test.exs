@@ -47,7 +47,8 @@ defmodule Blockchain.P2P.IntegrationTest do
 
     [block | _] = remote_chain
     payload =
-      Payload.response_blockchain([block])
+      [block]
+      |> Payload.response_blockchain()
       |> Payload.encode!()
 
       {:ok, response} = Payload.decode(send_and_recv(socket, payload))

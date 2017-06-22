@@ -1,4 +1,6 @@
 defmodule Blockchain.Fixtures do
+  @moduledoc "Test helpers"
+
   alias Blockchain.{Block, P2P.Payload}
 
   # mock a valid blockchain of n elements + genesis block

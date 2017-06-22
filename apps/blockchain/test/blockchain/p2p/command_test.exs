@@ -15,7 +15,8 @@ defmodule Blockchain.P2P.CommandTest do
     [block | chain] = remote_chain
     assert Chain.replace_chain(chain) == :ok
     payload =
-      Payload.response_blockchain([block])
+      [block]
+      |> Payload.response_blockchain()
       |> Payload.encode!()
 
     :ok = Command.handle(payload)
@@ -25,7 +26,8 @@ defmodule Blockchain.P2P.CommandTest do
     assert Chain.replace_chain(remote_chain) == :ok
     [_ | chain] = remote_chain
     payload =
-      Payload.response_blockchain(chain)
+      chain
+      |> Payload.response_blockchain()
       |> Payload.encode!()
     :ok = Command.handle(payload)
     assert Chain.all_blocks() == remote_chain
@@ -33,7 +35,8 @@ defmodule Blockchain.P2P.CommandTest do
     # receiving a longer chain
     assert Chain.replace_chain([Block.genesis_block()])
     payload =
-      Payload.response_blockchain(remote_chain)
+      remote_chain
+      |> Payload.response_blockchain()
       |> Payload.encode!()
     :ok = Command.handle(payload)
     assert Chain.all_blocks() == remote_chain
