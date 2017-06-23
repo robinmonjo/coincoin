@@ -8,7 +8,7 @@ defmodule Blockchain.Application do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    port = String.to_integer(System.get_env("PORT") || "4040")
+    port = String.to_integer(System.get_env("P2P_PORT") || "5000")
 
     # Define workers and child supervisors to be supervised
     children = [
