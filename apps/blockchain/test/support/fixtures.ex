@@ -15,7 +15,8 @@ defmodule Blockchain.Fixtures do
   # communication with TCP server
   def open_connection do
     opts = [:binary, packet: 4, active: false]
-    :gen_tcp.connect('localhost', 4040, opts)
+    port = Application.fetch_env!(:blockchain, :port)
+    :gen_tcp.connect('localhost', port, opts)
   end
 
   def open_connection_and_ping do
