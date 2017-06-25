@@ -13,9 +13,9 @@ Setting up a 3 nodes blockchain locally:
 Then connect the nodes in the `iex` console, for example:
 
 ```elixir
-$node2> Blockchain.connect_to_peer(4000) # connect node2 to node1
+$node2> Blockchain.connect(4000) # connect node2 to node1
 
-$note3> Blockchain.connect_to_peer(4001) # connect node3 to node2
+$note3> Blockchain.connect(4001) # connect node3 to node2
 ```
 
 # TODO
