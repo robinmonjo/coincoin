@@ -20,7 +20,10 @@ defmodule Blockchain.Web.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", Blockchain.Web do
-  #   pipe_through :api
-  # end
+  scope "/api", Blockchain.Web.API do
+    pipe_through :api
+
+    resources "/blocks", BlockController, only: [:index, :create]
+    resources "/peers", PeerController, only: [:index, :create]
+  end
 end
