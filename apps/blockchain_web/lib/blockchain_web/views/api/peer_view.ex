@@ -4,5 +4,4 @@ defmodule Blockchain.Web.API.PeerView do
   def render("index.json", %{peers: peers}) do
     peers
   end
-
 end

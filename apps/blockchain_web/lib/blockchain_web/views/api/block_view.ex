@@ -4,5 +4,4 @@ defmodule Blockchain.Web.API.BlockView do
   def render("index.json", %{blocks: blocks}) do
     blocks
   end
-
 end
