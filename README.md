@@ -21,5 +21,3 @@ $note3> Blockchain.connect_to_peer(4001) # connect node3 to node2
 # TODO
 
 - [ ] allow remote host (only localhost for now)
-- [ ] more commands in the Blockchain module
-- [ ] http interface using phoenix (umbrella project)
