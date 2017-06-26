@@ -36,5 +36,4 @@ curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ 
 
 # TODO
 
-- [ ] allow remote host (only localhost for now)
 - [ ] type spec and dyalizer

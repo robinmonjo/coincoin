@@ -13,8 +13,8 @@ defmodule Blockchain do
   end
 
   # connect to an existing peer (only localhost for now, just specify a port)
-  def connect(port) do
-    Client.connect(port)
+  def connect(uri) do
+    Client.connect(uri)
   end
 
   # list connected peers
