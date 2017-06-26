@@ -5,8 +5,8 @@ defmodule Blockchain.Web.API.PeerController do
     render conn, "index.json", peers: Blockchain.peers()
   end
 
-  def create(conn, %{"port" => port}) do
-    :ok = Blockchain.connect(port)
+  def create(conn, %{"uri" => uri}) do
+    :ok = Blockchain.connect(uri)
     render conn, "index.json", peers: Blockchain.peers()
   end
 end

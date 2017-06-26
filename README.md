@@ -13,9 +13,9 @@ Setting up a 3 nodes blockchain locally:
 Then connect the nodes using the API, for example:
 
 ```bash
-curl -H 'Content-Type: application/json' localhost:4001/api/peers -X POST -d '{ "port": 5000}'  # connect node2 to node1
+curl -H 'Content-Type: application/json' localhost:4001/api/peers -X POST -d '{ "uri": "localhost:5000"}'  # connect node2 to node1
 
-curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ "port": 5001}'  # connect node3 to node2
+curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ "uri": "localhost:5001"}'  # connect node3 to node2
 ```
 
 ## API:
@@ -31,7 +31,7 @@ curl -H 'Content-Type: application/json' localhost:4000/api/blocks
 curl -H 'Content-Type: application/json' localhost:4000/api/peers
 
 # connect to a peer
-curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ "port": 5001}'
+curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ "uri": "localhost:5001"}'
 ```
 
 # TODO
