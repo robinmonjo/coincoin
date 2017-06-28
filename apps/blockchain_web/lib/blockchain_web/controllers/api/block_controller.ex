@@ -6,7 +6,7 @@ defmodule Blockchain.Web.API.BlockController do
   end
 
   def create(conn, %{"data" => data}) do
-    Blockchain.create(data)
+    Blockchain.mine(data)
     render conn, "index.json", blocks: Blockchain.blocks()
   end
 end
