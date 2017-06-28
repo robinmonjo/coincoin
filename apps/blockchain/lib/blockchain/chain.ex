@@ -64,6 +64,8 @@ defmodule Blockchain.Chain do
         {:error, "invalid index"}
       previous_block.hash != block.previous_hash ->
         {:error, "invalid previous hash"}
+      Block.verify_proof_of_work(block.hash) == false ->
+        {:error, "no proof of work"}
       block.hash != Block.compute_hash(block) ->
         {:error, "invalid block hash"}
       true ->

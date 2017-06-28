@@ -6,7 +6,7 @@ defmodule Blockchain do
   alias Blockchain.{Block, Chain, P2P.Client, P2P.Command, P2P.Peers}
 
   # add a block to the blockchain
-  def create(data) do
+  def mine(data) do
     block = Block.generate_next_block(data)
     :ok = Chain.add_block(block)
     Command.broadcast_new_block(block)

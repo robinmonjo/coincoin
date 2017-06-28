@@ -9,17 +9,19 @@ defmodule Blockchain.Block do
     :previous_hash,
     :timestamp,
     :data,
+    :nounce,
     :hash
   ]
 
   def genesis_block do
-    b = %Block{
+    %Block{
       index: 0,
       previous_hash: "0",
       timestamp: 1_465_154_705,
-      data: "genesis block"
+      data: "genesis block",
+      nounce: 35679,
+      hash: "0000DA3553676AC53CC20564D8E956D03A08F7747823439FDE74ABF8E7EADF60"
     }
-    %{b | hash: compute_hash(b)}
   end
 
   def generate_next_block(data) do
@@ -33,12 +35,28 @@ defmodule Blockchain.Block do
       timestamp: System.system_time(:second),
       data: data
     }
-    %{b | hash: compute_hash(b)}
+    b = %{b | nounce: proof_of_work(b)}
+    hash = compute_hash(b)
+    %{b | hash: hash}
   end
 
-  def compute_hash(%Block{index: i, previous_hash: h, timestamp: timestamp, data: data}) do
-    hash = :crypto.hash(:sha256, "#{i}#{h}#{timestamp}#{data}")
-    Base.encode16(hash)
+  def compute_hash(%Block{index: i, previous_hash: h, timestamp: timestamp, data: data, nounce: nounce}) do
+    :crypto.hash(:sha256, "#{i}#{h}#{timestamp}#{data}#{nounce}") |> Base.encode16
   end
 
+  # https://en.bitcoin.it/wiki/Proof_of_work
+  defp proof_of_work(%Block{} = block, nounce \\ 0) do
+    b = %{block | nounce: nounce}
+    hash = compute_hash(b)
+    case verify_proof_of_work(hash) do
+      true -> nounce
+      _ -> proof_of_work(block, nounce + 1)
+    end
+  end
+
+  def verify_proof_of_work(hash) do
+    difficulty = Application.fetch_env!(:blockchain, :pow_difficulty)
+    prefix = Enum.reduce 1..difficulty, "", fn(_, acc) -> "0#{acc}" end
+    String.starts_with?(hash, prefix)
+  end
 end

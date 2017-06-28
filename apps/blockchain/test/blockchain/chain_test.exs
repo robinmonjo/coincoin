@@ -4,10 +4,6 @@ defmodule Blockchain.ChainTest do
 
   alias Blockchain.{Chain, Block}
 
-  setup do
-    :ok
-  end
-
   test "first block should be the genesis block" do
     b = Block.genesis_block()
     {:ok, first_block} = Enum.fetch(Chain.all_blocks(), -1)
@@ -28,8 +24,11 @@ defmodule Blockchain.ChainTest do
     invalid_block = %{valid_block | previous_hash: "not the good previous hash"}
     assert {:error, "invalid previous hash"} = Chain.add_block(invalid_block)
 
-    invalid_block = %{valid_block | hash: "not the good hash"}
+    invalid_block = %{valid_block | hash: "#{valid_block.hash}1"}
     assert {:error, "invalid block hash"} = Chain.add_block(invalid_block)
+
+    invalid_block = %{valid_block | hash: "1#{valid_block.hash}"}
+    assert {:error, "no proof of work"} = Chain.add_block(invalid_block)
   end
 
   test "validate a blockchain" do
