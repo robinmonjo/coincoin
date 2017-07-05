@@ -4,7 +4,9 @@
 
 A "naive blockchain" implementation in Elixir inspired by [this JS implementation](https://github.com/lhartikk/naivechain)
 
-**This is a work in progress**
+This is an umbrella project that provides the blockchain core and a REST API built with Phoenix.
+
+## Usage
 
 Setting up a 3 nodes blockchain locally:
 
@@ -20,7 +22,7 @@ curl -H 'Content-Type: application/json' localhost:4001/api/peers -X POST -d '{ 
 curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ "uri": "localhost:5001"}'  # connect node3 to node2
 ```
 
-## API:
+## API
 
 ```bash
 # create a block
@@ -36,6 +38,13 @@ curl -H 'Content-Type: application/json' localhost:4000/api/peers
 curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ "uri": "localhost:5001"}'
 ```
 
-# TODO
+## Resources
 
-- [ ] type spec and dyalizer
+- [naive blockchain](https://github.com/lhartikk/naivechain) and its [medium post](https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54#.dttbm9afr5)
+- [legion blockchain](https://github.com/aviaviavi/legion)
+- [proof of work](https://en.bitcoin.it/wiki/Proof_of_work)
+
+For future improvements:
+
+- [minimum viable blockchain](https://www.igvita.com/2014/05/05/minimum-viable-block-chain/)
+- [minimum viable blockchain Go implementation](https://github.com/izqui/blockchain)
