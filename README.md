@@ -6,6 +6,8 @@ A "naive blockchain" implementation in Elixir inspired by [this JS implementatio
 
 This is an umbrella project that provides the blockchain core and a REST API built with Phoenix.
 
+It provides peer-to-peer communications, naive blockchain logic and a rudimentary Proof of Work.
+
 ## Usage
 
 Setting up a 3 nodes blockchain locally:
@@ -14,7 +16,7 @@ Setting up a 3 nodes blockchain locally:
 - node 2: `PORT=4001 P2P_PORT=5001 iex -S mix phx.server`
 - node 3: `PORT=4002 P2P_PORT=5002 iex -S mix phx.server`
 
-Then connect the nodes using the API, for example:
+Then connect the nodes using the REST API, for example:
 
 ```bash
 curl -H 'Content-Type: application/json' localhost:4001/api/peers -X POST -d '{ "uri": "localhost:5000"}'  # connect node2 to node1
@@ -22,7 +24,30 @@ curl -H 'Content-Type: application/json' localhost:4001/api/peers -X POST -d '{ 
 curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ "uri": "localhost:5001"}'  # connect node3 to node2
 ```
 
-## API
+or directly in the `iex` console:
+
+```elixir
+$node2> Blockchain.connect("localhost:5000") # connect node2 to node1
+
+$node3> Blockchain.connect("localhost:5001") # connect node3 to node2
+```
+
+You can then mine blocks using the REST API or directly in the `iex` console.
+
+## iex
+
+Interaction with the blockchain in the `iex` console:
+
+```elixir
+Blockchain.connect("host:port") # connect to a peer
+Blockchain.list_peers() # list direct peers
+Blockchain.mine("some data") # add a block to the blockchain
+Blockchain.blocks() # get all blocks in the chain
+```
+
+## REST API
+
+Interaction with the blockchain with the REST API:
 
 ```bash
 # create a block
@@ -37,6 +62,16 @@ curl -H 'Content-Type: application/json' localhost:4000/api/peers
 # connect to a peer
 curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ "uri": "localhost:5001"}'
 ```
+
+## Motivations / next steps
+
+The goal of this project is to understand basic mechanisms behind the blockchain and to use Elixir and OTP.
+
+It has been designed to be modular and extensible. Some ideas to make it more complete :
+- web UI to control the node
+- build more blockchain features to make it a less "naive" blockchain
+
+Issues and pull requests are very welcome 😊
 
 ## Resources
 
