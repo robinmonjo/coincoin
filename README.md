@@ -3,9 +3,7 @@
 [![Build Status](https://travis-ci.org/robinmonjo/blockchain.svg?branch=master)](https://travis-ci.org/robinmonjo/blockchain)
 
 A "naive blockchain" implementation in Elixir inspired by [this JS implementation](https://github.com/lhartikk/naivechain)
-
 This is an umbrella project that provides the blockchain core and a REST API built with Phoenix.
-
 It provides peer-to-peer communications, naive blockchain logic and a rudimentary Proof of Work.
 
 ## Usage
@@ -65,9 +63,7 @@ curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ 
 
 ## Motivations / next steps
 
-The goal of this project is to understand basic mechanisms behind the blockchain and to use Elixir and OTP.
-
-It has been designed to be modular and extensible. Some ideas to make it more complete :
+The goal of this project is to understand basic mechanisms behind the blockchain and to use Elixir and OTP. It has been designed to be modular and extensible. Some ideas to make it more complete :
 - web UI to control the node
 - build more blockchain features to make it a less "naive" blockchain
 
