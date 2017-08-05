@@ -63,9 +63,9 @@ curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ 
 
 ## Motivations / next steps
 
-The goal of this project is to understand basic mechanisms behind the blockchain and to use Elixir and OTP. It has been designed to be modular and extensible. Some ideas to make it more complete :
-- web UI to control the node
-- build more blockchain features to make it a less "naive" blockchain
+The goal of this project is to understand basic mechanisms behind the blockchain and to use Elixir and OTP. It has been designed to be modular and extensible.
+
+I'm currently working on a "naive" cryptocurrency implementation on top of this blockchain. More to come later
 
 Issues and pull requests are very welcome 😊
 
