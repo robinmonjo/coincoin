@@ -16,8 +16,8 @@ defmodule Token.WalletTest do
 
   test "sign and verify data", %{wallet: w} do
     data = "some data to sign"
-    signature = Wallet.sign(w, data)
-    assert Wallet.verify(w, data, signature)
+    signature = Wallet.sign(data, w)
+    assert Wallet.verify(data, signature, w)
   end
 
 end
