@@ -33,4 +33,9 @@ defmodule Blockchain do
   def blocks() do
     Chain.all_blocks()
   end
+
+  # implements Enum.reduce_while on the chain
+  def reduce_while(acc, fun) do
+    Chain.reduce_while(acc, fun)
+  end
 end

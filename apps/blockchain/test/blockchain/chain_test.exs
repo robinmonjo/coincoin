@@ -59,4 +59,18 @@ defmodule Blockchain.ChainTest do
     :ok = Chain.replace_chain(new_chain)
     assert Chain.all_blocks() == new_chain
   end
+
+  test "reduce_while on the blockchain" do
+    chain = mock_blockchain(5)
+    :ok = Chain.replace_chain(chain)
+    res = Chain.reduce_while([], fn(block, acc) ->
+      {:cont, acc ++ [block]}
+    end)
+    assert res == chain
+
+    res = Chain.reduce_while([], fn(block, acc) ->
+      {:halt, acc ++ [block]}
+    end)
+    assert res == [Enum.fetch!(chain, 0)]
+  end
 end

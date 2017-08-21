@@ -36,6 +36,6 @@ defmodule Token.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:blockchain, in_umbrella: true}]
   end
 end

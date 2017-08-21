@@ -32,6 +32,10 @@ defmodule Blockchain.Chain do
     GenServer.call(__MODULE__, {:replace_chain, chain})
   end
 
+  def reduce_while(acc, fun) do
+    GenServer.call(__MODULE__, {:reduce_while, acc, fun})
+  end
+
   def handle_call(:latest_block, _from, chain) do
     [h | _] = chain
     {:reply, h, chain}
@@ -56,6 +60,11 @@ defmodule Blockchain.Chain do
       true -> {:reply, :ok, new_chain}
       _ -> {:reply, :error, chain}
     end
+  end
+
+  def handle_call({:reduce_while, acc, fun}, _from, chain) do
+    res = Enum.reduce_while(chain, acc, fun)
+    {:reply, res, chain}
   end
 
   defp validate_new_block(previous_block, block) do
