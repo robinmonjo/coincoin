@@ -17,7 +17,35 @@ defmodule Token.Transaction.Verify do
   end
 
   defp ensure_format(%Transaction{} = tx) do
-    :ok # TODO: check the format of the transaction
+    cond do
+      !sha256_string?(tx.hash) -> {:error, "invalid hash format"}
+      length(tx.inputs) <= 0 -> {:error, "no input"}
+      length(tx.outputs) <= 0 -> {:error, "no output"}
+      !valid_inputs_format?(tx.inputs) -> {:error, "invalid input"}
+      !valid_outputs_format?(tx.outputs) -> {:error, "invalid output"}
+      true -> :ok
+    end
+  end
+
+  defp sha256_string?(str), do: byte_size(str) == 64
+  defp reepdm160_string?(str), do: byte_size(str) == 40
+
+  defp valid_inputs_format?([]), do: true
+  defp valid_inputs_format?([{tx_ref, output_index} | remaining]) do
+    if sha256_string?(tx_ref) && output_index >= 0 do
+      valid_inputs_format?(remaining)
+    else
+      false
+    end
+  end
+
+  defp valid_outputs_format?([]), do: :true
+  defp valid_outputs_format?([{recipient, amount} | remaining]) do
+    if reepdm160_string?(recipient) && amount > 0 do
+      valid_outputs_format?(remaining)
+    else
+      false
+    end
   end
 
   defp ensure_doesnt_already_exist(%Transaction{} = tx, find_in_ledger) do
@@ -61,9 +89,10 @@ defmodule Token.Transaction.Verify do
   defp ensure_inputs_sum_superior_to_outputs_sum(%Transaction{outputs: outputs}, used_outputs) do
     inputs_sum = compute_sum(used_outputs)
     outputs_sum = compute_sum(outputs)
-    cond do
-      inputs_sum < outputs_sum -> {:error, "input sum below output sum"}
-      true -> :ok
+    if inputs_sum < outputs_sum do
+      {:error, "input sum below output sum"}
+    else
+      :ok
     end
   end
 
@@ -78,9 +107,10 @@ defmodule Token.Transaction.Verify do
   end
   defp ensure_inputs_ownership([], _), do: :ok
   defp ensure_inputs_ownership([{recipient, _value} | remaining], pkh) do
-    cond do
-      recipient == pkh -> ensure_inputs_ownership(remaining, pkh)
-      true -> {:error, "recipient in used output doesn't match transaction public key"}
+    if recipient == pkh do
+      ensure_inputs_ownership(remaining, pkh)
+    else
+      {:error, "recipient in input doesn't match transaction public key"}
     end
   end
 

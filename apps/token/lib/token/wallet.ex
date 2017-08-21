@@ -1,4 +1,5 @@
 defmodule Token.Wallet do
+  @moduledoc "Wallet module"
 
   alias Token.{Wallet, Crypto}
 
@@ -31,7 +32,6 @@ defmodule Token.Wallet do
     Crypto.verify_signature(wallet.public_key, msg, signature)
   end
 end
-
 
 # wallet can search all UTXO (unspent transaction output) for a given address in the blockchain
 # need to have an iterator function on the chain

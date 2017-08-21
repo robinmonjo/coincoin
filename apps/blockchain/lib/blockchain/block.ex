@@ -19,7 +19,7 @@ defmodule Blockchain.Block do
       previous_hash: "0",
       timestamp: 1_465_154_705,
       data: "genesis block",
-      nounce: 35679,
+      nounce: 35_679,
       hash: "0000DA3553676AC53CC20564D8E956D03A08F7747823439FDE74ABF8E7EADF60"
     }
   end
