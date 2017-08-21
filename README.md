@@ -79,3 +79,12 @@ For future improvements:
 
 - [minimum viable blockchain](https://www.igvita.com/2014/05/05/minimum-viable-block-chain/)
 - [minimum viable blockchain Go implementation](https://github.com/izqui/blockchain)
+
+## TODOs
+
+- [ ] test transactions (verify)
+- [ ] find in ledger from the blockchain (one block one transaction)
+- [ ] wallet API (find UTXO, prepare transaction) `Wallet.send(recipient, value, wallet)`
+- [ ] integration testing on tokens
+- [ ] send transactions to miners so it can get validated
+- [ ] one README per app with a main README
