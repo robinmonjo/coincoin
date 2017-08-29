@@ -12,8 +12,10 @@ defmodule Blockchain.P2P.Payload do
   # to request all the blockchain
   @query_all "query_all"
 
-  # to receive a blockchain (all the chain or only latest block in an array)
+  # to transmit a block or a blockchain
   @response_blockchain "response_blockchain"
+
+  @mining_request "mining_request"
 
   @derive [Poison.Encoder]
   defstruct [:type, :data]
@@ -25,6 +27,8 @@ defmodule Blockchain.P2P.Payload do
   def query_latest, do: %Payload{type: @query_latest}
 
   def response_blockchain(chain), do: %Payload{type: @response_blockchain, data: chain}
+
+  def mining_request(data), do: %Payload{type: @mining_request, data: data}
 
   def decode(input) do
     case Poison.decode(input, as: %Payload{data: [%Block{}]}) do

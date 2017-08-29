@@ -72,4 +72,12 @@ defmodule Blockchain.P2P.Command do
     |> Payload.encode!()
     |> Server.broadcast()
   end
+
+  def broadcast_mining_request(data) do
+    Logger.info fn -> "broadcasting mining request" end
+    data
+    |> Payload.mining_request()
+    |> Payload.encode!()
+    |> Server.broadcast()
+  end
 end

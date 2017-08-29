@@ -32,8 +32,3 @@ defmodule Token.Wallet do
     Crypto.verify_signature(wallet.public_key, msg, signature)
   end
 end
-
-# wallet can search all UTXO (unspent transaction output) for a given address in the blockchain
-# need to have an iterator function on the chain
-# wallet find all UTXO to satisfy an exact or superior amount of what must be spent. After there is the change
-#

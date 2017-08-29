@@ -19,9 +19,13 @@ defmodule Blockchain.Application do
       # P2P processes
       worker(Blockchain.P2P.Peers, []),
       supervisor(Task.Supervisor, [
-        [name: Blockchain.P2P.Server.TaskSupervisor]
+        [name: Blockchain.P2P.Server.TasksSupervisor]
       ]),
-      worker(Task, [Blockchain.P2P.Server, :accept, [port]])
+      worker(Task, [Blockchain.P2P.Server, :accept, [port]]),
+      worker(Blockchain.Mining, []),
+      supervisor(Task.Supervisor, [
+        [name: Blockchain.Mining.TasksSupervisor]
+      ])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

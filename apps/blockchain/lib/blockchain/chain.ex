@@ -32,10 +32,6 @@ defmodule Blockchain.Chain do
     GenServer.call(__MODULE__, {:replace_chain, chain})
   end
 
-  def reduce_while(acc, fun) do
-    GenServer.call(__MODULE__, {:reduce_while, acc, fun})
-  end
-
   def handle_call(:latest_block, _from, chain) do
     [h | _] = chain
     {:reply, h, chain}
@@ -57,14 +53,9 @@ defmodule Blockchain.Chain do
 
   def handle_call({:replace_chain, new_chain}, _from, chain) do
     case validate_chain(new_chain) do
-      true -> {:reply, :ok, new_chain}
-      _ -> {:reply, :error, chain}
+      :ok -> {:reply, :ok, new_chain}
+      {:error, _} = error -> {:reply, error, chain}
     end
-  end
-
-  def handle_call({:reduce_while, acc, fun}, _from, chain) do
-    res = Enum.reduce_while(chain, acc, fun)
-    {:reply, res, chain}
   end
 
   defp validate_new_block(previous_block, block) do
@@ -82,17 +73,17 @@ defmodule Blockchain.Chain do
     end
   end
 
-  def validate_chain(blockchain) when length(blockchain) == 0, do: false # should at least have a genesis block
-
-  def validate_chain(blockchain) when length(blockchain) == 1 do
-    [genesis_block | _] = blockchain
-    genesis_block == Block.genesis_block()
+  def validate_chain(blockchain) when length(blockchain) == 0, do: {:error, "empty chain"}
+  def validate_chain([genesis_block | _] = blockchain) when length(blockchain) == 1 do
+    if genesis_block == Block.genesis_block() do
+      :ok
+    else
+      {:error, "chain doesn't start with genesis block"}
+    end
   end
-
-  def validate_chain(blockchain) do
-    [block | [previous_block | rest]] = blockchain
+  def validate_chain([block | [previous_block | rest]]) do
     case validate_new_block(previous_block, block) do
-      {:error, _} -> false
+      {:error, _} = error -> error
       _ -> validate_chain([previous_block | rest])
     end
   end

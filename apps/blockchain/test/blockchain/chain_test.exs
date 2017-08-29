@@ -38,7 +38,7 @@ defmodule Blockchain.ChainTest do
       timestamp: 1_465_154_705,
       data: "genesis block"
     }
-    refute Chain.validate_chain([invalid_genesis_block])
+    assert {:error, "chain doesn't start with genesis block"} = Chain.validate_chain([invalid_genesis_block])
 
     genesis_block = Block.genesis_block()
     chain = [genesis_block]
@@ -49,7 +49,7 @@ defmodule Blockchain.ChainTest do
       timestamp: 1_465_154_706,
       data: "first block"
     }
-    refute Chain.validate_chain([invalid_next_block | chain])
+    assert {:error, "invalid previous hash"} = Chain.validate_chain([invalid_next_block | chain])
 
     assert Chain.validate_chain(mock_blockchain(3))
   end
@@ -58,19 +58,5 @@ defmodule Blockchain.ChainTest do
     new_chain = mock_blockchain(6)
     :ok = Chain.replace_chain(new_chain)
     assert Chain.all_blocks() == new_chain
-  end
-
-  test "reduce_while on the blockchain" do
-    chain = mock_blockchain(5)
-    :ok = Chain.replace_chain(chain)
-    res = Chain.reduce_while([], fn(block, acc) ->
-      {:cont, acc ++ [block]}
-    end)
-    assert res == chain
-
-    res = Chain.reduce_while([], fn(block, acc) ->
-      {:halt, acc ++ [block]}
-    end)
-    assert res == [Enum.fetch!(chain, 0)]
   end
 end

@@ -5,11 +5,16 @@ defmodule Blockchain do
 
   alias Blockchain.{Block, Chain, P2P.Client, P2P.Command, P2P.Peers}
 
-  # add a block to the blockchain
+  # add a block to the blockchain performing verification and proof of work
   def mine(data) do
     block = Block.generate_next_block(data)
     :ok = Chain.add_block(block)
     Command.broadcast_new_block(block)
+  end
+
+  # asks miners in the network to mine a block with given data
+  def request_mining(data) do
+
   end
 
   # connect to an existing peer (only localhost for now, just specify a port)
@@ -32,10 +37,5 @@ defmodule Blockchain do
   # returns all blocks
   def blocks() do
     Chain.all_blocks()
-  end
-
-  # implements Enum.reduce_while on the chain
-  def reduce_while(acc, fun) do
-    Chain.reduce_while(acc, fun)
   end
 end
