@@ -17,7 +17,7 @@ defmodule Blockchain.BlockTest do
       "some data"
       |> Block.generate_next_block()
       |> Block.perform_proof_of_work()
-    assert b.nounce > 0
+    assert b.nounce != nil
     assert Block.verify_proof_of_work(b.hash)
   end
 
