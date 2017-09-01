@@ -24,7 +24,7 @@ defmodule Blockchain.P2P.IntegrationTest do
 
     response = send_and_recv(socket, payload)
     {:ok, payload} = Payload.decode(response)
-    assert payload == %Payload{type: "response_blockchain", data: [Chain.latest_block()]}
+    assert payload == %Payload{type: "response_blockchain", blocks: [Chain.latest_block()]}
   end
 
   test "query all command", %{socket: socket} do
@@ -34,7 +34,7 @@ defmodule Blockchain.P2P.IntegrationTest do
 
     response = send_and_recv(socket, payload)
     {:ok, payload} = Payload.decode(response)
-    assert payload == %Payload{type: "response_blockchain", data: Chain.all_blocks()}
+    assert payload == %Payload{type: "response_blockchain", blocks: Chain.all_blocks()}
   end
 
   test "bad commands", %{socket: socket} do
@@ -67,7 +67,7 @@ defmodule Blockchain.P2P.IntegrationTest do
     n = length(Peers.get_all())
     assert n == 2
     payload = "test"
-    Server.broadcast(payload)
+    assert Server.broadcast(payload) == [:ok, :ok]
     for s <- [socket, socket1], do: assert recv(s) == payload
   end
 end
