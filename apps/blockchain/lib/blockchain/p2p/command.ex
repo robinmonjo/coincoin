@@ -64,7 +64,7 @@ defmodule Blockchain.P2P.Command do
     end
   end
 
-  defp handle_payload(%Payload{type: "mining_request", data: data} = payload) do
+  defp handle_payload(%Payload{type: "mining_request", data: data}) do
     case Mining.mine(data) do
       :ok ->
         Logger.info fn -> "received data to be mined" end
