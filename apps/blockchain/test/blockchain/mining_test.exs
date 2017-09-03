@@ -1,8 +1,7 @@
 defmodule Blockchain.MiningTest do
   use ExUnit.Case, async: false
-  import Blockchain.Fixtures
 
-  alias Blockchain.{Mining, Chain, Block}
+  alias Blockchain.{Mining, Block}
 
   test "handle_call mine_data add data to pool and start mining" do
     data = "foo"

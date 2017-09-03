@@ -1,6 +1,7 @@
 require Logger
 
 defmodule Blockchain.Mining do
+  @moduledoc "GenServer responsible for block mining"
   use GenServer
 
   alias Blockchain.{Chain, Block, P2P.Command, Data}
@@ -71,7 +72,7 @@ defmodule Blockchain.Mining do
     case Chain.add_block(mined_block) do
       :ok ->
         Command.broadcast_new_block(mined_block)
-        Logger.info fn -> "I mined your sheet" end
+        Logger.info fn -> "I mined block number #{mined_block.index}" end
       {:error, _reason} -> nil
     end
   end
