@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/robinmonjo/blockchain.svg?branch=master)](https://travis-ci.org/robinmonjo/blockchain)
 
-A "naive blockchain" implementation in Elixir inspired by [this JS implementation](https://github.com/lhartikk/naivechain)
+A minimal blockchain implementation in Elixir inspired by [this JS implementation](https://github.com/lhartikk/naivechain)
 This is an umbrella project that provides the blockchain core and a REST API built with Phoenix.
-It provides peer-to-peer communications, naive blockchain logic and a rudimentary Proof of Work.
+It provides peer-to-peer communications, blockchain logic and Proof of Work.
 
 ## Usage
 
@@ -39,7 +39,7 @@ Interaction with the blockchain in the `iex` console:
 ```elixir
 Blockchain.connect("host:port") # connect to a peer
 Blockchain.list_peers() # list direct peers
-Blockchain.mine("some data") # add a block to the blockchain
+Blockchain.add("some data") # add data to the blockchain. It will appear once mined
 Blockchain.blocks() # get all blocks in the chain
 ```
 
