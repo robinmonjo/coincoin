@@ -48,7 +48,7 @@ Blockchain.blocks() # get all blocks in the chain
 Interaction with the blockchain with the REST API:
 
 ```bash
-# create a block
+# create a block (will appear in the blockchain once miner create it)
 curl -H 'Content-Type: application/json' localhost:4000/api/blocks -X POST -d '{"data": "block data"}'
 
 # show the blockchain
