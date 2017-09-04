@@ -48,9 +48,7 @@ defmodule Blockchain.P2P.Command do
         :ok
       latest_block_held.hash == latest_block_received.previous_hash ->
         Logger.info fn -> "adding new block" end
-        :ok = Chain.add_block(latest_block_received)
-        :ok = Mining.block_mined(latest_block_received)
-        broadcast_new_block(latest_block_received)
+        add_block(latest_block_received)
         :ok
       length(received_chain) == 1 ->
         Logger.info fn -> "asking for all blocks" end
@@ -77,6 +75,18 @@ defmodule Blockchain.P2P.Command do
 
   defp handle_payload(_) do
     {:error, :unknown_type}
+  end
+
+  defp add_block(block) do
+    with :ok <- Chain.add_block(block),
+         :ok <- Mining.block_mined(block)
+    do
+      broadcast_new_block(block)
+    else
+      {:error, _reason} ->
+        # block is invalid just ignoring it
+        :ok
+    end
   end
 
   # sending
