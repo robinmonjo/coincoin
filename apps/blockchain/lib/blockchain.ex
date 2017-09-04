@@ -3,13 +3,15 @@ defmodule Blockchain do
   Documentation for Blockchain.
   """
 
-  alias Blockchain.{Block, Chain, P2P.Client, P2P.Command, P2P.Peers}
+  alias Blockchain.{Chain, P2P.Client, P2P.Command, P2P.Peers, Data}
+
+  defimpl Data, for: BitString do
+    def hash(string), do: :crypto.hash(:sha256, string) |> Base.encode16
+  end
 
   # add a block to the blockchain
-  def mine(data) do
-    block = Block.generate_next_block(data)
-    :ok = Chain.add_block(block)
-    Command.broadcast_new_block(block)
+  def add(data) do
+    Command.broadcast_mining_request(data)
   end
 
   # connect to an existing peer (only localhost for now, just specify a port)
