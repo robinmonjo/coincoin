@@ -8,7 +8,10 @@ defmodule Blockchain.Fixtures do
   def mock_blockchain(acc, n) when n == 0, do: acc
   def mock_blockchain(acc, n) when n > 0 do
     [latest_block | _] = acc
-    b = Block.generate_next_block("some block data #{n}", latest_block)
+    b =
+      "some block data #{n}"
+      |> Block.generate_next_block(latest_block)
+      |> Block.perform_proof_of_work()
     mock_blockchain([b | acc], n - 1)
   end
 

@@ -1,14 +1,14 @@
 defmodule Blockchain.Block do
   @moduledoc "Provides Block struct and related block operations"
 
-  alias Blockchain.{Block, Chain}
+  alias Blockchain.{Block, Chain, Data}
 
   @derive [Poison.Encoder]
   defstruct [
     :index,
     :previous_hash,
     :timestamp,
-    :data,
+    :data, # must follow the Blockchain.Data protocol
     :nounce,
     :hash
   ]
@@ -35,21 +35,25 @@ defmodule Blockchain.Block do
       timestamp: System.system_time(:second),
       data: data
     }
-    b = %{b | nounce: proof_of_work(b)}
     hash = compute_hash(b)
     %{b | hash: hash}
   end
 
   def compute_hash(%Block{index: i, previous_hash: h, timestamp: timestamp, data: data, nounce: nounce}) do
-    :crypto.hash(:sha256, "#{i}#{h}#{timestamp}#{data}#{nounce}") |> Base.encode16
+    :crypto.hash(:sha256, "#{i}#{h}#{timestamp}#{Data.hash(data)}#{nounce}") |> Base.encode16
   end
 
   # https://en.bitcoin.it/wiki/Proof_of_work
+  def perform_proof_of_work(%Block{} = b) do
+    {hash, nounce} = proof_of_work(b)
+    %{b | hash: hash, nounce: nounce}
+  end
+
   defp proof_of_work(%Block{} = block, nounce \\ 0) do
     b = %{block | nounce: nounce}
     hash = compute_hash(b)
     case verify_proof_of_work(hash) do
-      true -> nounce
+      true -> {hash, nounce}
       _ -> proof_of_work(block, nounce + 1)
     end
   end

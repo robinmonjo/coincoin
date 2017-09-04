@@ -15,10 +15,15 @@ defmodule Blockchain.P2P.Payload do
   # to transmit a block or a blockchain
   @response_blockchain "response_blockchain"
 
+  # to transmit data to be mined
   @mining_request "mining_request"
 
   @derive [Poison.Encoder]
-  defstruct [:type, :data]
+  defstruct [
+    :type,
+    :blocks,
+    :data
+  ]
 
   def ping, do: %Payload{type: @ping}
 
@@ -26,12 +31,14 @@ defmodule Blockchain.P2P.Payload do
 
   def query_latest, do: %Payload{type: @query_latest}
 
-  def response_blockchain(chain), do: %Payload{type: @response_blockchain, data: chain}
+  def response_blockchain(chain), do: %Payload{type: @response_blockchain, blocks: chain}
+
+  def mining_request(data), do: %Payload{type: @mining_request, data: data}
 
   def mining_request(data), do: %Payload{type: @mining_request, data: data}
 
   def decode(input) do
-    case Poison.decode(input, as: %Payload{data: [%Block{}]}) do
+    case Poison.decode(input, as: %Payload{blocks: [%Block{}]}) do
       {:ok, _} = result ->
         result
       {:error, {reason, _, _}} ->

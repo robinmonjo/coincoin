@@ -3,7 +3,9 @@ require Logger
 defmodule Blockchain.P2P.Command do
   @moduledoc "TCP server commands"
 
-  alias Blockchain.{Chain, Block, P2P.Payload, P2P.Server}
+  alias Blockchain.{Chain, Block, P2P.Payload, P2P.Server, Mining}
+
+  # reception
 
   def handle(data) do
     case Payload.decode(data) do
@@ -36,7 +38,7 @@ defmodule Blockchain.P2P.Command do
     {:ok, response}
   end
 
-  defp handle_payload(%Payload{type: "response_blockchain", data: received_chain}) do
+  defp handle_payload(%Payload{type: "response_blockchain", blocks: received_chain}) do
     latest_block_held = Chain.latest_block()
     [latest_block_received | _] = received_chain
 
@@ -46,8 +48,7 @@ defmodule Blockchain.P2P.Command do
         :ok
       latest_block_held.hash == latest_block_received.previous_hash ->
         Logger.info fn -> "adding new block" end
-        :ok = Chain.add_block(latest_block_received)
-        broadcast_new_block(latest_block_received)
+        add_block(latest_block_received)
         :ok
       length(received_chain) == 1 ->
         Logger.info fn -> "asking for all blocks" end
@@ -61,9 +62,34 @@ defmodule Blockchain.P2P.Command do
     end
   end
 
+  defp handle_payload(%Payload{type: "mining_request", data: data}) do
+    case Mining.mine(data) do
+      :ok ->
+        Logger.info fn -> "received data to be mined" end
+        broadcast_mining_request(data)
+        :ok
+      :already_in_pool ->
+        :ok
+    end
+  end
+
   defp handle_payload(_) do
     {:error, :unknown_type}
   end
+
+  defp add_block(block) do
+    with :ok <- Chain.add_block(block),
+         :ok <- Mining.block_mined(block)
+    do
+      broadcast_new_block(block)
+    else
+      {:error, _reason} ->
+        # block is invalid just ignoring it
+        :ok
+    end
+  end
+
+  # sending
 
   def broadcast_new_block(%Block{} = block) do
     Logger.info fn -> "broadcasting new block" end

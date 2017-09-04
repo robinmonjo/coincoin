@@ -11,12 +11,18 @@ defmodule Blockchain.ChainTest do
   end
 
   test "add a block if valid" do
-    valid_block = Block.generate_next_block("some data")
-    assert :ok = Chain.add_block(valid_block)
+    b =
+      "some data"
+      |> Block.generate_next_block()
+      |> Block.perform_proof_of_work()
+    assert :ok = Chain.add_block(b)
   end
 
   test "should fail if block is invalid" do
-    valid_block = Block.generate_next_block("some data")
+    valid_block =
+      "some data"
+      |> Block.generate_next_block()
+      |> Block.perform_proof_of_work()
 
     invalid_block = %{valid_block | index: 1000}
     assert {:error, "invalid index"} = Chain.add_block(invalid_block)
