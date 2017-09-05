@@ -6,7 +6,7 @@ defmodule Blockchain.Chain do
 
   use GenServer
 
-  alias Blockchain.Block
+  alias Blockchain.{Block, Data}
 
   def start_link do
     GenServer.start_link(__MODULE__, [Block.genesis_block()], name: __MODULE__)
@@ -68,6 +68,8 @@ defmodule Blockchain.Chain do
         {:error, "no proof of work"}
       block.hash != Block.compute_hash(block) ->
         {:error, "invalid block hash"}
+      Data.verify(block.data) != :ok ->
+        {:error, "data validation failed"}
       true ->
         :ok
     end

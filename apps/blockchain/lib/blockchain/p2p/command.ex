@@ -68,7 +68,8 @@ defmodule Blockchain.P2P.Command do
         Logger.info fn -> "received data to be mined" end
         broadcast_mining_request(data)
         :ok
-      :already_in_pool ->
+      {:error, _reason} ->
+        # block is already in mining pool, or Data.verify failed
         :ok
     end
   end

@@ -23,10 +23,11 @@ defmodule Blockchain.Mining do
   end
 
   def handle_call({:mine, data}, _from, {pool, _} = state) do
-    if data_in_pool?(pool, data) do
-      {:reply, :already_in_pool, state}
-    else
-      {:reply, :ok, add_to_pool(state, data)}
+    case verify_data(data, pool) do
+      :ok ->
+        {:reply, :ok, add_to_pool(state, data)}
+      {:error, _reason} = error ->
+        {:reply, error, state}
     end
   end
 
@@ -45,13 +46,17 @@ defmodule Blockchain.Mining do
     {:noreply, mine_next_block(pool)}
   end
 
+  defp verify_data(data, pool) do
+    if Enum.find(pool, &(Data.hash(&1) == Data.hash(data))) != nil do
+      {:error, :already_in_pool}
+    else
+      Data.verify(data)
+    end
+  end
+
   defp add_to_pool({pool, {}}, data), do: {pool ++ [data], start_mining(data)}
   defp add_to_pool({pool, mining}, data) do
     {pool ++ [data], mining}
-  end
-
-  defp data_in_pool?(pool, data) do
-    Enum.find(pool, &(Data.hash(&1) == Data.hash(data))) != nil
   end
 
   defp remove_from_pool(%Block{data: data}, pool) do

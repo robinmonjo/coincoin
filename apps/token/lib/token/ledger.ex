@@ -5,6 +5,9 @@ defmodule Token.Ledger do
 
   alias Token.{Wallet, Transaction}
 
+  def unspent_outputs(%Wallet{} = wallet) do
+    unspent_outputs(wallet, blockchain_transactions_list())
+  end
   def unspent_outputs(%Wallet{} = wallet, ledger) do
     inputs_set = inputs_set(ledger)
     wallet_outputs = wallet_outputs(wallet, ledger)
@@ -33,5 +36,10 @@ defmodule Token.Ledger do
         end
       end)
     end)
+  end
+
+  defp blockchain_transactions_list do
+    blocks = Blockchain.blocks()
+    Enum.map(blocks, fn(%Block{data: data}) -> data end)
   end
 end

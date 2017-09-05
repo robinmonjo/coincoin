@@ -21,7 +21,7 @@ defmodule Blockchain.MiningTest do
     data = "foo"
     state = {[data], {}}
     {:reply, response, new_state} = Mining.handle_call({:mine, data}, nil, state)
-    assert response == :already_in_pool
+    assert response == {:error, :already_in_pool}
     assert new_state == state
   end
 

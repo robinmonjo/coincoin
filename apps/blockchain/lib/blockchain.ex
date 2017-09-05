@@ -7,16 +7,12 @@ defmodule Blockchain do
 
   defimpl Data, for: BitString do
     def hash(string), do: :crypto.hash(:sha256, string) |> Base.encode16
+    def verify(_string), do: :ok
   end
 
   # add a block to the blockchain
   def add(data) do
     Command.broadcast_mining_request(data)
-  end
-
-  # asks miners in the network to mine a block with given data
-  def request_mining(data) do
-
   end
 
   # connect to an existing peer (only localhost for now, just specify a port)

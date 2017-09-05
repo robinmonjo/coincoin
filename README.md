@@ -89,4 +89,4 @@ For future improvements:
 - [ ] send transactions to miners so it can get validated
 - [ ] one README per app with a main README
 
-Donc l'idée c'est que une fois que j'ai généré ma transaction, je fais une "mine request" aux autre gens (il faut empécher que les gens puissent miner leur propre transaction). Donc nouvelle commande dans le protocol blockchain. Quand les gens reçoivent une "mine request", ils vérifient la transaction + font la proof of work. Ensuite au niveau de la chain, dans la validation d'un block, il faut ajouter la vérification de la transaction (voir comment injecter ça en plus sans trrop toucher au code existant).
+Donc l'idée c'est que une fois que j'ai généré ma transaction, je fais une "mine request" aux autre gens. Quand les gens reçoivent une "mine request", ils vérifient la transaction + font la proof of work. Ensuite au niveau de la chain, dans la validation d'un block, il faut ajouter la vérification de la transaction (voir comment injecter ça en plus sans trrop toucher au code existant).

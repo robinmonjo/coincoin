@@ -35,8 +35,6 @@ defmodule Blockchain.P2P.Payload do
 
   def mining_request(data), do: %Payload{type: @mining_request, data: data}
 
-  def mining_request(data), do: %Payload{type: @mining_request, data: data}
-
   def decode(input) do
     case Poison.decode(input, as: %Payload{blocks: [%Block{}]}) do
       {:ok, _} = result ->
