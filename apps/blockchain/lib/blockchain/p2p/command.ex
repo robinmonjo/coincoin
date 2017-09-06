@@ -106,5 +106,6 @@ defmodule Blockchain.P2P.Command do
     |> Payload.mining_request()
     |> Payload.encode!()
     |> Server.broadcast()
+    Mining.mine(data)
   end
 end
