@@ -1,14 +1,25 @@
 defmodule Token.Transaction do
 
-  alias Token.{Wallet, Transaction, Crypto}
+  alias Token.{Wallet, Transaction, Transaction.Verify, Crypto, Ledger}
 
   defstruct [
     :hash,
-    :inputs, # an array of tuple of the form [{previous_tx_hash, output_index}]
+    :inputs, # a list of list of the form [[previous_tx_hash, output_index]]
     :public_key,
     :signature,
-    :outputs # an array of tuple of the form [{recipient, value}]
+    :outputs # a list of list of the form [[recipient, value]]
   ]
+
+  defimpl Blockchain.Data, for: Transaction do
+    def hash(tx), do: tx.hash
+
+    # coinbase transaction are automatically validated
+    def verify(%Transaction{inputs: [["0", 0]]}, _chain), do: :ok
+
+    def verify(%Transaction{} = tx, chain) do
+      Verify.verify_transaction(tx, Ledger.find_func(chain))
+    end
+  end
 
   def new_transaction(%Wallet{} = wallet, inputs, outputs) do
     tx = %Transaction{
@@ -27,13 +38,13 @@ defmodule Token.Transaction do
   def new_coinbase_transaction(outputs) do
     tx = %Transaction{
       outputs: outputs,
-      inputs: [{"0", 0}] # coinbase transaction identifier, miner will have to accept this
+      inputs: [["0", 0]] # coinbase transaction not validated
     }
     %{tx | hash: compute_hash(tx)}
   end
 
   def signing_string(%Transaction{} = tx) do
-    s = Enum.reduce(tx.inputs ++ tx.outputs, "", fn({str, int}, acc) ->
+    s = Enum.reduce(tx.inputs ++ tx.outputs, "", fn([str, int], acc) ->
       acc <> str <> Integer.to_string(int)
     end)
     "#{s}#{tx.public_key}"
