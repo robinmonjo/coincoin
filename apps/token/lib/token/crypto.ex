@@ -12,6 +12,11 @@ defmodule Token.Crypto do
     |> Base.encode16()
   end
 
+  def generate_key_pair() do
+    {pub, priv} = :crypto.generate_key(:ecdh, :secp256k1)
+    {Base.encode16(pub), Base.encode16(priv)}
+  end
+
   def sign(private_key, msg) do
     signature = :crypto.sign(:ecdsa, :sha256, msg, [Base.decode16!(private_key), :secp256k1])
     Base.encode16(signature)
