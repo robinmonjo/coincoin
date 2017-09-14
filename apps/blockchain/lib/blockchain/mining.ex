@@ -50,7 +50,7 @@ defmodule Blockchain.Mining do
     if Enum.find(pool, &(Data.hash(&1) == Data.hash(data))) != nil do
       {:error, :already_in_pool}
     else
-      Data.verify(data)
+      Data.verify(data, Chain.all_blocks())
     end
   end
 
@@ -72,13 +72,14 @@ defmodule Blockchain.Mining do
     {ref, pid, b}
   end
 
-  defp mine_block(%Block{} = b) do
+  def mine_block(%Block{} = b) do
     mined_block = Block.perform_proof_of_work(b)
     case Chain.add_block(mined_block) do
       :ok ->
-        Command.broadcast_new_block(mined_block)
         Logger.info fn -> "I mined block number #{mined_block.index}" end
-      {:error, _reason} -> nil
+        Command.broadcast_new_block(mined_block)
+        :ok
+      {:error, _reason} = error -> error
     end
   end
 end

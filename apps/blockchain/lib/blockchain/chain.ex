@@ -9,11 +9,11 @@ defmodule Blockchain.Chain do
   alias Blockchain.{Block, Data}
 
   def start_link do
-    GenServer.start_link(__MODULE__, [Block.genesis_block()], name: __MODULE__)
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
-  def init([%Block{}] = initial_chain) do
-    {:ok, initial_chain}
+  def init(_) do
+    {:ok, [Block.genesis_block()]}
   end
 
   def latest_block do
@@ -32,6 +32,10 @@ defmodule Blockchain.Chain do
     GenServer.call(__MODULE__, {:replace_chain, chain})
   end
 
+  def clear_chain() do
+    replace_chain([Block.genesis_block()])
+  end
+
   def handle_call(:latest_block, _from, chain) do
     [h | _] = chain
     {:reply, h, chain}
@@ -43,7 +47,7 @@ defmodule Blockchain.Chain do
 
   def handle_call({:add_block, %Block{} = b}, _from, chain) do
     [previous_block | _] = chain
-    case validate_new_block(previous_block, b) do
+    case validate_block(previous_block, b, chain) do
       {:error, reason} ->
         {:reply, {:error, reason}, chain}
       :ok ->
@@ -58,7 +62,7 @@ defmodule Blockchain.Chain do
     end
   end
 
-  defp validate_new_block(previous_block, block) do
+  defp validate_block(previous_block, block, chain) do
     cond do
       previous_block.index + 1 != block.index ->
         {:error, "invalid index"}
@@ -68,12 +72,12 @@ defmodule Blockchain.Chain do
         {:error, "no proof of work"}
       block.hash != Block.compute_hash(block) ->
         {:error, "invalid block hash"}
-      Data.verify(block.data) != :ok ->
-        {:error, "data validation failed"}
       true ->
-        :ok
+        validate_block_data(block, chain)
     end
   end
+
+  defp validate_block_data(%Block{data: data}, chain), do: Data.verify(data, chain)
 
   def validate_chain(blockchain) when length(blockchain) == 0, do: {:error, "empty chain"}
   def validate_chain([genesis_block | _] = blockchain) when length(blockchain) == 1 do
@@ -83,8 +87,8 @@ defmodule Blockchain.Chain do
       {:error, "chain doesn't start with genesis block"}
     end
   end
-  def validate_chain([block | [previous_block | rest]]) do
-    case validate_new_block(previous_block, block) do
+  def validate_chain([block | [previous_block | rest]] = chain) do
+    case validate_block(previous_block, block, chain) do
       {:error, _} = error -> error
       _ -> validate_chain([previous_block | rest])
     end
