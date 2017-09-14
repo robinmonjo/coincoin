@@ -83,10 +83,8 @@ For future improvements:
 ## TODOs
 
 - [ ] test transactions (verify)
-- [ ] find in ledger from the blockchain (one block one transaction)
-- [ ] wallet API (find UTXO, prepare transaction) `Wallet.send(recipient, value, wallet)`
-- [ ] integration testing on tokens
-- [ ] send transactions to miners so it can get validated
+- [ ] test transaction (generate etc ...)
+- [ ] wallet should be persisted one way or another (app start a wallet is generated)
+- [ ] token main api
+- [ ] test when peers (probable issues and probably need Blockchain.Data.Encode Blockchain.Data.Decode)
 - [ ] one README per app with a main README
-
-Donc l'idée c'est que une fois que j'ai généré ma transaction, je fais une "mine request" aux autre gens. Quand les gens reçoivent une "mine request", ils vérifient la transaction + font la proof of work. Ensuite au niveau de la chain, dans la validation d'un block, il faut ajouter la vérification de la transaction (voir comment injecter ça en plus sans trrop toucher au code existant).
