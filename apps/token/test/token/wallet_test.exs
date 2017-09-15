@@ -2,7 +2,7 @@ defmodule Token.WalletTest do
   use ExUnit.Case
   import Token.Fixtures
 
-  alias Token.{Wallet, Ledger}
+  alias Token.Wallet
 
   setup tags do
     if tags[:mock_ledger] do

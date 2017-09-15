@@ -2,7 +2,7 @@ defmodule Token.LedgerTest do
   use ExUnit.Case, async: false
   import Token.Fixtures
 
-  alias Token.{Ledger, Wallet}
+  alias Token.Ledger
 
   setup do
     {:ok, mock_ledger()}
