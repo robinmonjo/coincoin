@@ -36,14 +36,4 @@ defmodule Token.TransactionTest do
     assert tx.signature == nil
     assert byte_size(tx.hash) == 64
   end
-
-  test "Blockchain.Data implementation", %{alice: alice, bob: bob} do
-    inputs = [["hash", 0]]
-    outputs = [[bob.address, 20]]
-    tx = Transaction.new_transaction(alice, inputs, outputs)
-    assert Data.hash(tx) == tx.hash
-
-    coinbase_tx = Transaction.new_coinbase_transaction(outputs)
-    assert Data.verify(coinbase_tx, []) == :ok
-  end
 end
