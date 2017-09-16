@@ -87,7 +87,7 @@ defmodule Blockchain.Chain do
       {:error, "chain doesn't start with genesis block"}
     end
   end
-  def validate_chain([block | [previous_block | rest]] = chain) do
+  def validate_chain([block | [previous_block | rest] = chain]) do
     case validate_block(previous_block, block, chain) do
       {:error, _} = error -> error
       _ -> validate_chain([previous_block | rest])
