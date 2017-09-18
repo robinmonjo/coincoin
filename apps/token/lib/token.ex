@@ -1,18 +1,15 @@
 defmodule Token do
-  @moduledoc """
-  Documentation for Token.
-  """
 
-  @doc """
-  Hello world.
+  alias Token.{MyWallet, Transaction, Ledger}
 
-  ## Examples
+  def address, do: MyWallet.address()
 
-      iex> Token.hello
-      :world
+  def balance, do: MyWallet.balance()
 
-  """
-  def hello do
-    :world
+  def send(amount, recipient), do: MyWallet.send(amount, recipient)
+
+  def free_tokens(amount) do
+    utx = Transaction.new_coinbase_transaction([[address(), amount]])
+    Ledger.write(utx)
   end
 end

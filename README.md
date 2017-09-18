@@ -83,8 +83,4 @@ For future improvements:
 ## TODOs
 
 - [ ] test transactions (verify)
-- [ ] test transaction (generate etc ...)
-- [ ] wallet should be persisted one way or another (app start a wallet is generated)
-- [ ] token main api
-- [ ] test when peers (probable issues and probably need Blockchain.Data.Encode Blockchain.Data.Decode)
 - [ ] one README per app with a main README
