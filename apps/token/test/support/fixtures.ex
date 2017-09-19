@@ -38,20 +38,27 @@ defmodule Token.Fixtures do
     :ok = Ledger.write(bob_utx)
 
     # first transaction
-    tx1 = Transaction.new_transaction(alice, [[alice_utx.hash, 0]], [[bob.address, 20], [joe.address, 10], [alice.address, 20]])
+    inputs = [[alice_utx.hash, 0]]
+    outputs = [[bob.address, 20], [joe.address, 10], [alice.address, 20]]
+    tx1 = Transaction.new_transaction(alice, inputs, outputs)
     :ok = Ledger.write(tx1)
 
     # second transaction
-    tx2 = Transaction.new_transaction(bob, [[tx1.hash, 0]], [[joe.address, 5], [alice.address, 7], [bob.address, 8]])
+    inputs = [[tx1.hash, 0]]
+    outputs = [[joe.address, 5], [alice.address, 7], [bob.address, 8]]
+    tx2 = Transaction.new_transaction(bob, inputs, outputs)
     :ok = Ledger.write(tx2)
 
     # third transaction
-    tx3 = Transaction.new_transaction(joe, [[tx1.hash, 1]], [[alice.address, 6], [joe.address, 4]])
+    inputs = [[tx1.hash, 1]]
+    outputs = [[alice.address, 6], [joe.address, 4]]
+    tx3 = Transaction.new_transaction(joe, inputs, outputs)
     :ok = Ledger.write(tx3)
 
-
     # fourth transaction
-    tx4 = Transaction.new_transaction(bob, [[tx2.hash, 2]], [[alice.address, 3], [joe.address, 1], [bob.address, 4]])
+    inputs = [[tx2.hash, 2]]
+    outputs = [[alice.address, 3], [joe.address, 1], [bob.address, 4]]
+    tx4 = Transaction.new_transaction(bob, inputs, outputs)
     :ok = Ledger.write(tx4)
 
     %{alice: alice, bob: bob, joe: joe}

@@ -1,5 +1,7 @@
 defmodule Token.Crypto do
-  @moduledoc "Crypto module"
+  @moduledoc """
+  Functions to perform cryptographic computations
+  """
 
   def hash(data, algo), do: :crypto.hash(algo, data)
 
@@ -12,7 +14,7 @@ defmodule Token.Crypto do
     |> Base.encode16()
   end
 
-  def generate_key_pair() do
+  def generate_key_pair do
     {pub, priv} = :crypto.generate_key(:ecdh, :secp256k1)
     {Base.encode16(pub), Base.encode16(priv)}
   end

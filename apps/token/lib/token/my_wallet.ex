@@ -1,4 +1,7 @@
 defmodule Token.MyWallet do
+  @moduledoc """
+  GenServer that stores the current wallet. Exposes high level APIs of Token.Wallet
+  """
   use GenServer
 
   alias Token.Wallet

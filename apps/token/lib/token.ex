@@ -1,4 +1,7 @@
 defmodule Token do
+  @moduledoc """
+  Token system
+  """
 
   alias Token.{MyWallet, Transaction, Ledger}
 

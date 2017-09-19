@@ -1,4 +1,7 @@
 defmodule Token.Transaction do
+  @moduledoc """
+  Structure that represents a transaction and functions to work on transactions
+  """
 
   alias Token.{Wallet, Transaction, Crypto}
 

@@ -2,7 +2,6 @@ defmodule Token.TransactionTest do
   use ExUnit.Case, async: true
 
   alias Token.{Transaction, Wallet, Crypto}
-  alias Blockchain.Data
 
   setup do
     {:ok, %{

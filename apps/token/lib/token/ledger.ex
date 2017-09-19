@@ -1,6 +1,7 @@
 defmodule Token.Ledger do
   @moduledoc """
-  Abstraction around the blockchain
+  Abstraction around the blockchain. Only module that interacts with the
+  underlying blockchain
   """
 
   alias Token.{Ledger, Wallet, Transaction, Transaction.Verify}
@@ -33,11 +34,11 @@ defmodule Token.Ledger do
     |> Blockchain.add()
   end
 
-  def all_transactions() do
+  def all_transactions do
     reduce_while([], &({:cont, [&1 | &2]}))
   end
 
-  def find_func(), do: find_func(Blockchain.blocks())
+  def find_func, do: find_func(Blockchain.blocks())
   def find_func(chain) do
     fn(func) ->
       reduce_while(chain, nil, fn(%Transaction{} = tx, acc) ->

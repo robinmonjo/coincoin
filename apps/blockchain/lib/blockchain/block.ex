@@ -1,7 +1,7 @@
 defmodule Blockchain.Block do
   @moduledoc "Provides Block struct and related block operations"
 
-  alias Blockchain.{Block, Chain, Data}
+  alias Blockchain.{Block, Chain, Data, Crypto}
 
   @derive [Poison.Encoder]
   defstruct [
@@ -40,7 +40,9 @@ defmodule Blockchain.Block do
   end
 
   def compute_hash(%Block{index: i, previous_hash: h, timestamp: timestamp, data: data, nounce: nounce}) do
-    :crypto.hash(:sha256, "#{i}#{h}#{timestamp}#{Data.hash(data)}#{nounce}") |> Base.encode16
+    "#{i}#{h}#{timestamp}#{Data.hash(data)}#{nounce}"
+    |> Crypto.hash(:sha256)
+    |> Base.encode16
   end
 
   # https://en.bitcoin.it/wiki/Proof_of_work
