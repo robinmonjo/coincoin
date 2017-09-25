@@ -4,7 +4,7 @@ Web interface built with Phoenix to control a node of the blockchain. At the mom
 
 ## Usage 
 
-In the blockchain readme, we see how to setup a 3 nodes blockchain with the `iex` console. To also start the web interface do:
+In the [`blockchain` readme](../blockchain/README.md), we see how to setup a 3 nodes blockchain with the `iex` console. To also start the web interface do:
 
 - node1: `iex -S mix phx.server` (defaults: `PORT=4000 P2P_PORT=5000`)
 - node2: `PORT=4001 P2P_PORT=5001 iex -S mix phx.server`
@@ -29,7 +29,7 @@ And finally you can add data to the blockchain:
 $> curl -H 'Content-Type: application/json' localhost:4000/api/blocks -X POST -d '{"data": "block data"}'
 # output the current blockchain (note the newly created block won't appear until its mined by one node of the network)
 
-# wait a bit until the block get mined ... the query all the blockchain
+# wait a bit until the block get mined ... then query all the blockchain
 # from node1
 $> curl -H 'Content-Type: application/json' localhost:4000/api/blocks
 
@@ -42,7 +42,7 @@ $> curl -H 'Content-Type: application/json' localhost:4001/api/blocks
 ## API
 
 ```bash
-# create a block (will appear in the blockchain once miner create it)
+# create a block (will appear in the blockchain once a miner creates it)
 curl -H 'Content-Type: application/json' localhost:4000/api/blocks -X POST -d '{"data": "block data"}'
 
 # show the blockchain

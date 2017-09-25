@@ -2,6 +2,12 @@
 
 A minimal blockchain implementation in Elixir inspired by [this JS implementation](https://github.com/lhartikk/naivechain)
 
+## What is a blockchain ?
+
+> Blockchain is a distributed database that maintains a continuously-growing list of records called blocks secured from tampering and revision. - Wikipedia
+
+While blockchain is mostly used to store cryptocurrencies transactions, it can also be used to store "any" kind of data. This simple implementation focuses on mechanisms behind a blockchain (see the [`token` app](../token/README.md) for a cryptocurrency implementation using this blockchain).
+
 ## Features / goals
 
 - as simple as possible
