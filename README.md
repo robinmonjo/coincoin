@@ -32,3 +32,5 @@ To setup a blockchain and store random data in it using the `iex` console checko
 ## Final words
 
 Issues, suggestions and requests are very welcome 😊
+
+Icon made by Smashicons from www.flaticon.com
