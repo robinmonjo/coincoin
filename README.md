@@ -1,8 +1,8 @@
-# Blockchain
+# Coinstack
 
 [![Build Status](https://travis-ci.org/robinmonjo/blockchain.svg?branch=master)](https://travis-ci.org/robinmonjo/blockchain)
 
-A proof-of-concept cryptocurrency implemented in Elixir. 
+A proof-of-concept cryptocurrency implemented in Elixir.
 
 - use Elixir/OTP
 - learn about blockchain and cryptocurrency tech
@@ -18,7 +18,7 @@ As I'm sure about **1**, I still have some doubts about **2** eventough tech beh
 
 This project is an unbrella project that contains 3 apps:
 
-- [`blockchain`](apps/blockchain/README.md): a minimal blockchain 
+- [`blockchain`](apps/blockchain/README.md): a minimal blockchain
 - [`token`](apps/token/README.md): a dumb/incomplete cryptocurrency implemented on top of the blockchain
 - [`blockchain_web`](apps/blockchain_web/README.md): a web interface to manage blockchain nodes
 
