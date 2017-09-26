@@ -42,7 +42,7 @@ defmodule Blockchain.Block do
   def compute_hash(%Block{index: i, previous_hash: h, timestamp: timestamp, data: data, nounce: nounce}) do
     "#{i}#{h}#{timestamp}#{Data.hash(data)}#{nounce}"
     |> Crypto.hash(:sha256)
-    |> Base.encode16
+    |> Base.encode16()
   end
 
   # https://en.bitcoin.it/wiki/Proof_of_work

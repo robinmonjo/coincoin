@@ -9,7 +9,7 @@ defmodule Blockchain do
     def hash(string) do
       string
       |> Crypto.hash(:sha256)
-      |> Base.encode16
+      |> Base.encode16()
     end
 
     def verify(_string, _chain), do: :ok
