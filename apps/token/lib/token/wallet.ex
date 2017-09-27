@@ -38,9 +38,9 @@ defmodule Token.Wallet do
     with {:ok, unspent_outputs} <- select_outputs(value, wallet),
          inputs <- prepare_inputs(unspent_outputs),
          outputs <- [[recipient, value]],
-         final_outputs <- add_change_output(value, outputs, unspent_outputs, wallet)
+         outputs <- add_change_output(value, outputs, unspent_outputs, wallet)
     do
-      tx = Transaction.new_transaction(wallet, inputs, final_outputs)
+      tx = Transaction.new_transaction(wallet, inputs, outputs)
       Ledger.write(tx)
     end
   end
