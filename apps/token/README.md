@@ -21,7 +21,7 @@ $node3> Blockchain.connect(5001) # connect node3 to node2
 On startup, each node generates a wallet (a private/public key pair and an address derived from the public key):
 
 ```elixir
-$node1> Token.address  
+$node1> Token.address
 "20902B4FF51658B9CA7C3604F8A5F7F40B9B156C" # node1 address
 ```
 

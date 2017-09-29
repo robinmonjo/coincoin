@@ -72,7 +72,7 @@ defmodule Blockchain.Mining do
     {ref, pid, b}
   end
 
-  def mine_block(%Block{} = b) do
+  defp mine_block(%Block{} = b) do
     mined_block = Block.perform_proof_of_work(b)
     case Chain.add_block(mined_block) do
       :ok ->

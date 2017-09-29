@@ -1,8 +1,7 @@
 defmodule Token.Fixtures do
   @moduledoc "Test helpers"
 
-  alias Token.{Wallet, Transaction, Ledger}
-  alias Blockchain.Chain
+  alias Token.{Wallet, Transaction, Ledger, Test.Blockchain}
 
   # mock a ledger with 3 participants alice bob joe
   # scénario:
@@ -24,7 +23,7 @@ defmodule Token.Fixtures do
   #   - alice/tx1(20)+tx2(7)+tx3(6)+tx4(3) bob/utx(20)+tx4(4) joe/tx2(5)+tx3(4)+tx4(1)
 
   def mock_ledger do
-    :ok = Chain.clear_chain()
+    :ok = Blockchain.clear()
 
     # create wallets for each participants
     alice = Wallet.generate_wallet()

@@ -28,3 +28,6 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
+
+config :token,
+  blockchain: if(Mix.env == :test, do: Token.Test.Blockchain, else: Blockchain)

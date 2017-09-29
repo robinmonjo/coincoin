@@ -37,7 +37,7 @@ $node2> Blockchain.connect(5000) # connect node2 to node1
 $node3> Blockchain.connect(5001) # connect node3 to node2
 ```
 
-This will setup a simple network: 
+This will setup a simple network:
 
 ```
 node1 <--> node2 <--> node3
@@ -59,16 +59,13 @@ it will add the block in the blockchain and forward it to other peers. Proof-of-
 Blockchain.connect("host:port")
 
 # list direct peers
-Blockchain.list_peers()         
+Blockchain.list_peers()
 
 # add data to the blockchain. It will appear once mined
-Blockchain.add("some data")     
+Blockchain.add("some data")
 
 # get all blocks in the chain
-Blockchain.blocks()             
-
-# directly mine a block, without letting other nodes a chance to mine the block (mostly used for testing)
-Blockchain.mine("some data")    
+Blockchain.blocks()
 ```
 
 ## Resources

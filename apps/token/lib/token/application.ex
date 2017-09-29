@@ -10,8 +10,8 @@ defmodule Token.Application do
 
     # Define workers and child supervisors to be supervised
     children = [
-      # Starts a worker by calling: Blockchain.Worker.start_link(a1, a2, a3)
-      # worker(Blockchain.Worker, [arg1, arg2, arg3]),
+      # Starts a worker by calling: Token.Worker.start_link(a1, a2, a3)
+      # worker(Token.Worker, [arg1, arg2, arg3]),
       worker(Token.MyWallet, [])
     ]
 
