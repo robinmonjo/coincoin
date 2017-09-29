@@ -58,15 +58,21 @@ defmodule Token.Ledger do
 
   # returns all transaction sent to the given wallet format: [{tx_hash, output_idx, value}]
   defp wallet_outputs(%Wallet{address: address}) do
-    reduce_while([], fn(%Transaction{hash: hash, outputs: outputs}, acc) ->
-      indexed_outputs = Enum.with_index(outputs)
-      {:cont, acc ++ Enum.reduce(indexed_outputs, [], fn({[recipient, value], index}, acc) ->
-        if recipient == address do
-          [{hash, index, value} | acc]
-        else
-          acc
-        end
-      end)}
+    reduce_while([], fn(%Transaction{} = tx, acc) ->
+      {:cont, acc ++ address_outputs(tx, address)}
+    end)
+  end
+
+  # return all outputs in the given transaction where recipient corresponds to the given address
+  # format: [{tx_hash, output_idx, value}]
+  defp address_outputs(%Transaction{hash: hash, outputs: outputs}, address) do
+    indexed_outputs = Enum.with_index(outputs)
+    Enum.reduce(indexed_outputs, [], fn({[recipient, value], index}, acc) ->
+      if recipient == address do
+        [{hash, index, value} | acc]
+      else
+        acc
+      end
     end)
   end
 
