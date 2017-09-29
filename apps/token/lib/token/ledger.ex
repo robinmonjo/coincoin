@@ -6,8 +6,6 @@ defmodule Token.Ledger do
 
   alias Token.{Ledger, Wallet, Transaction, Transaction.Verify}
 
-  @blockchain Application.get_env(:token, :blockchain)
-
   # transactions are sent to the blockchain as raw maps
   defimpl Blockchain.Data, for: Map do
     def hash(map), do: Ledger.map_to_tx(map).hash
@@ -23,17 +21,19 @@ defmodule Token.Ledger do
     end
   end
 
+  defp blockchain, do: Application.get_env(:token, :blockchain)
+
   def write(%Transaction{} = tx) do
     tx
     |> Map.from_struct()
-    |> @blockchain.add()
+    |> blockchain().add()
   end
 
   def all_transactions do
     reduce_while([], &({:cont, [&1 | &2]}))
   end
 
-  def find_func, do: find_func(@blockchain.blocks())
+  def find_func, do: find_func(blockchain().blocks())
   def find_func(chain) do
     fn(func) ->
       reduce_while(chain, nil, fn(%Transaction{} = tx, acc) ->
@@ -70,7 +70,7 @@ defmodule Token.Ledger do
     end)
   end
 
-  defp reduce_while(acc, func), do: reduce_while(@blockchain.blocks(), acc, func)
+  defp reduce_while(acc, func), do: reduce_while(blockchain().blocks(), acc, func)
   defp reduce_while(chain, acc, func) do
     Enum.reduce_while(chain, acc, fn(%{data: data}, acc) ->
       case data do
