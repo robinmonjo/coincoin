@@ -30,5 +30,7 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 
 config :blockchain,
-  port: String.to_integer(System.get_env("P2P_PORT") || "5000"),
+  port: String.to_integer(System.get_env("P2P_PORT") || "5000")
+
+config :blockchain, Blockchain.ProofOfWork,
   pow_difficulty: if(Mix.env == :test, do: 1, else: 4)

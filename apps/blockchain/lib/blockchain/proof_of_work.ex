@@ -22,7 +22,7 @@ defmodule Blockchain.ProofOfWork do
     String.starts_with?(hash, prefix)
   end
 
-  defp difficulty, do: Application.fetch_env!(:blockchain, :pow_difficulty)
+  defp difficulty, do: Application.get_env(:blockchain, __MODULE__)[:pow_difficulty]
 
   defp proof_of_work(%Block{} = block, nounce \\ 0) do
     b = %{block | nounce: nounce}
