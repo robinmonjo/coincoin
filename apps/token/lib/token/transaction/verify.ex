@@ -51,7 +51,7 @@ defmodule Token.Transaction.Verify do
   defp ensure_doesnt_already_exist(%Transaction{} = tx, find_in_ledger) do
     case find_in_ledger.(&(&1.hash == tx.hash)) do
       nil -> :ok
-      _ -> {:error, "tx already exists"}
+      _ -> {:error, "transaction already exists"}
     end
   end
 
