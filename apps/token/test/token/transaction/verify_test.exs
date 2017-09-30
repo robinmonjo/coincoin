@@ -2,7 +2,7 @@ defmodule Token.Transaction.VerifyTest do
   use ExUnit.Case
   import Token.Fixtures
 
-  alias Token.{Transaction, Transaction.Verify, Ledger, Crypto}
+  alias Token.{Transaction, Transaction.Verify, Ledger, Crypto, Wallet}
 
   setup do
     {:ok, mock_ledger()}
@@ -32,9 +32,9 @@ defmodule Token.Transaction.VerifyTest do
       |> Base.encode16()
 
     inputs = [[unknown_hash, idx]]
-    invalid_tx = Transaction.new_transaction(bob, inputs, outputs)
+    tx = Transaction.new_transaction(bob, inputs, outputs)
 
-    assert Verify.verify_transaction(invalid_tx, Ledger.find_func) == {:error, "input doesn't exist"}
+    assert Verify.verify_transaction(tx, Ledger.find_func) == {:error, "input doesn't exist"}
   end
 
   test "transaction inputs must refer to an unspent transaction", %{bob: bob, alice: alice} do
@@ -48,8 +48,21 @@ defmodule Token.Transaction.VerifyTest do
     assert Verify.verify_transaction(tx, Ledger.find_func) == {:error, "input already spent"}
   end
 
-  test "transaction inputs sum must be superior or equal to transaction output sum" do
+  test "transaction inputs sum must be superior or equal to transaction output sum", %{bob: bob, alice: alice, joe: joe} do
+    bob_unspent_transactions = Ledger.unspent_outputs(bob)
+    available = Wallet.balance(bob)
 
+    inputs = Enum.reduce(bob_unspent_transactions, [], fn({tx_hash, idx, _}, acc) ->
+      [[tx_hash, idx] | acc]
+    end)
+
+    outputs = [[alice.address, available]]
+    tx = Transaction.new_transaction(bob, inputs, outputs)
+    assert Verify.verify_transaction(tx, Ledger.find_func) == :ok
+
+    outputs = [[joe.address, 1] | outputs]
+    tx = Transaction.new_transaction(bob, inputs, outputs)
+    assert Verify.verify_transaction(tx, Ledger.find_func) == {:error, "input sum below output sum"}
   end
 
   test "transaction inputs must be owned by the public key" do
