@@ -32,10 +32,6 @@ defmodule Blockchain.Chain do
     GenServer.call(__MODULE__, {:replace_chain, chain})
   end
 
-  def clear_chain do
-    replace_chain([Block.genesis_block()])
-  end
-
   def handle_call(:latest_block, _from, chain) do
     [h | _] = chain
     {:reply, h, chain}
