@@ -35,11 +35,9 @@ defmodule Token.Ledger do
 
   def find_func, do: find_func(blockchain().blocks())
   def find_func(chain) do
-    fn(func) ->
-      reduce_while(chain, nil, fn(%Transaction{} = tx, acc) ->
-        if func.(tx), do: {:halt, tx}, else: {:cont, acc}
-      end)
-    end
+    &(reduce_while(chain, nil, fn(%Transaction{} = tx, acc) ->
+      if &1.(tx), do: {:halt, tx}, else: {:cont, acc}
+    end))
   end
 
   def unspent_outputs(%Wallet{} = wallet) do
