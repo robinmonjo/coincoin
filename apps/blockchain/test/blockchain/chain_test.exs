@@ -2,7 +2,7 @@ defmodule Blockchain.ChainTest do
   use ExUnit.Case, async: false
   import Blockchain.Fixtures
 
-  alias Blockchain.{Chain, Block}
+  alias Blockchain.{Chain, Block, ProofOfWork}
 
   test "first block should be the genesis block" do
     b = Block.genesis_block()
@@ -14,7 +14,7 @@ defmodule Blockchain.ChainTest do
     b =
       "some data"
       |> Block.generate_next_block()
-      |> Block.perform_proof_of_work()
+      |> ProofOfWork.compute()
     assert :ok = Chain.add_block(b)
   end
 
@@ -22,7 +22,7 @@ defmodule Blockchain.ChainTest do
     valid_block =
       "some data"
       |> Block.generate_next_block()
-      |> Block.perform_proof_of_work()
+      |> ProofOfWork.compute()
 
     invalid_block = %{valid_block | index: 1000}
     assert {:error, "invalid index"} = Chain.add_block(invalid_block)
