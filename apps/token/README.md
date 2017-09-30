@@ -78,4 +78,4 @@ To be validated and added to the blockchain transactions must be verified. Check
 
 ### Ledger
 
-Cryptocurrencies and blockchains are different concepts eventough they often get confused. In this implementation, the `Ledger` module abstract the blockchain so it is seen as a simple list of transactions while still relying on blockchain immutability properties).
+Cryptocurrencies and blockchains are different concepts eventough they often get confused. In this implementation, the `Ledger` module abstracts the blockchain so it is seen as a simple list of transactions while still relying on blockchain immutability properties).
