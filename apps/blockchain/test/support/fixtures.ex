@@ -1,7 +1,7 @@
 defmodule Blockchain.Fixtures do
   @moduledoc "Test helpers"
 
-  alias Blockchain.{Block, ProofOfWork, P2P.Payload}
+  alias Blockchain.{Block, P2P.Payload}
 
   # mock a valid blockchain of n elements + genesis block
   def mock_blockchain(n), do: mock_blockchain([Block.genesis_block()], n)
