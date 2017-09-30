@@ -49,8 +49,7 @@ You can then add data to the blockchain (from any nodes):
 Blockchain.add("some data")
 ```
 
-Data will be broadcasted on the network so nodes can start to mine it (i.e: compute the proof-of-work). Once a node comes up with the proof-of-work,
-it will add the block in the blockchain and forward it to other peers. Proof-of-work difficulty can be modified in `config.exs`
+Data will be broadcasted on the network so nodes can start to mine it (i.e: compute the proof-of-work). Once a node comes up with the proof-of-work, it adds the block in the blockchain and forwards it to other peers. Proof-of-work difficulty can be modified in `config.exs`
 
 ## API
 
