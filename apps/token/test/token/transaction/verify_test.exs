@@ -37,8 +37,15 @@ defmodule Token.Transaction.VerifyTest do
     assert Verify.verify_transaction(invalid_tx, Ledger.find_func) == {:error, "input doesn't exist"}
   end
 
-  test "transaction inputs must refer to an unspent transaction" do
+  test "transaction inputs must refer to an unspent transaction", %{bob: bob, alice: alice} do
+    last_tx = Enum.at(Ledger.all_transactions, -1)
 
+    # in mock_ledger, bob did the last transaction
+    # he shouldn't be able to do another transaction using the same inputs
+    inputs = last_tx.inputs
+    outputs = [[alice.address, 3]]
+    tx = Transaction.new_transaction(bob, inputs, outputs)
+    assert Verify.verify_transaction(tx, Ledger.find_func) == {:error, "input already spent"}
   end
 
   test "transaction inputs sum must be superior or equal to transaction output sum" do
