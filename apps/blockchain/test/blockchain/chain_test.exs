@@ -2,7 +2,7 @@ defmodule Blockchain.ChainTest do
   use ExUnit.Case, async: false
   import Blockchain.Fixtures
 
-  alias Blockchain.{Chain, Block, ProofOfWork}
+  alias Blockchain.{Chain, Block}
 
   test "first block should be the genesis block" do
     b = Block.genesis_block()
@@ -14,7 +14,7 @@ defmodule Blockchain.ChainTest do
     b =
       "some data"
       |> Block.generate_next_block()
-      |> ProofOfWork.compute()
+      |> proof_of_work().compute()
     assert :ok = Chain.add_block(b)
   end
 
@@ -22,7 +22,7 @@ defmodule Blockchain.ChainTest do
     valid_block =
       "some data"
       |> Block.generate_next_block()
-      |> ProofOfWork.compute()
+      |> proof_of_work().compute()
 
     invalid_block = %{valid_block | index: 1000}
     assert {:error, "invalid index"} = Chain.add_block(invalid_block)
@@ -33,7 +33,7 @@ defmodule Blockchain.ChainTest do
     invalid_block = %{valid_block | hash: "#{valid_block.hash}1"}
     assert {:error, "invalid block hash"} = Chain.add_block(invalid_block)
 
-    invalid_block = %{valid_block | hash: "1#{valid_block.hash}"}
+    invalid_block = %{valid_block | hash: "n#{valid_block.hash}"}
     assert {:error, "no proof of work"} = Chain.add_block(invalid_block)
   end
 
@@ -65,4 +65,6 @@ defmodule Blockchain.ChainTest do
     :ok = Chain.replace_chain(new_chain)
     assert Chain.all_blocks() == new_chain
   end
+
+  defp proof_of_work, do: Application.fetch_env!(:blockchain, :proof_of_work)
 end

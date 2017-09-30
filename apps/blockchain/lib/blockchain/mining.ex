@@ -4,7 +4,7 @@ defmodule Blockchain.Mining do
   @moduledoc "GenServer responsible for block mining"
   use GenServer
 
-  alias Blockchain.{Chain, Block, ProofOfWork, P2P.Command, Data}
+  alias Blockchain.{Chain, Block, P2P.Command, Data}
 
   def start_link do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
@@ -73,7 +73,7 @@ defmodule Blockchain.Mining do
   end
 
   defp mine_block(%Block{} = b) do
-    mined_block = ProofOfWork.compute(b)
+    mined_block = proof_of_work().compute(b)
     case Chain.add_block(mined_block) do
       :ok ->
         Logger.info fn -> "I mined block number #{mined_block.index}" end
@@ -82,4 +82,6 @@ defmodule Blockchain.Mining do
       {:error, _reason} = error -> error
     end
   end
+
+  defp proof_of_work, do: Application.fetch_env!(:blockchain, :proof_of_work)
 end
