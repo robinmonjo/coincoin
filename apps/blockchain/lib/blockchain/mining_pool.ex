@@ -1,6 +1,6 @@
 require Logger
 
-defmodule Blockchain.Mining do
+defmodule Blockchain.MiningPool do
   @moduledoc "GenServer responsible for block mining"
   use GenServer
 
@@ -14,7 +14,7 @@ defmodule Blockchain.Mining do
     {:ok, {[], {}}}
   end
 
-  def mine(data) do
+  def add(data) do
     GenServer.call(__MODULE__, {:mine, data})
   end
 
