@@ -41,7 +41,7 @@ $node1> Token.balance()
 20
 ```
 
-The `free_tokens/1` call write a particular transaction into the blockchain (more details below), that gives tokens to a node.
+The `free_tokens/1` function writes a particular transaction into the blockchain, that gives tokens to the calling node.
 
 Now that tokens are in the system, we can start exchanging it between the nodes of our network using the `send/2` API:
 
@@ -72,10 +72,10 @@ A wallet contains 3 fields, [ECDH](https://en.wikipedia.org/wiki/Elliptic-curve_
 
 ### Transaction
 
-A transaction contains a list of inputs (an input point to a transaction output), a list of outputs (recipients of the transaction and the amount of tokens), a public key (public key of the sender), a signature (computed from the sender private key) and a hash:
+A transaction contains a list of inputs (an input points to a transaction output), a list of outputs (recipients of the transaction and the amount of tokens), a public key (public key of the sender), a signature (computed from the sender private key) and a hash.
 
 To be validated and added to the blockchain transactions must be verified. Checkout the `Transaction.Verify.verify_transaction/2` function to see what happens.
 
 ### Ledger
 
-Cryptocurrencies and blockchains are different concepts eventough they often get confused. In this implementation, the `Ledger` module abstracts the blockchain so it is seen as a simple list of transactions while still relying on blockchain immutability properties).
+Cryptocurrencies and blockchains are different concepts eventough they often get confused. In this implementation, the `Ledger` module abstracts the blockchain so it is seen as a simple list of transactions while still relying on blockchain immutability properties.

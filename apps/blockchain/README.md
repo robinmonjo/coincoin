@@ -6,12 +6,12 @@ A minimal blockchain implementation in Elixir inspired by [this JS implementatio
 
 > Blockchain is a distributed database that maintains a continuously-growing list of records called blocks secured from tampering and revision. - Wikipedia
 
-Basically, the two main properties of blockchain are:
+Basically, the 2 main properties of a blockchain are:
 
 - decentralisation: there is no central authority
 - immutability: data in the blockchain can't be modified. This is made possible by cryptographic hash functions and proof-of-work
 
-This make the blockchain a perfect fit to store cryptocurrencies transactions. However, it can also be used to store "any" kind of data. This simple implementation focuses on mechanisms behind a blockchain (see the [`token` app](../token/README.md) for a cryptocurrency implementation using this blockchain).
+This makes the blockchain a perfect fit to store cryptocurrencies transactions. However, it can also be used to store "any" kind of data. This simple implementation focuses on mechanisms behind a blockchain (see the [`token` app](../token/README.md) for a cryptocurrency implementation using this blockchain).
 
 ## Features / goals
 

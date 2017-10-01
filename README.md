@@ -17,11 +17,11 @@ Lately I heard a lot about:
 
 So what about building a cryptocurrency proof-of-concept in Elixir ?
 
-As I'm sure about **1**, I still have some doubts about **2** eventough technologies behind cryptocurrency are exciting.
+As I'm sure about **1**, I still have some doubts about **2** eventough technologies behind cryptocurrencies are exciting.
 
 ## What's in this repo ?
 
-This is an unbrella project that contains 3 apps:
+This is an umbrella project that contains 3 apps:
 
 - [`blockchain`](apps/blockchain/README.md): a minimal blockchain
 - [`token`](apps/token/README.md): a minimal cryptocurrency implemented on top of the blockchain
