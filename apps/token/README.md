@@ -1,6 +1,6 @@
 # Token
 
-Proof-of-concept of a cryptocurrency implemented on top of the [`blockchain` app](../blockchain/README.md). The goal is to keep it as simple as possible but complete enough to understand how most of cryptocurrencies such as Bitcoin or Ethereum work.
+Proof-of-concept of a cryptocurrency implemented on top of the [`blockchain` app](../blockchain/README.md). The goal is to keep it as simple as possible but complete enough to understand how most cryptocurrencies such as Bitcoin or Ethereum work.
 
 ## Usage
 

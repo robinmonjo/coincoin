@@ -31,7 +31,12 @@ use Mix.Config
 
 config :blockchain,
   port: String.to_integer(System.get_env("P2P_PORT") || "5000"),
-  proof_of_work: if(Mix.env == :test, do: Blockchain.Test.ProofOfWork, else: Blockchain.ProofOfWork)
+  # the module to use for Proof-of-work
+  # should expose compute/1 and verify/1
+  proof_of_work: Blockchain.ProofOfWork
 
 config :blockchain, Blockchain.ProofOfWork,
-  pow_difficulty: if(Mix.env == :test, do: 1, else: 4)
+  # numbers of leading 0 in block hash required by the proof-of-work
+  pow_difficulty: 4
+
+import_config "#{Mix.env}.exs"

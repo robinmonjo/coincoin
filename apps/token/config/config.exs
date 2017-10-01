@@ -30,4 +30,8 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 
 config :token,
-  blockchain: if(Mix.env == :test, do: Token.Test.Blockchain, else: Blockchain)
+  # the module to use as the underlying blockchain
+  # should expose add/1 and blocks/0
+  blockchain: Blockchain
+
+import_config "#{Mix.env}.exs"
