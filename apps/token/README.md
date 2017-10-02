@@ -32,7 +32,7 @@ $node1> Token.balance()
 0
 ````
 
-To "inject" tokens in the system we need to cheat and use a "forbidden" API:
+To "inject" tokens in the system we need to cheat and use a *forbidden* API:
 
 ```elixir
 $node1> Token.free_tokens(20) # this will give node1 20 tokens
