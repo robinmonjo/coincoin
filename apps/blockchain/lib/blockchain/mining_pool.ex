@@ -1,6 +1,6 @@
 require Logger
 
-defmodule Blockchain.Mining do
+defmodule Blockchain.MiningPool do
   @moduledoc "GenServer responsible for block mining"
   use GenServer
 
@@ -14,7 +14,7 @@ defmodule Blockchain.Mining do
     {:ok, {[], {}}}
   end
 
-  def mine(data) do
+  def add(data) do
     GenServer.call(__MODULE__, {:mine, data})
   end
 
@@ -23,10 +23,11 @@ defmodule Blockchain.Mining do
   end
 
   def handle_call({:mine, data}, _from, {pool, _} = state) do
-    if data_in_pool?(pool, data) do
-      {:reply, :already_in_pool, state}
-    else
-      {:reply, :ok, add_to_pool(state, data)}
+    case verify_data(data, pool) do
+      :ok ->
+        {:reply, :ok, add_to_pool(state, data)}
+      {:error, _reason} = error ->
+        {:reply, error, state}
     end
   end
 
@@ -45,13 +46,17 @@ defmodule Blockchain.Mining do
     {:noreply, mine_next_block(pool)}
   end
 
+  defp verify_data(data, pool) do
+    if Enum.find(pool, &(Data.hash(&1) == Data.hash(data))) != nil do
+      {:error, :already_in_pool}
+    else
+      Data.verify(data, Chain.all_blocks())
+    end
+  end
+
   defp add_to_pool({pool, {}}, data), do: {pool ++ [data], start_mining(data)}
   defp add_to_pool({pool, mining}, data) do
     {pool ++ [data], mining}
-  end
-
-  defp data_in_pool?(pool, data) do
-    Enum.find(pool, &(Data.hash(&1) == Data.hash(data))) != nil
   end
 
   defp remove_from_pool(%Block{data: data}, pool) do
@@ -68,12 +73,15 @@ defmodule Blockchain.Mining do
   end
 
   defp mine_block(%Block{} = b) do
-    mined_block = Block.perform_proof_of_work(b)
+    mined_block = proof_of_work().compute(b)
     case Chain.add_block(mined_block) do
       :ok ->
-        Command.broadcast_new_block(mined_block)
         Logger.info fn -> "I mined block number #{mined_block.index}" end
-      {:error, _reason} -> nil
+        Command.broadcast_new_block(mined_block)
+        :ok
+      {:error, _reason} = error -> error
     end
   end
+
+  defp proof_of_work, do: Application.fetch_env!(:blockchain, :proof_of_work)
 end

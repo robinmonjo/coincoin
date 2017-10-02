@@ -1,7 +1,7 @@
 defmodule Blockchain.Block do
   @moduledoc "Provides Block struct and related block operations"
 
-  alias Blockchain.{Block, Chain, Data}
+  alias Blockchain.{Block, Chain, Data, Crypto}
 
   @derive [Poison.Encoder]
   defstruct [
@@ -40,27 +40,8 @@ defmodule Blockchain.Block do
   end
 
   def compute_hash(%Block{index: i, previous_hash: h, timestamp: timestamp, data: data, nounce: nounce}) do
-    :crypto.hash(:sha256, "#{i}#{h}#{timestamp}#{Data.hash(data)}#{nounce}") |> Base.encode16
-  end
-
-  # https://en.bitcoin.it/wiki/Proof_of_work
-  def perform_proof_of_work(%Block{} = b) do
-    {hash, nounce} = proof_of_work(b)
-    %{b | hash: hash, nounce: nounce}
-  end
-
-  defp proof_of_work(%Block{} = block, nounce \\ 0) do
-    b = %{block | nounce: nounce}
-    hash = compute_hash(b)
-    case verify_proof_of_work(hash) do
-      true -> {hash, nounce}
-      _ -> proof_of_work(block, nounce + 1)
-    end
-  end
-
-  def verify_proof_of_work(hash) do
-    difficulty = Application.fetch_env!(:blockchain, :pow_difficulty)
-    prefix = Enum.reduce 1..difficulty, "", fn(_, acc) -> "0#{acc}" end
-    String.starts_with?(hash, prefix)
+    "#{i}#{h}#{timestamp}#{Data.hash(data)}#{nounce}"
+    |> Crypto.hash(:sha256)
+    |> Base.encode16()
   end
 end

@@ -1,8 +1,8 @@
-defmodule Blockchain.Mixfile do
+defmodule Token.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :blockchain,
+    [app: :token,
      version: "0.1.0",
      build_path: "../../_build",
      config_path: "../../config/config.exs",
@@ -24,7 +24,7 @@ defmodule Blockchain.Mixfile do
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
     [extra_applications: [:logger],
-     mod: {Blockchain.Application, []}]
+     mod: {Token.Application, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -35,10 +35,14 @@ defmodule Blockchain.Mixfile do
   #
   #   {:my_dep, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
   #
+  # To depend on another app inside the umbrella:
+  #
+  #   {:my_app, in_umbrella: true}
+  #
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:poison, "~> 3.1"}
+      {:blockchain, in_umbrella: true}
     ]
   end
 end

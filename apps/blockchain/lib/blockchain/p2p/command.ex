@@ -3,7 +3,7 @@ require Logger
 defmodule Blockchain.P2P.Command do
   @moduledoc "TCP server commands"
 
-  alias Blockchain.{Chain, Block, P2P.Payload, P2P.Server, Mining}
+  alias Blockchain.{Chain, Block, P2P.Payload, P2P.Server, MiningPool}
 
   # reception
 
@@ -63,12 +63,13 @@ defmodule Blockchain.P2P.Command do
   end
 
   defp handle_payload(%Payload{type: "mining_request", data: data}) do
-    case Mining.mine(data) do
+    case MiningPool.add(data) do
       :ok ->
-        Logger.info fn -> "received data to be mined" end
+        Logger.info fn -> "received data to mine" end
         broadcast_mining_request(data)
         :ok
-      :already_in_pool ->
+      {:error, _reason} ->
+        # block is already in mining pool, or Data.verify failed
         :ok
     end
   end
@@ -79,7 +80,7 @@ defmodule Blockchain.P2P.Command do
 
   defp add_block(block) do
     with :ok <- Chain.add_block(block),
-         :ok <- Mining.block_mined(block)
+         :ok <- MiningPool.block_mined(block) # notify mining pool to stop working on this block
     do
       broadcast_new_block(block)
     else
@@ -105,5 +106,6 @@ defmodule Blockchain.P2P.Command do
     |> Payload.mining_request()
     |> Payload.encode!()
     |> Server.broadcast()
+    MiningPool.add(data)
   end
 end

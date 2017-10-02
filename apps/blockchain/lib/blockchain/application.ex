@@ -15,12 +15,12 @@ defmodule Blockchain.Application do
       # Starts a worker by calling: Blockchain.Worker.start_link(a1, a2, a3)
       # worker(Blockchain.Worker, [arg1, arg2, arg3]),
       worker(Blockchain.Chain, []),
-      worker(Blockchain.Mining, []),
+      worker(Blockchain.MiningPool, []),
 
       # P2P processes
       worker(Blockchain.P2P.Peers, []),
       supervisor(Task.Supervisor, [
-        [name: Blockchain.P2P.Server.TaskSupervisor]
+        [name: Blockchain.P2P.Server.TasksSupervisor]
       ]),
       worker(Task, [Blockchain.P2P.Server, :accept, [port]])
     ]

@@ -6,14 +6,14 @@ defmodule Blockchain.Chain do
 
   use GenServer
 
-  alias Blockchain.Block
+  alias Blockchain.{Block, Data}
 
   def start_link do
-    GenServer.start_link(__MODULE__, [Block.genesis_block()], name: __MODULE__)
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
-  def init([%Block{}] = initial_chain) do
-    {:ok, initial_chain}
+  def init(_) do
+    {:ok, [Block.genesis_block()]}
   end
 
   def latest_block do
@@ -43,7 +43,7 @@ defmodule Blockchain.Chain do
 
   def handle_call({:add_block, %Block{} = b}, _from, chain) do
     [previous_block | _] = chain
-    case validate_new_block(previous_block, b) do
+    case validate_block(previous_block, b, chain) do
       {:error, reason} ->
         {:reply, {:error, reason}, chain}
       :ok ->
@@ -53,39 +53,42 @@ defmodule Blockchain.Chain do
 
   def handle_call({:replace_chain, new_chain}, _from, chain) do
     case validate_chain(new_chain) do
-      true -> {:reply, :ok, new_chain}
-      _ -> {:reply, :error, chain}
+      :ok -> {:reply, :ok, new_chain}
+      {:error, _} = error -> {:reply, error, chain}
     end
   end
 
-  defp validate_new_block(previous_block, block) do
+  defp validate_block(previous_block, block, chain) do
     cond do
       previous_block.index + 1 != block.index ->
         {:error, "invalid index"}
       previous_block.hash != block.previous_hash ->
         {:error, "invalid previous hash"}
-      Block.verify_proof_of_work(block.hash) == false ->
+      proof_of_work().verify(block.hash) == false ->
         {:error, "no proof of work"}
       block.hash != Block.compute_hash(block) ->
         {:error, "invalid block hash"}
       true ->
-        :ok
+        validate_block_data(block, chain)
     end
   end
 
-  def validate_chain(blockchain) when length(blockchain) == 0, do: false # should at least have a genesis block
+  defp validate_block_data(%Block{data: data}, chain), do: Data.verify(data, chain)
 
-  def validate_chain(blockchain) when length(blockchain) == 1 do
-    [genesis_block | _] = blockchain
-    genesis_block == Block.genesis_block()
+  def validate_chain(blockchain) when length(blockchain) == 0, do: {:error, "empty chain"}
+  def validate_chain([genesis_block | _] = blockchain) when length(blockchain) == 1 do
+    if genesis_block == Block.genesis_block() do
+      :ok
+    else
+      {:error, "chain doesn't start with genesis block"}
+    end
   end
-
-  def validate_chain(blockchain) do
-    [block | [previous_block | rest]] = blockchain
-    case validate_new_block(previous_block, block) do
-      {:error, _} -> false
+  def validate_chain([block | [previous_block | rest] = chain]) do
+    case validate_block(previous_block, block, chain) do
+      {:error, _} = error -> error
       _ -> validate_chain([previous_block | rest])
     end
   end
 
+  defp proof_of_work, do: Application.fetch_env!(:blockchain, :proof_of_work)
 end

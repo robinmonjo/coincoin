@@ -30,7 +30,7 @@ defmodule Blockchain.P2P.Server do
   def handle_socket(socket) do
     Peers.add(socket)
     {:ok, pid} =
-      Task.Supervisor.start_child(Blockchain.P2P.Server.TaskSupervisor, fn ->
+      Task.Supervisor.start_child(Blockchain.P2P.Server.TasksSupervisor, fn ->
         serve(socket)
       end)
     :ok = :gen_tcp.controlling_process(socket, pid)

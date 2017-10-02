@@ -12,7 +12,7 @@ defmodule Blockchain.P2P.Payload do
   # to request all the blockchain
   @query_all "query_all"
 
-  # to receive a blockchain (all the chain or only latest block in an array)
+  # to transmit a block or a blockchain
   @response_blockchain "response_blockchain"
 
   # to transmit data to be mined

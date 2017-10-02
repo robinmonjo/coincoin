@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :blockchain, key: :value
+#     config :token, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:blockchain, :key)
+#     Application.get_env(:token, :key)
 #
 # Or configure a 3rd-party app:
 #
@@ -29,14 +29,9 @@ use Mix.Config
 #
 #     import_config "#{Mix.env}.exs"
 
-config :blockchain,
-  port: String.to_integer(System.get_env("P2P_PORT") || "5000"),
-  # the module to use for Proof-of-work
-  # should expose compute/1 and verify/1
-  proof_of_work: Blockchain.ProofOfWork
-
-config :blockchain, Blockchain.ProofOfWork,
-  # numbers of leading 0 in block hash required by the proof-of-work
-  pow_difficulty: 4
+config :token,
+  # the module to use as the underlying blockchain
+  # should expose add/1 and blocks/0
+  blockchain: Blockchain
 
 import_config "#{Mix.env}.exs"

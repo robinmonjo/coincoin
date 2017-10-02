@@ -1,81 +1,36 @@
-# Blockchain
+# coinstack
 
 [![Build Status](https://travis-ci.org/robinmonjo/blockchain.svg?branch=master)](https://travis-ci.org/robinmonjo/blockchain)
 
-A minimal blockchain implementation in Elixir inspired by [this JS implementation](https://github.com/lhartikk/naivechain)
-This is an umbrella project that provides the blockchain core and a REST API built with Phoenix.
-It provides peer-to-peer communications, blockchain logic and Proof of Work.
+<img align="right" src="logo.png">
 
-## Usage
+`coinstack` is a cryptocurrency proof-of-concept implemented in Elixir. It's an umbrella project that focuses on the 2 main components of (most of) the existing cryptocurrencies: the **blockchain** and **digital transactions**.
 
-Setting up a 3 nodes blockchain locally:
+It's goal is to be as simple as possible but complete enough to technically understand what's going on behind Bitcoin or Ethereum for example. It's also a way do dive more into Elixir and OTP.
 
-- node 1: `iex -S mix phx.server` (defaults: `PORT=4000 P2P_PORT=5000`)
-- node 2: `PORT=4001 P2P_PORT=5001 iex -S mix phx.server`
-- node 3: `PORT=4002 P2P_PORT=5002 iex -S mix phx.server`
+## Why coinstack ?
 
-Then connect the nodes using the REST API, for example:
+Lately I heard a lot about:
 
-```bash
-curl -H 'Content-Type: application/json' localhost:4001/api/peers -X POST -d '{ "uri": "localhost:5000"}'  # connect node2 to node1
+1. how Elixir is awesome and is the future of complex system / web development
+2. how blockchain technology will be the next big thing
 
-curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ "uri": "localhost:5001"}'  # connect node3 to node2
-```
+So what about building a cryptocurrency proof-of-concept in Elixir ?
 
-or directly in the `iex` console:
+As I'm sure about **1**, I still have some doubts about **2** eventough technologies behind cryptocurrencies are exciting.
 
-```elixir
-$node2> Blockchain.connect("localhost:5000") # connect node2 to node1
+## What's in this repo ?
 
-$node3> Blockchain.connect("localhost:5001") # connect node3 to node2
-```
+This is an umbrella project that contains 3 apps:
 
-You can then mine blocks using the REST API or directly in the `iex` console.
+- [`blockchain`](apps/blockchain/README.md): a minimal blockchain
+- [`token`](apps/token/README.md): a minimal cryptocurrency implemented on top of the blockchain
+- [`blockchain_web`](apps/blockchain_web/README.md): a web interface to manage nodes of the blockchain
 
-## iex
+To setup a blockchain and store random data in it using the `iex` console checkout the [`blockchain` app](apps/blockchain/README.md). To do the same using a REST API, checkout the [`blockchain_web` app](apps/blockchain_web/README.md). And finally to play with a cryptocurrency and use the blockchain as a distributed ledger, checkout the [`token` app](apps/token/README.md).
 
-Interaction with the blockchain in the `iex` console:
+## Final words
 
-```elixir
-Blockchain.connect("host:port") # connect to a peer
-Blockchain.list_peers() # list direct peers
-Blockchain.add("some data") # add data to the blockchain. It will appear once mined
-Blockchain.blocks() # get all blocks in the chain
-```
+Issues, suggestions and pull requests are very welcome 😊
 
-## REST API
-
-Interaction with the blockchain with the REST API:
-
-```bash
-# create a block (will appear in the blockchain once miner create it)
-curl -H 'Content-Type: application/json' localhost:4000/api/blocks -X POST -d '{"data": "block data"}'
-
-# show the blockchain
-curl -H 'Content-Type: application/json' localhost:4000/api/blocks
-
-# show connected peers
-curl -H 'Content-Type: application/json' localhost:4000/api/peers
-
-# connect to a peer
-curl -H 'Content-Type: application/json' localhost:4002/api/peers -X POST -d '{ "uri": "localhost:5001"}'
-```
-
-## Motivations / next steps
-
-The goal of this project is to understand basic mechanisms behind the blockchain and to use Elixir and OTP. It has been designed to be modular and extensible.
-
-I'm currently working on a "naive" cryptocurrency implementation on top of this blockchain. More to come later
-
-Issues and pull requests are very welcome 😊
-
-## Resources
-
-- [naive blockchain](https://github.com/lhartikk/naivechain) and its [medium post](https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54#.dttbm9afr5)
-- [legion blockchain](https://github.com/aviaviavi/legion)
-- [proof of work](https://en.bitcoin.it/wiki/Proof_of_work)
-
-For future improvements:
-
-- [minimum viable blockchain](https://www.igvita.com/2014/05/05/minimum-viable-block-chain/)
-- [minimum viable blockchain Go implementation](https://github.com/izqui/blockchain)
+*Icon made by Smashicons from www.flaticon.com*

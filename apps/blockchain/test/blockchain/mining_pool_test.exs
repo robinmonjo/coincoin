@@ -1,11 +1,11 @@
 defmodule Blockchain.MiningTest do
   use ExUnit.Case, async: false
 
-  alias Blockchain.{Mining, Block}
+  alias Blockchain.{MiningPool, Block}
 
   test "handle_call mine_data add data to pool and start mining" do
     data = "foo"
-    {:reply, response, new_state} = Mining.handle_call({:mine, data}, nil, {[], {}})
+    {:reply, response, new_state} = MiningPool.handle_call({:mine, data}, nil, {[], {}})
     assert response == :ok
     {pool, {ref, pid, block}} = new_state
     Process.monitor(pid)
@@ -20,8 +20,8 @@ defmodule Blockchain.MiningTest do
   test "handle_call mine_data do not change state if data already in pool" do
     data = "foo"
     state = {[data], {}}
-    {:reply, response, new_state} = Mining.handle_call({:mine, data}, nil, state)
-    assert response == :already_in_pool
+    {:reply, response, new_state} = MiningPool.handle_call({:mine, data}, nil, state)
+    assert response == {:error, :already_in_pool}
     assert new_state == state
   end
 
@@ -29,7 +29,7 @@ defmodule Blockchain.MiningTest do
     data = "foo"
     pool = ["bar"]
     mining = {"some_ref", "some_pid", "block_candidate"}
-    {:reply, response, new_state} = Mining.handle_call({:mine, data}, nil, {pool, mining})
+    {:reply, response, new_state} = MiningPool.handle_call({:mine, data}, nil, {pool, mining})
     assert response == :ok
     assert new_state == {pool ++ [data], mining}
   end
@@ -38,7 +38,7 @@ defmodule Blockchain.MiningTest do
     data = "foo"
     pool = ["bar", data]
     b = Block.generate_next_block(data)
-    {:reply, response, new_state} = Mining.handle_call({:block_mined, b}, nil, {pool, {}})
+    {:reply, response, new_state} = MiningPool.handle_call({:block_mined, b}, nil, {pool, {}})
     assert response == :ok
     {pool, {}} = new_state
     assert pool == ["bar"]
@@ -46,9 +46,9 @@ defmodule Blockchain.MiningTest do
 
   test "handle_call block_mined stop block mining if block number matches" do
     data = "foobar"
-    {:reply, :ok, {[^data], {ref, pid, block} = mining} = state} = Mining.handle_call({:mine, data}, nil, {[], {}})
+    {:reply, :ok, {[^data], {ref, pid, block} = mining} = state} = MiningPool.handle_call({:mine, data}, nil, {[], {}})
     mref = Process.monitor(pid)
-    {:reply, response, new_state} = Mining.handle_call({:block_mined, block}, nil, state)
+    {:reply, response, new_state} = MiningPool.handle_call({:block_mined, block}, nil, state)
     assert response == :ok
     assert new_state == {[], mining}
     for r <- [mref, ref] do
@@ -61,18 +61,18 @@ defmodule Blockchain.MiningTest do
 
   test "handle_info DOWN clean up mining state" do
     data = "foobar"
-    {:reply, :ok, {[^data], {ref, pid, _block}} = state} = Mining.handle_call({:mine, data}, nil, {[], {}})
-    {:noreply, {_pool, mining}} = Mining.handle_info({:DOWN, ref, :process, pid, :normal}, state)
+    {:reply, :ok, {[^data], {ref, pid, _block}} = state} = MiningPool.handle_call({:mine, data}, nil, {[], {}})
+    {:noreply, {_pool, mining}} = MiningPool.handle_info({:DOWN, ref, :process, pid, :normal}, state)
     assert mining == {}
   end
 
   test "handle_info DOWN start mining next block in pool" do
     data1 = "foobar1"
     data2 = "foobar2"
-    {:reply, :ok, {[^data1], {ref, pid, _block}} = state} = Mining.handle_call({:mine, data1}, nil, {[], {}})
-    {:reply, :ok, {[^data1, ^data2], {_ref, _pid, _block}} = state} = Mining.handle_call({:mine, data2}, nil, state)
+    {:reply, :ok, {[^data1], {ref, pid, _block}} = state} = MiningPool.handle_call({:mine, data1}, nil, {[], {}})
+    {:reply, :ok, {[^data1, ^data2], {_ref, _pid, _block}} = state} = MiningPool.handle_call({:mine, data2}, nil, state)
 
-    {:noreply, {_pool, mining}} = Mining.handle_info({:DOWN, ref, :process, pid, :normal}, state)
+    {:noreply, {_pool, mining}} = MiningPool.handle_info({:DOWN, ref, :process, pid, :normal}, state)
     assert {_ref, _pid, %Block{data: ^data2}} = mining
   end
 end

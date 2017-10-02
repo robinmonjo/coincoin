@@ -14,7 +14,7 @@ defmodule Blockchain.ChainTest do
     b =
       "some data"
       |> Block.generate_next_block()
-      |> Block.perform_proof_of_work()
+      |> proof_of_work().compute()
     assert :ok = Chain.add_block(b)
   end
 
@@ -22,7 +22,7 @@ defmodule Blockchain.ChainTest do
     valid_block =
       "some data"
       |> Block.generate_next_block()
-      |> Block.perform_proof_of_work()
+      |> proof_of_work().compute()
 
     invalid_block = %{valid_block | index: 1000}
     assert {:error, "invalid index"} = Chain.add_block(invalid_block)
@@ -33,7 +33,7 @@ defmodule Blockchain.ChainTest do
     invalid_block = %{valid_block | hash: "#{valid_block.hash}1"}
     assert {:error, "invalid block hash"} = Chain.add_block(invalid_block)
 
-    invalid_block = %{valid_block | hash: "1#{valid_block.hash}"}
+    invalid_block = %{valid_block | hash: "n#{valid_block.hash}"}
     assert {:error, "no proof of work"} = Chain.add_block(invalid_block)
   end
 
@@ -44,7 +44,7 @@ defmodule Blockchain.ChainTest do
       timestamp: 1_465_154_705,
       data: "genesis block"
     }
-    refute Chain.validate_chain([invalid_genesis_block])
+    assert {:error, "chain doesn't start with genesis block"} = Chain.validate_chain([invalid_genesis_block])
 
     genesis_block = Block.genesis_block()
     chain = [genesis_block]
@@ -55,7 +55,7 @@ defmodule Blockchain.ChainTest do
       timestamp: 1_465_154_706,
       data: "first block"
     }
-    refute Chain.validate_chain([invalid_next_block | chain])
+    assert {:error, "invalid previous hash"} = Chain.validate_chain([invalid_next_block | chain])
 
     assert Chain.validate_chain(mock_blockchain(3))
   end
@@ -65,4 +65,6 @@ defmodule Blockchain.ChainTest do
     :ok = Chain.replace_chain(new_chain)
     assert Chain.all_blocks() == new_chain
   end
+
+  defp proof_of_work, do: Application.fetch_env!(:blockchain, :proof_of_work)
 end

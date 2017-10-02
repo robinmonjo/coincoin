@@ -3,10 +3,16 @@ defmodule Blockchain do
   Documentation for Blockchain.
   """
 
-  alias Blockchain.{Chain, P2P.Client, P2P.Command, P2P.Peers, Data}
+  alias Blockchain.{Chain, P2P.Client, P2P.Command, P2P.Peers, Data, Crypto}
 
   defimpl Data, for: BitString do
-    def hash(string), do: :crypto.hash(:sha256, string) |> Base.encode16
+    def hash(string) do
+      string
+      |> Crypto.hash(:sha256)
+      |> Base.encode16()
+    end
+
+    def verify(_string, _chain), do: :ok
   end
 
   # add a block to the blockchain
@@ -32,7 +38,7 @@ defmodule Blockchain do
   end
 
   # returns all blocks
-  def blocks() do
+  def blocks do
     Chain.all_blocks()
   end
 end

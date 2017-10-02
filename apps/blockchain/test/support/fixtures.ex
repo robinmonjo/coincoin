@@ -11,9 +11,11 @@ defmodule Blockchain.Fixtures do
     b =
       "some block data #{n}"
       |> Block.generate_next_block(latest_block)
-      |> Block.perform_proof_of_work()
+      |> proof_of_work().compute()
     mock_blockchain([b | acc], n - 1)
   end
+
+  defp proof_of_work, do: Application.fetch_env!(:blockchain, :proof_of_work)
 
   # communication with TCP server
   def open_connection do
