@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/robinmonjo/blockchain.svg?branch=master)](https://travis-ci.org/robinmonjo/blockchain)
 
-<img align="right" src="logo.png">
+<img align="right" src="logo.png" width="128px">
 
 `coincoin` is a cryptocurrency proof-of-concept implemented in Elixir. It's an umbrella project that focuses on the 2 main components of (most of) the existing cryptocurrencies: the **blockchain** and **digital transactions**.
 
