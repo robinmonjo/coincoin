@@ -1,6 +1,6 @@
 # coincoin
 
-[![Build Status](https://travis-ci.org/robinmonjo/blockchain.svg?branch=master)](https://travis-ci.org/robinmonjo/blockchain)
+[![Build Status](https://travis-ci.org/robinmonjo/coincoin.svg?branch=master)](https://travis-ci.org/robinmonjo/blockchain)
 
 <img align="right" src="logo.png" width="128px">
 
