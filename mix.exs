@@ -1,4 +1,4 @@
-defmodule CoinstackUmbrella.Mixfile do
+defmodule CoincoinUmbrella.Mixfile do
   use Mix.Project
 
   def project do

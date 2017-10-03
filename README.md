@@ -1,14 +1,14 @@
-# coinstack
+# coincoin
 
 [![Build Status](https://travis-ci.org/robinmonjo/blockchain.svg?branch=master)](https://travis-ci.org/robinmonjo/blockchain)
 
 <img align="right" src="logo.png">
 
-`coinstack` is a cryptocurrency proof-of-concept implemented in Elixir. It's an umbrella project that focuses on the 2 main components of (most of) the existing cryptocurrencies: the **blockchain** and **digital transactions**.
+`coincoin` is a cryptocurrency proof-of-concept implemented in Elixir. It's an umbrella project that focuses on the 2 main components of (most of) the existing cryptocurrencies: the **blockchain** and **digital transactions**.
 
 It's goal is to be as simple as possible but complete enough to technically understand what's going on behind Bitcoin or Ethereum for example. It's also a way do dive more into Elixir and OTP.
 
-## Why coinstack ?
+## Why coincoin ?
 
 Lately I heard a lot about:
 
@@ -18,6 +18,8 @@ Lately I heard a lot about:
 So what about building a cryptocurrency proof-of-concept in Elixir ?
 
 As I'm sure about **1**, I still have some doubts about **2** eventough technologies behind cryptocurrencies are exciting.
+
+> Also "coin-coin" in french is the sound of a duck (hence Scrooge McDuck)
 
 ## What's in this repo ?
 
@@ -32,5 +34,3 @@ To setup a blockchain and store random data in it using the `iex` console checko
 ## Final words
 
 Issues, suggestions and pull requests are very welcome 😊
-
-*Icon made by Smashicons from www.flaticon.com*
