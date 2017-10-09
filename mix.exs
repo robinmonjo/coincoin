@@ -23,6 +23,7 @@ defmodule CoincoinUmbrella.Mixfile do
   defp deps do
     [
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
+      {:distillery, "~> 1.5", runtime: false}
     ]
   end
 end
