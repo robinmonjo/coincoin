@@ -2,17 +2,9 @@
 
 Web interface built with Phoenix to control a node of the blockchain. At the moment there is only a simple JSON API.
 
-## Usage 
+## Usage
 
-In the [`blockchain` readme](../blockchain/README.md), we see how to setup a 3 nodes blockchain with the `iex` console. To also start the web interface do:
-
-- node1: `iex -S mix phx.server` (defaults: `PORT=4000 P2P_PORT=5000`)
-- node2: `PORT=4001 P2P_PORT=5001 iex -S mix phx.server`
-- node3: `PORT=4002 P2P_PORT=5002 iex -S mix phx.server`
-
-`PORT` corresponds to the HTTP port of the web interface.
-
-Then connect the nodes with the API:
+Setup a blockchain as explained in the [main readme](../../README.md#setup) and skip the "connecting nodes" section. We are doing it using the REST API (note that nodes are idenfied by their HTTP port):
 
 ```bash
 $> curl -H 'Content-Type: application/json' localhost:4001/api/peers -X POST -d '{ "uri": "localhost:5000"}'  # connect node2 to node1

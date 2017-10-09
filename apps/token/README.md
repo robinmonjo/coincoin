@@ -4,19 +4,7 @@ Proof-of-concept of a cryptocurrency implemented on top of the [`blockchain` app
 
 ## Usage
 
-The token system is implemented on top of the blockchain app. So first, setup a blockchain with 3 nodes:
-
-- node1: `iex -S mix` (default: `P2P_PORT=5000`)
-- node2: `P2P_PORT=5001 iex -S mix`
-- node3: `P2P_PORT=5002 iex -S mix`
-
-and connect the nodes:
-
-```elixir
-$node2> Blockchain.connect(5000) # connect node2 to node1
-
-$node3> Blockchain.connect(5001) # connect node3 to node2
-```
+Setup a blockchain as explained in the [main readme](../../README.md#setup)
 
 On startup, each node generates a wallet (a private/public key pair and an address derived from the public key):
 

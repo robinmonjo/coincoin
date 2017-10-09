@@ -23,25 +23,7 @@ This makes the blockchain a perfect fit to store cryptocurrencies transactions. 
 
 ## Usage
 
-Setting up a 3 nodes blockchain locally:
-
-- node1: `iex -S mix` (default: `P2P_PORT=5000`)
-- node2: `P2P_PORT=5001 iex -S mix`
-- node3: `P2P_PORT=5002 iex -S mix`
-
-Then connect the nodes to create a P2P network:
-
-```elixir
-$node2> Blockchain.connect(5000) # connect node2 to node1
-
-$node3> Blockchain.connect(5001) # connect node3 to node2
-```
-
-This will setup a simple network:
-
-```
-node1 <--> node2 <--> node3
-```
+Setup a 3 nodes blockchain as explained in the [main readme](../../README.md#setup)
 
 You can then add data to the blockchain (from any nodes):
 
