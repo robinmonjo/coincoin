@@ -6,7 +6,7 @@ defmodule Blockchain.Chain do
 
   use GenServer
 
-  alias Blockchain.{Block, Data}
+  alias Blockchain.{Block, BlockData}
 
   def start_link do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
@@ -73,7 +73,7 @@ defmodule Blockchain.Chain do
     end
   end
 
-  defp validate_block_data(%Block{data: data}, chain), do: Data.verify(data, chain)
+  defp validate_block_data(%Block{data: data}, chain), do: BlockData.verify(data, chain)
 
   def validate_chain(blockchain) when length(blockchain) == 0, do: {:error, "empty chain"}
   def validate_chain([genesis_block | _] = blockchain) when length(blockchain) == 1 do

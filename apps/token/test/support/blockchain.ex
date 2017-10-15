@@ -5,7 +5,7 @@ defmodule Token.Test.Blockchain do
   """
   use GenServer
 
-  alias Blockchain.Data
+  alias Blockchain.BlockData
 
   def start do
     GenServer.start(__MODULE__, nil, name: __MODULE__)
@@ -20,7 +20,7 @@ defmodule Token.Test.Blockchain do
   def blocks, do: GenServer.call(__MODULE__, :blocks)
 
   def handle_call({:add, data}, _from, chain) do
-    case Data.verify(data, chain) do
+    case BlockData.verify(data, chain) do
       :ok -> {:reply, :ok, [%{data: data} | chain]}
       {:error, _} = error -> {:reply, error, chain}
     end

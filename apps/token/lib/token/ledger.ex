@@ -7,11 +7,10 @@ defmodule Token.Ledger do
   alias Token.{Ledger, Wallet, Transaction, Transaction.Verify}
 
   # transactions are sent to the blockchain as raw maps
-  defimpl Blockchain.Data, for: Map do
-    def hash(map), do: Ledger.map_to_tx(map).hash
+  defimpl Blockchain.BlockData, for: Transaction do
+    def hash(tx), do: tx.hash
 
-    def verify(map, chain) do
-      tx = Ledger.map_to_tx(map)
+    def verify(tx, chain) do
       if tx.inputs == [["0", 0]] do
         # coinbase transaction are automatically validated
         :ok
@@ -23,11 +22,7 @@ defmodule Token.Ledger do
 
   defp blockchain, do: Application.get_env(:token, :blockchain)
 
-  def write(%Transaction{} = tx) do
-    tx
-    |> Map.from_struct()
-    |> blockchain().add()
-  end
+  def write(%Transaction{} = tx), do: blockchain().add(tx)
 
   def all_transactions do
     reduce_while([], &({:cont, [&1 | &2]}))
@@ -78,22 +73,11 @@ defmodule Token.Ledger do
   defp reduce_while(chain, acc, func) do
     Enum.reduce_while(chain, acc, fn(%{data: data}, acc) ->
       case data do
-        data when is_map(data) ->
-          func.(map_to_tx(data), acc)
+        %Transaction{} ->
+          func.(data, acc)
         _ ->
           {:cont, acc}
       end
     end)
-  end
-
-  def map_to_tx(map) do
-    map = Enum.reduce(map, %{}, fn({key, val}, acc) ->
-      if is_atom(key) do
-        Map.put(acc, key, val)
-      else
-        Map.put(acc, String.to_atom(key), val)
-      end
-    end)
-    struct(%Transaction{}, map)
   end
 end

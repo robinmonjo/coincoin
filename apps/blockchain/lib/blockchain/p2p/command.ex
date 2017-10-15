@@ -69,7 +69,7 @@ defmodule Blockchain.P2P.Command do
         broadcast_mining_request(data)
         :ok
       {:error, _reason} ->
-        # block is already in mining pool, or Data.verify failed
+        # block is already in mining pool, or BlockData.verify failed
         :ok
     end
   end
