@@ -1,6 +1,6 @@
 require Logger
 
-defmodule Blockchain.MiningPool do
+defmodule Blockchain.Mempool do
   @moduledoc "GenServer responsible for block mining"
   use GenServer
 
