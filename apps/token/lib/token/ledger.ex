@@ -6,7 +6,6 @@ defmodule Token.Ledger do
 
   alias Token.{Ledger, Wallet, Transaction, Transaction.Verify}
 
-  # transactions are sent to the blockchain as raw maps
   defimpl Blockchain.BlockData, for: Transaction do
     def hash(tx), do: tx.hash
 
