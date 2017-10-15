@@ -35,9 +35,11 @@ defmodule Blockchain.P2P.Payload do
 
   def mining_request(data), do: %Payload{type: @mining_request, data: data}
 
-  # helper struct to encapsulate the type of the data
-  # so we can decode back to the original type
   defmodule TypedData do
+    @moduledoc """
+    helper struct to encapsulate the type of the data
+    so we can decode back to the original type
+    """
     defstruct [:type, :data]
   end
 
@@ -56,8 +58,9 @@ defmodule Blockchain.P2P.Payload do
     def encode(%{data: data} = struct, options) do
       # embed data into TypedData
       typed_data = typed_data(data)
-      new_struct = %{struct | data: typed_data}
-      Poison.Encoder.Map.encode(Map.from_struct(new_struct), options)
+      %{struct | data: typed_data}
+      |> Map.from_struct()
+      |> Poison.Encoder.Map.encode(options)
     end
 
     defp typed_data(%module{} = struct), do: %TypedData{type: module, data: struct}
