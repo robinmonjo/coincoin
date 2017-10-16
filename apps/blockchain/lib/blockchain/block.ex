@@ -1,14 +1,14 @@
 defmodule Blockchain.Block do
   @moduledoc "Provides Block struct and related block operations"
 
-  alias Blockchain.{Block, Chain, Data, Crypto}
+  alias Blockchain.{Block, Chain, BlockData, Crypto}
 
   @derive [Poison.Encoder]
   defstruct [
     :index,
     :previous_hash,
     :timestamp,
-    :data, # must follow the Blockchain.Data protocol
+    :data, # must follow the Blockchain.BlockData protocol
     :nounce,
     :hash
   ]
@@ -40,7 +40,7 @@ defmodule Blockchain.Block do
   end
 
   def compute_hash(%Block{index: i, previous_hash: h, timestamp: timestamp, data: data, nounce: nounce}) do
-    "#{i}#{h}#{timestamp}#{Data.hash(data)}#{nounce}"
+    "#{i}#{h}#{timestamp}#{BlockData.hash(data)}#{nounce}"
     |> Crypto.hash(:sha256)
     |> Base.encode16()
   end

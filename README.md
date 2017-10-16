@@ -14,7 +14,7 @@ Blockchains are P2P softwares. To start using `coincoin`, we need to setup multi
 
 You need [Elixir](https://elixir-lang.org/install.html) installed. Clone this repository and run `make release`.
 
-Then to setup a 3 nodes blockchain, spawn 3 tabs in your terminal (node1, node2 and node3) and run:
+To setup a 3 nodes blockchain, spawn 3 tabs in your terminal (node1, node2 and node3) and run:
 
 - node1: `build/prod/rel/coincoin/bin/coincoin.run console` (defaults: `PORT=4000 P2P_PORT=5000`)
 - node2: `PORT=4001 P2P_PORT=5001 build/prod/rel/coincoin/bin/coincoin.run console`

@@ -1,10 +1,10 @@
 require Logger
 
-defmodule Blockchain.MiningPool do
+defmodule Blockchain.Mempool do
   @moduledoc "GenServer responsible for block mining"
   use GenServer
 
-  alias Blockchain.{Chain, Block, P2P.Command, Data}
+  alias Blockchain.{Chain, Block, P2P.Command, BlockData}
 
   def start_link do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
@@ -47,10 +47,10 @@ defmodule Blockchain.MiningPool do
   end
 
   defp verify_data(data, pool) do
-    if Enum.find(pool, &(Data.hash(&1) == Data.hash(data))) != nil do
+    if Enum.find(pool, &(BlockData.hash(&1) == BlockData.hash(data))) != nil do
       {:error, :already_in_pool}
     else
-      Data.verify(data, Chain.all_blocks())
+      BlockData.verify(data, Chain.all_blocks())
     end
   end
 
@@ -60,7 +60,7 @@ defmodule Blockchain.MiningPool do
   end
 
   defp remove_from_pool(%Block{data: data}, pool) do
-    Enum.reject(pool, &(Data.hash(&1) == Data.hash(data)))
+    Enum.reject(pool, &(BlockData.hash(&1) == BlockData.hash(data)))
   end
 
   defp mine_next_block([]), do: {[], {}}
