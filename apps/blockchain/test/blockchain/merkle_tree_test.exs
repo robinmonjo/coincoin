@@ -17,7 +17,7 @@ defmodule Blockchain.MerkleTreeTest do
     {:ok, leaves: ["a", "b", "c", "d", "e", "f", "g", "h", "i"]}
   end
 
-  test "build a tree and access its route", %{leaves: leaves} do
+  test "build a tree and access its root", %{leaves: leaves} do
     # this works because BitString implements Blockchain.BlockData
     tree = MerkleTree.build(leaves)
     assert length(tree) == 20
