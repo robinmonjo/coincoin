@@ -1,5 +1,5 @@
 defmodule Blockchain.MerkleTree do
-  @moduledoc "Module to worrk with merkle trees"
+  @moduledoc "Module to work with merkle trees (not used yet)"
 
   alias Blockchain.{Crypto, BlockData}
 
