@@ -12,13 +12,15 @@ It's goal is to be **as simple as possible** but complete enough to technically 
 
 Blockchains are P2P softwares. To start using `coincoin`, we need to setup multiple nodes and connect them together.
 
-You need [Elixir](https://elixir-lang.org/install.html) installed. Clone this repository and run `make release`.
+You need [Elixir](https://elixir-lang.org/install.html) installed. Clone this repository and go to the root of the project.
+
+Then pull the dependencies using `mix deps.get`
 
 To setup a 3 nodes blockchain, spawn 3 tabs in your terminal (node1, node2 and node3) and run:
 
-- node1: `build/prod/rel/coincoin/bin/coincoin.run console` (defaults: `PORT=4000 P2P_PORT=5000`)
-- node2: `PORT=4001 P2P_PORT=5001 build/prod/rel/coincoin/bin/coincoin.run console`
-- node3: `PORT=4002 P2P_PORT=5002 build/prod/rel/coincoin/bin/coincoin.run console`
+- node1: `iex -S mix phx.server` (defaults: `PORT=4000 P2P_PORT=5000`)
+- node2: `PORT=4001 P2P_PORT=5001 iex -S mix phx.server`
+- node3: `PORT=4002 P2P_PORT=5002 iex -S mix phx.server`
 
 Then connect the nodes to create a P2P network:
 
@@ -41,6 +43,11 @@ docker run -it robinmonjo/coincoin
 ```
 
 If you use Docker, in the `Blockchain.connect/1` call make sure to pass your container IP address and that this address is reachable.
+
+**Notes:**
+
+- if you don't wan to interact with the REST API, you can skip setting the `PORT` env var and use `iex -S mix` instead of `iex -S mix phx.server`
+- `Blockchain.connect(5000)` is equivalent to `Blockchain.connect("localhost:5000")`
 
 ## Usage
 
