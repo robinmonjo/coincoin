@@ -59,4 +59,4 @@ config :blockchain_web, Blockchain.Web.Endpoint,
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
-import_config "prod.secret.exs"
+# import_config "prod.secret.exs" app is only intended to be deployed and accessed from loclahost so commenting this out
