@@ -32,4 +32,25 @@ defmodule Blockchain.ProofOfWork do
       _ -> proof_of_work(block, nounce + 1)
     end
   end
+
+  # ---------------------------------------
+
+  def compute2(%Block{} = b, target) do
+    {hash, nounce} = proof_of_work2(b, target)
+    %{b | hash: hash, nounce: nounce}
+  end
+
+  defp proof_of_work2(%Block{} = block, target, nounce \\ 0) do
+    b = %{block | nounce: nounce}
+    hash = Block.compute_hash(b)
+    case verify2(hash, target) do
+      true -> {hash, nounce}
+      _ -> proof_of_work2(block, target, nounce + 1)
+    end
+  end
+
+  def verify2(hash, target) do
+    {n, _} = Integer.parse(hash, 16)
+    n < target
+  end
 end
