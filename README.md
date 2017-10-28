@@ -46,7 +46,7 @@ If you use Docker, in the `Blockchain.connect/1` call make sure to pass your con
 
 **Notes:**
 
-- if you don't wan to interact with the REST API, you can skip setting the `PORT` env var and use `iex -S mix` instead of `iex -S mix phx.server`
+- if you don't want to interact with the REST API, you can skip the `PORT` env var and use `iex -S mix` instead of `iex -S mix phx.server`
 - `Blockchain.connect(5000)` is equivalent to `Blockchain.connect("localhost:5000")`
 - for releases use `make release`
 
