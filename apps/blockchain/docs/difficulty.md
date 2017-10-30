@@ -77,11 +77,35 @@ Blockchain.Difficulty.benchmark # this may take some times
 +-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
 ```
 
-Run this again, but pass a hash rate to the `Blockchain.Difficulty.benchmark/1` function. You will see time estimations based on the given hash rate:
+In this table you see:
+- `:target` the target (expressed in power of 2)
+- `:probab` the probability of finding a hash that is below the target (a valid proof-of-work)
+- `:estimated_trials` the estimated number of trials according to the probability
+- `:nounce` the nounce that satifies the proof-of-work
+- `:estimated_time` the estimated time in seconds to come up with a nounce that satisfies the proof-of-work (only available when a hash rate is provided)
+- `:time` the actual time spent in seconds
+- `:hasrate` the number of hash computed per seconds (in kilo hash)
+
+The table shows that my hash rate is around 130 000 k hash/s. I can run the same function again but this time passing this hash rate:
 
 ```elixir
-
+Blockchain.Difficulty.benchmark(130_000) # using 130_000 k hash/s
++-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
+| :target         | :probab                | :estimated_trials     | :nounce       | :estimated_time         | :time         | :hashrate             |
++-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
+| "2^252.0"       | 0.0625                 | 16.0                  | 41            | 1.2307692307692307e-4   | 0.001         | "n/a"                 |
++-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
+| "2^248.0"       | 0.00390625             | 256.0                 | 326           | 0.001969230769230769    | 0.004         | "n/a"                 |
++-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
+| "2^240.0"       | 1.52587890625e-5       | 65536.0               | 97779         | 0.5041230769230769      | 0.737         | "n/a"                 |
++-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
+| "2^236.0"       | 9.5367431640625e-7     | 1048576.0             | 1539392       | 8.06596923076923        | 11.319        | 136000.70677621698    |
++-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
+| "2^235.0"       | 4.76837158203125e-7    | 2097152.0             | 1539392       | 16.13193846153846       | 11.375        | 135331.16483516485    |
++-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
 ```
+
+I now have an estimation of the time that is required (according to probabilities) to complete a proof-of-work.
 
 ### Finding a target for a given time
 
@@ -96,8 +120,14 @@ With a hash rate of `135 000`, the above target should make the proof-of-work la
 
 ```
 Blockchain.Difficulty.test_target("00000C6D750EBFA67C0000000000000000000000000000000000000000000000")
-
++-------------------------+------------------------+----------------------+---------------+--------------------+--------------+----------------------+
+| :target                 | :probab                | :estimated_trials    | :nounce       | :estimated_time    | :time        | :hashrate            |
++-------------------------+------------------------+----------------------+---------------+--------------------+--------------+----------------------+
+| "2^235.63547202339973"  | 7.407407407407408e-7   | 1349999.9999999998   | 1460163       | "n/a"              | 10.887       | 134119.8677321576    |
++-------------------------+------------------------+----------------------+---------------+--------------------+--------------+----------------------+
 ```
+
+Run this multiple times and you should see that the time spent approaches 10 seconds.
 
 ## What's next
 
