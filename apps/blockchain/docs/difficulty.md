@@ -1,6 +1,6 @@
 # Coincoin difficulty
 
-Difficulty is a concept that relates to proof-of-work. It basically set the time that is required to perform a proof-of-work, and hence, set the **pace at wich blocks are added to the blockchain**.
+Difficulty is a concept that relates to proof-of-work. It basically set the time that is required to perform a proof-of-work, and hence, set the **pace at which blocks are added to the blockchain**.
 
 ## Proof-of-work
 
@@ -16,7 +16,7 @@ In order to simplify, imagine a `sha8` algorithm that hash data into 8 bits (and
 
 `0111 1111` : we have `1/2` chance that `sha8` outputs a 0 on the first bit (it's either 0 or 1)
 
-If we say at least 2 leading 0s:
+For at least 2 leading 0s:
 
 `0011 1111` : we have `1/2 x 1/2 = 1/4` chance that the first and second bits will be 0
 
@@ -28,7 +28,7 @@ If we go on:
 
 `0000 0000` : `1/2^8 = 0.00390625`
 
-Same thing using **base 16** (hexadelcimal numbers go from 0 to F which is 16 numbers):
+Same thing using **base 16** (hexadelcimal numbers go from 0 to F):
 
 `0111 1111` = `7F` : we have `8/16 = 1/2` chance that `sha8` outputs a number lower than or equal 7
 
@@ -38,7 +38,7 @@ Same thing using **base 16** (hexadelcimal numbers go from 0 to F which is 16 nu
 
 `0000 0000` = `00` : we have `1/16 x 1/16 = 0.00390625` that both numbers are 0
 
-And of course, same thing in **base 10** (8 bits can store decimal from 0 to 255, which is 256 possible numbers):
+And of course, same thing in **base 10** (8 bits can store decimal numbers from 0 to 255):
 
 `7F` = `127` : we have `128/256 = 1/2` chance that `sha8` outputs a number lower than or equal 127
 
@@ -84,12 +84,12 @@ In this table you see:
 - `:nounce` the nounce that satifies the proof-of-work
 - `:estimated_time` the estimated time in seconds to come up with a nounce that satisfies the proof-of-work (only available when a hash rate is provided)
 - `:time` the actual time spent in seconds
-- `:hasrate` the number of hash computed per seconds (in kilo hash)
+- `:hasrate` the number of hash computed per seconds
 
-The table shows that my hash rate is around 130 000 k hash/s. I can run the same function again but this time passing this hash rate:
+The table shows that my hash rate is around 130 000 hashes/s. I can run the same function again but this time passing this hash rate:
 
 ```elixir
-Blockchain.Difficulty.benchmark(130_000) # using 130_000 k hash/s
+Blockchain.Difficulty.benchmark(130_000) # using 130_000 hashes/s
 +-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
 | :target         | :probab                | :estimated_trials     | :nounce       | :estimated_time         | :time         | :hashrate             |
 +-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
