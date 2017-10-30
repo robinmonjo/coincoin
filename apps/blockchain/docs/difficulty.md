@@ -86,7 +86,7 @@ In this table you see:
 - `:time` the actual time spent in seconds
 - `:hasrate` the number of hash computed per second
 
-The table shows that my hash rate is around 130 000 hashes/s. I can run the same function again but this time passing this hash rate:
+The table shows that my hash rate is around `130 000` hashes/s. I can run the same function again but this time passing this hash rate:
 
 ```elixir
 Blockchain.Difficulty.benchmark(130_000) # using 130_000 hashes/s
@@ -109,22 +109,22 @@ I now have an estimation of the time that is required (according to probabilitie
 
 ### Finding a target for a given time
 
-With your hash rate in mind, you can pick your target. Let's say I want my blocks to be generated every **10 seconds** in average and that my hash rate is estimated to `135 000`:
+With your hash rate in mind, you can pick your target. Let's say I want my blocks to be generated every **10 seconds** in average and that my hash rate is estimated to `130 000`:
 
-```
-Blockchain.Difficulty.target_for_time(10, 135_000)
-00000C6D750EBFA67C0000000000000000000000000000000000000000000000
+```elixir
+Blockchain.Difficulty.target_for_time(10, 130_000)
+"00000CE7D22CDAB6BB8000000000000000000000000000000000000000000000"
 ```
 
 With a hash rate of `135 000`, the above target should make the proof-of-work last 10 seconds on average. We can test it:
 
 ```
-Blockchain.Difficulty.test_target("00000C6D750EBFA67C0000000000000000000000000000000000000000000000")
-+-------------------------+------------------------+----------------------+---------------+--------------------+--------------+----------------------+
-| :target                 | :probab                | :estimated_trials    | :nounce       | :estimated_time    | :time        | :hashrate            |
-+-------------------------+------------------------+----------------------+---------------+--------------------+--------------+----------------------+
-| "2^235.63547202339973"  | 7.407407407407408e-7   | 1349999.9999999998   | 1460163       | "n/a"              | 10.887       | 134119.8677321576    |
-+-------------------------+------------------------+----------------------+---------------+--------------------+--------------+----------------------+
+Blockchain.Difficulty.test_target("00000CE7D22CDAB6BB8000000000000000000000000000000000000000000000", 130_000)
++-------------------------+------------------------+----------------------+---------------+--------------------+-------------+-----------------------+
+| :target                 | :probab                | :estimated_trials    | :nounce       | :estimated_time    | :time       | :hashrate             |
++-------------------------+------------------------+----------------------+---------------+--------------------+-------------+-----------------------+
+| "2^235.6899198074221"   | 7.692307692307693e-7   | 1.3e6                | 1262283       | 10.0               | 9.682       | 130374.19954554843    |
++-------------------------+------------------------+----------------------+---------------+--------------------+-------------+-----------------------+
 ```
 
 Run this multiple times and you should see that the time spent approaches 10 seconds.
