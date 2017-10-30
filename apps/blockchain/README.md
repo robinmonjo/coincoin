@@ -35,7 +35,7 @@ Data will be broadcasted on the network so nodes can start to mine it (i.e: comp
 
 ## Configuring difficulty
 
-Follow [this doc](docs/difficulty.md) explains what is the difficulty and how to determine an appropriate **target** for your setup. You can then set this target into the `:blockchain > Blockchain.ProofOfWork > target` config in `config.exs`.
+**[This doc](docs/difficulty.md)** explains what is the difficulty and how to determine an appropriate **target** for your setup. You can then set this target into the `:blockchain > Blockchain.ProofOfWork > target` config in `config.exs`.
 
 ## API
 
