@@ -118,7 +118,7 @@ Blockchain.Difficulty.target_for_time(10, 130_000)
 
 With a hash rate of `130 000`, the above target should make the proof-of-work last 10 seconds on average. We can test it:
 
-```
+```elixir
 Blockchain.Difficulty.test_target("00000CE7D22CDAB6BB8000000000000000000000000000000000000000000000", 130_000)
 +-------------------------+------------------------+----------------------+---------------+--------------------+-------------+-----------------------+
 | :target                 | :probab                | :estimated_trials    | :nounce       | :estimated_time    | :time       | :hashrate             |
