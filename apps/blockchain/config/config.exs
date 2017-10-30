@@ -36,7 +36,7 @@ config :blockchain,
   proof_of_work: Blockchain.ProofOfWork
 
 config :blockchain, Blockchain.ProofOfWork,
-  # around 3 seconds for a 132_904 khashrate/s
+  # around 3 seconds for a 132_904 hash/s
   target: "00000C6D750EBFA67C0000000000000000000000000000000000000000000000"
 
 import_config "#{Mix.env}.exs"

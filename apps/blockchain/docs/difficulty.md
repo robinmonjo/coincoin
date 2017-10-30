@@ -109,14 +109,14 @@ I now have an estimation of the time that is required (according to probabilitie
 
 ### Finding a target for a given time
 
-With your hash rate in mind, you can pick your target. Let's say I want my blocks to be generated every **10 seconds** in average and that my hash rate is estimated to `130 000`:
+With your hash rate in mind, you can pick your target. Let's say I want my blocks to be generated every **10 seconds** in average and that my hash rate is around `130 000`:
 
 ```elixir
 Blockchain.Difficulty.target_for_time(10, 130_000)
 "00000CE7D22CDAB6BB8000000000000000000000000000000000000000000000"
 ```
 
-With a hash rate of `135 000`, the above target should make the proof-of-work last 10 seconds on average. We can test it:
+With a hash rate of `130 000`, the above target should make the proof-of-work last 10 seconds on average. We can test it:
 
 ```
 Blockchain.Difficulty.test_target("00000CE7D22CDAB6BB8000000000000000000000000000000000000000000000", 130_000)
@@ -127,10 +127,8 @@ Blockchain.Difficulty.test_target("00000CE7D22CDAB6BB800000000000000000000000000
 +-------------------------+------------------------+----------------------+---------------+--------------------+-------------+-----------------------+
 ```
 
-Run this multiple times and you should see that the time spent approaches 10 seconds.
+Run this multiple times and you should see that the time approaches 10 seconds.
 
 ## What's next
 
 Hash rate can change depending on the hardware or the proof-of-work implementation (Elixir will give you a bad hash rate compared to C for example). That is why Bitcoin protocol adjusts the difficulty target every 2016 blocks. This is not yet available in `coincoin` but will be soon.
-
-
