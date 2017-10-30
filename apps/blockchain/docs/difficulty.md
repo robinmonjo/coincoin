@@ -129,6 +129,6 @@ Blockchain.Difficulty.test_target("00000CE7D22CDAB6BB800000000000000000000000000
 
 Run this multiple times and you should see that the time approaches 10 seconds.
 
-## What's next
+## What's next ?
 
 Hash rate can change depending on the hardware or the proof-of-work implementation (Elixir will give you a bad hash rate compared to C for example). That is why Bitcoin protocol adjusts the difficulty target every 2016 blocks. This is not yet available in `coincoin` but will be soon.
