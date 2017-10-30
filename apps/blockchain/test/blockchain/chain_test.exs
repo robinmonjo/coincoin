@@ -36,7 +36,7 @@ defmodule Blockchain.ChainTest do
 
     invalid_hash = "F#{String.slice(valid_block.hash, 1..-1)}"
     invalid_block = %{valid_block | hash: invalid_hash}
-    assert {:error, "no proof of work"} = Chain.add_block(invalid_block)
+    assert {:error, "proof of work not verified"} = Chain.add_block(invalid_block)
   end
 
   test "validate a blockchain" do
