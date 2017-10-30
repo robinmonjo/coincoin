@@ -4,11 +4,15 @@ Difficulty is a concept that refers to proof-of-work. It basically set the time 
 
 ## Proof-of-work
 
-The goal is to find a `sha256` hash that is below the defined **target**. There is plenty of explanations online
+In the Bitcoin protocol proof-of-work is simple to understand: https://en.bitcoin.it/wiki/Proof_of_work#Example
+
+`coincoin` proof-of-work works almost the same way: given some data (usually a block header), the goal is to find a `sha256` digest that is **below** a given **target**. The `sha256` is modified by a **nounce** everytime until a valid `sha256` digest is found.
 
 ## What are the chances ?
 
-For easier reasonning, imagine a `sha8` algorithm that digests data into 8 bits (and not 256 as `sha256`). If we set our target to :
+When talking about proof-of-work in the blockchain area, we always talk about the *number of leading zeros in the block hash*. This is confusing and not totally right.
+
+For easier reasonning, imagine a `sha8` algorithm that digests data into 8 bits (and not 256 as `sha256`). If we set our target to:
 
 `0111 1111` : we have `1/2` chance that `sha8` outputs a 0 on the first bit (it's either 0 or 1)
 
@@ -44,23 +48,32 @@ And of course, same thing in **base 10** (8 bits can store decimal from 0 to 255
 
 `00` = `0` : we have `1/256 = 0.00390625` chance that it outputs 0
 
+**Conclusion**
+
+Leadings zeros do affect the time required to compute a proof-of-work because they reduce the **target**. Adding a leading zero divide the target by two. However, a target is **just a number** stored on 256 bits.
+
 ## Finding a target
 
 ### Hash Rate
 
 The hash rate is the number of hash a piece of hardware can compute per seconds. Knowing this and the fact that we can calculate the probability of finding a hash that's below a given target, we can estimate the time of a proof-of-work.
 
-Coincoin provides you with a tool for that:
+`coincoin` provides you with a tool for that:
+
+```elixir
+Blockchain.Difficulty.benchmark
 
 ```
 
+Run this again, but pass a hash rate to the `Blockchain.Difficulty.benchmark/1` function. You will see time estimations based on the given hash rate:
+
+```elixir
+
 ```
 
-Run this command again, but pass a hash rate to the `Blockchain.Difficulty.benchmark/1` function. You will see time estimations based on the given hash rate
+### Finding a target for a given time
 
-### Finding a good target
-
-With your hash rate in mind, you can pick your target. Let's say I want my blocks to be generated every 10 seconds in average and that my hash rate is `135 000` :
+With your hash rate in mind, you can pick your target. Let's say I want my blocks to be generated every **10 seconds** in average and that my hash rate is estimated to `135 000`:
 
 ```
 Blockchain.Difficulty.target_for_time(10, 135_000)
@@ -74,10 +87,8 @@ Blockchain.Difficulty.test_target("00000C6D750EBFA67C000000000000000000000000000
 
 ```
 
+## What's next
 
-Everything is about time
-
-- enter hashrate
-- how to use coincoin to find the right difficulty
+Hash rate can change depending on the hardware or the proof-of-work implementation (Elixir will give you a bad hash rate compared to C for example). That is why Bitcoin protocol adjusts the difficulty target every 2016 blocks. This is not yet available in `coincoin` but will be soon.
 
 
