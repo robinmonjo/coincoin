@@ -76,7 +76,7 @@ defmodule Blockchain.Difficulty do
 
   # helpers
 
-  defp target_with_leading_zeros(d), do: pow2(@bit_length - d)
+  defp target_with_leading_zeros(n), do: pow2(@bit_length - n)
 
   defp max_target, do: pow2(@bit_length)
 
