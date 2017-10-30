@@ -10,47 +10,32 @@ defmodule Blockchain.ProofOfWork do
   # and returns a new block with the `nounce` field set
   # so its hash satisfies the PoW. Can take a while according
   # to the difficulty set in `pow_difficulty` config
-  def compute(%Block{} = b) do
-    {hash, nounce} = proof_of_work(b)
+  def compute(%Block{} = b, target \\ target()) do
+    {hash, nounce} = proof_of_work(b, target)
     %{b | hash: hash, nounce: nounce}
   end
 
   # verify that a givens hash satisfy the blockchain
   # proof-of-work
-  def verify(hash) do
-    prefix = Enum.reduce 1..difficulty(), "", fn(_, acc) -> "0#{acc}" end
-    String.starts_with?(hash, prefix)
-  end
-
-  defp difficulty, do: Application.get_env(:blockchain, __MODULE__)[:pow_difficulty]
-
-  defp proof_of_work(%Block{} = block, nounce \\ 0) do
-    b = %{block | nounce: nounce}
-    hash = Block.compute_hash(b)
-    case verify(hash) do
-      true -> {hash, nounce}
-      _ -> proof_of_work(block, nounce + 1)
-    end
-  end
-
-  # ---------------------------------------
-
-  def compute2(%Block{} = b, target) do
-    {hash, nounce} = proof_of_work2(b, target)
-    %{b | hash: hash, nounce: nounce}
-  end
-
-  defp proof_of_work2(%Block{} = block, target, nounce \\ 0) do
-    b = %{block | nounce: nounce}
-    hash = Block.compute_hash(b)
-    case verify2(hash, target) do
-      true -> {hash, nounce}
-      _ -> proof_of_work2(block, target, nounce + 1)
-    end
-  end
-
-  def verify2(hash, target) do
+  def verify(hash), do: verify(hash, target())
+  def verify(hash, target) do
     {n, _} = Integer.parse(hash, 16)
     n < target
+  end
+
+
+  defp target do
+    hex_target = Application.get_env(:blockchain, __MODULE__)[:target]
+    {target, _} = Integer.parse(hex_target, 16)
+    target
+  end
+
+  defp proof_of_work(%Block{} = block, target, nounce \\ 0) do
+    b = %{block | nounce: nounce}
+    hash = Block.compute_hash(b)
+    case verify(hash, target) do
+      true -> {hash, nounce}
+      _ -> proof_of_work(block, target, nounce + 1)
+    end
   end
 end

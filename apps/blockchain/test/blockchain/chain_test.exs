@@ -30,10 +30,12 @@ defmodule Blockchain.ChainTest do
     invalid_block = %{valid_block | previous_hash: "not the good previous hash"}
     assert {:error, "invalid previous hash"} = Chain.add_block(invalid_block)
 
-    invalid_block = %{valid_block | hash: "#{valid_block.hash}1"}
+    invalid_block = %{valid_block | hash: "0#{valid_block.hash}"}
     assert {:error, "invalid block hash"} = Chain.add_block(invalid_block)
 
-    invalid_block = %{valid_block | hash: "n#{valid_block.hash}"}
+
+    invalid_hash = "F#{String.slice(valid_block.hash, 1..-1)}"
+    invalid_block = %{valid_block | hash: invalid_hash}
     assert {:error, "no proof of work"} = Chain.add_block(invalid_block)
   end
 

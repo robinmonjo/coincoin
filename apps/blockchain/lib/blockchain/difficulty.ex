@@ -69,7 +69,7 @@ defmodule Blockchain.Difficulty do
   # compute PoW on the given block and return {block, seconds_spent}
   defp benchmarked_proof_of_work(block, target) do
     start = System.system_time(:millisecond)
-    b = ProofOfWork.compute2(block, target)
+    b = ProofOfWork.compute(block, target)
     finish = System.system_time(:millisecond)
     {b, (finish - start) / 1000}
   end
@@ -82,13 +82,13 @@ defmodule Blockchain.Difficulty do
 
   defp pow2(n), do: round(:math.pow(2, n))
 
-  defp base16_to_integer(hex_str) do
+  def base16_to_integer(hex_str) do
     {n, _} = Integer.parse(hex_str, 16)
     n
   end
 
   defp format_base16(n) do
-    hex_length = div(@bit_length / 4)
+    hex_length = div(@bit_length, 4)
     to_string(:io_lib.format("~#{hex_length}.16.0B", [n]))
   end
 end
