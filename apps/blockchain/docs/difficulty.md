@@ -1,18 +1,18 @@
 # Coincoin difficulty
 
-Difficulty is a concept that refers to proof-of-work. It basically set the time that is required to perform a proof-of-work, and hence, set the **pace at wich blocks are added to the blockchain**.
+Difficulty is a concept that relates to proof-of-work. It basically set the time that is required to perform a proof-of-work, and hence, set the **pace at wich blocks are added to the blockchain**.
 
 ## Proof-of-work
 
 In the Bitcoin protocol proof-of-work is simple to understand: https://en.bitcoin.it/wiki/Proof_of_work#Example
 
-`coincoin` proof-of-work works almost the same way: given some data (usually a block header), the goal is to find a `sha256` digest that is **below** a given **target**. The `sha256` is modified by a **nounce** everytime until a valid `sha256` digest is found.
+`coincoin` proof-of-work works almost the same way: given some data (usually a block header), the goal is to find a `sha256` hash that is **below** a given **target**. The `sha256` is modified by a **nounce** everytime until a valid `sha256` hash is found.
 
 ## What are the chances ?
 
 When talking about proof-of-work in the blockchain area, we always talk about the *number of leading zeros in the block hash*. This is confusing and not totally right.
 
-For easier reasonning, imagine a `sha8` algorithm that digests data into 8 bits (and not 256 as `sha256`). If we set our target to:
+In order to simplify, imagine a `sha8` algorithm that hash data into 8 bits (and not 256 as `sha256`). If we set our target to:
 
 `0111 1111` : we have `1/2` chance that `sha8` outputs a 0 on the first bit (it's either 0 or 1)
 
@@ -28,11 +28,11 @@ If we go on:
 
 `0000 0000` : `1/2^8 = 0.00390625`
 
-Same thing using **base 16** (hex numbers go from 0 to F which is 16 hex number):
+Same thing using **base 16** (hexadelcimal numbers go from 0 to F which is 16 numbers):
 
-`0111 1111` = `7F` : we have `8/16 = 1/2` chance that `sha8` outputs an hex number lower than or equal 7
+`0111 1111` = `7F` : we have `8/16 = 1/2` chance that `sha8` outputs a number lower than or equal 7
 
-`0011 1111` = `3F` : we have `4/16 = 1/4` chance that `sha8` outputs an hex number lower than or equal 3
+`0011 1111` = `3F` : we have `4/16 = 1/4` chance that `sha8` outputs a number lower than or equal 3
 
 ...
 
@@ -56,13 +56,25 @@ Leadings zeros do affect the time required to compute a proof-of-work because th
 
 ### Hash Rate
 
-The hash rate is the number of hash a piece of hardware can compute per seconds. Knowing this and the fact that we can calculate the probability of finding a hash that's below a given target, we can estimate the time of a proof-of-work.
+The hash rate is the number of hashes a piece of hardware can compute per seconds. Knowing this and the fact that we can calculate the probability of finding a hash that's below a given target, we can estimate the time of a proof-of-work.
 
 `coincoin` provides you with a tool for that:
 
 ```elixir
-Blockchain.Difficulty.benchmark
-
+Blockchain.Difficulty.benchmark # this may take some times
++-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
+| :target         | :probab                 | :estimated_trials     | :nounce        | :estimated_time      | :time         | :hashrate              |
++-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
+| "2^252.0"       | 0.0625                  | 16.0                  | 13             | "n/a"                | 0.0           | "n/a"                  |
++-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
+| "2^248.0"       | 0.00390625              | 256.0                 | 33             | "n/a"                | 0.001         | "n/a"                  |
++-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
+| "2^240.0"       | 1.52587890625e-5        | 65536.0               | 238476         | "n/a"                | 1.829         | 130386.00328048113     |
++-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
+| "2^236.0"       | 9.5367431640625e-7      | 1048576.0             | 2289880        | "n/a"                | 17.604        | 130077.25516927971     |
++-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
+| "2^235.0"       | 4.76837158203125e-7     | 2097152.0             | 2289880        | "n/a"                | 17.707        | 129320.60766928333     |
++-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
 ```
 
 Run this again, but pass a hash rate to the `Blockchain.Difficulty.benchmark/1` function. You will see time estimations based on the given hash rate:
