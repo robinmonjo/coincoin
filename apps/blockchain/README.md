@@ -31,7 +31,11 @@ You can then add data to the blockchain (from any nodes):
 Blockchain.add("some data")
 ```
 
-Data will be broadcasted on the network so nodes can start to mine it (i.e: compute the proof-of-work). Once a node comes up with the proof-of-work, it adds the block in the blockchain and forwards it to other peers. Proof-of-work difficulty can be modified in `config.exs`
+Data will be broadcasted on the network so nodes can start to mine it (i.e: compute the proof-of-work). Once a node comes up with the proof-of-work, it adds the block in the blockchain and forwards it to other peers.
+
+## Configuring difficulty
+
+Follow [this doc](docs/difficulty.md) explains what is the difficulty and how to determine an appropriate **target** for your setup. You can then set this target into the `:blockchain > Blockchain.ProofOfWork > target` config in `config.exs`.
 
 ## API
 
