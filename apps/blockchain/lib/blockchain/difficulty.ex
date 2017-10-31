@@ -1,7 +1,7 @@
 defmodule Blockchain.Difficulty do
   @moduledoc """
   Module to work with Proof-of-work difficulty. It provides functions to
-  help configure difficulty in a coincoin blockchain
+  help configure difficulty in a coincoin blockchain. See docs/difficulty.md
   """
 
   alias Blockchain.{Block, ProofOfWork}
@@ -12,14 +12,15 @@ defmodule Blockchain.Difficulty do
   def benchmark(hashrate \\ nil) do
     block = Block.generate_next_block("data")
     [4, 8, 16, 20, 21]
-    |> benchmark(block, [], hashrate)
+    |> perform_benchmark(block, [], hashrate)
     |> print_data()
   end
-  def benchmark([], _, acc, _), do: acc
-  def benchmark([zeros | rest], block, acc, hashrate) do
+
+  defp perform_benchmark([], _, acc, _), do: acc
+  defp perform_benchmark([zeros | rest], block, acc, hashrate) do
     target = target_with_leading_zeros(zeros)
     data = compute_data(target, block, hashrate)
-    benchmark(rest, block, acc ++ [data], hashrate)
+    perform_benchmark(rest, block, acc ++ [data], hashrate)
   end
 
   def test_target(target, hashrate \\ nil) do
