@@ -27,7 +27,7 @@ defmodule Blockchain.Difficulty do
     target
     |> base16_to_integer()
     |> compute_data(block, hashrate)
-    |> print_data
+    |> print_data()
   end
 
   defp compute_data(target, block, hashrate) do
@@ -38,12 +38,18 @@ defmodule Blockchain.Difficulty do
       target: target,
       probab: probab,
       estimated_trials: estimated_trials,
-      estimated_time: if(hashrate, do: estimated_trials / hashrate, else: @not_applicable),
+      estimated_time: calculate_estimated_time(estimated_trials, hashrate),
       time: time,
       nounce: nounce,
-      hashrate: if(time >= 1, do: nounce / time, else: @not_applicable)
+      hashrate: calculate_hashrate(time, nounce)
     }
   end
+
+  defp calculate_estimated_time(_, nil), do: @not_applicable
+  defp calculate_estimated_time(estimated_trials, hashrate), do: estimated_trials / hashrate
+
+  defp calculate_hashrate(time, nounce) when time >= 1, do: nounce/time
+  defp calculate_hashrate(_, _), do: @not_applicable
 
   defp print_data(data) do
     headers = [
