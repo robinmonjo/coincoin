@@ -23,7 +23,6 @@ defmodule Blockchain.ProofOfWork do
     n < target
   end
 
-
   defp target do
     hex_target = Application.get_env(:blockchain, __MODULE__)[:target]
     {target, _} = Integer.parse(hex_target, 16)

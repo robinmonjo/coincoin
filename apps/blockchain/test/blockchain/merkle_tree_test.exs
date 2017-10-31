@@ -24,5 +24,3 @@ defmodule Blockchain.MerkleTreeTest do
     assert MerkleTree.root(leaves) == "29D9F10AEFD064E2232A9B585D175366D72163E998D8E97F1AA7E6885664687C"
   end
 end
-
-
