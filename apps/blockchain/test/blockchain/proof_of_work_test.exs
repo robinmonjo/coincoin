@@ -13,7 +13,10 @@ defmodule Blockchain.ProofOfWorkTest do
   end
 
   test "verify" do
-    assert ProofOfWork.verify("0000DA3553676AC53CC20564D8E956D03A08F7747823439FDE74ABF8E7EADF60")
-    refute ProofOfWork.verify("1000DA3553676AC53CC20564D8E956D03A08F7747823439FDE74ABF8E7EADF60")
+    hash = "0000DA3553676AC53CC20564D8E956D03A08F7747823439FDE74ABF8E7EADF60"
+    {n, _} = Integer.parse(hash, 16)
+    assert ProofOfWork.verify(hash, n + 1)
+    refute ProofOfWork.verify(hash, n)
+    refute ProofOfWork.verify(hash, n - 1)
   end
 end

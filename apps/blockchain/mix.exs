@@ -38,7 +38,8 @@ defmodule Blockchain.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:scribe, "~> 0.4.0"}
     ]
   end
 end

@@ -71,6 +71,8 @@ defmodule Blockchain.P2P.Server do
         :gen_tcp.send(socket, "unknown type")
       {:error, :invalid} ->
         :gen_tcp.send(socket, "invalid json")
+      {:error, reason} ->
+        Logger.info fn -> reason end
     end
   end
 end

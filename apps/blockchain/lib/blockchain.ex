@@ -3,7 +3,7 @@ defmodule Blockchain do
   Documentation for Blockchain.
   """
 
-  alias Blockchain.{Chain, P2P.Client, P2P.Command, P2P.Peers, Data}
+  alias Blockchain.{Chain, P2P.Client, P2P.Command, P2P.Peers}
 
   # add a block to the blockchain
   def add(data), do: Command.broadcast_mining_request(data)
