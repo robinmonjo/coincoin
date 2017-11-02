@@ -84,9 +84,9 @@ In this table you see:
 - `:nounce` the nounce that satifies the proof-of-work
 - `:estimated_time` the estimated time in seconds to come up with a nounce that satisfies the proof-of-work (only available when a hash rate is provided)
 - `:time` the actual time spent in seconds
-- `:hasrate` the number of hash computed per second
+- `:hasrate` the number of hashes computed per second
 
-The table shows that my hash rate is around `130 000` hashes/s. I can run the same function again but this time passing this hash rate:
+The table shows that my hash rate is around `130 000` hashes/s. I can run the same function with this hash rate as argument:
 
 ```elixir
 Blockchain.Difficulty.benchmark(130_000) # using 130_000 hashes/s
