@@ -6,7 +6,7 @@
 
 `coincoin` is a cryptocurrency proof-of-concept implemented in Elixir. It's an umbrella project that focuses on the 2 main components of (most of) the existing cryptocurrencies: the **blockchain** and **digital transactions**.
 
-It's goal is to be **as simple as possible** but complete enough to technically understand what's going on behind Bitcoin or Ethereum for example. It's also a way do dive more into Elixir and OTP.
+It's goal is to be **as simple as possible** but complete enough to technically understand what's going on behind Bitcoin or Ethereum for example.
 
 ## Setup
 
