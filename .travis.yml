@@ -1,6 +1,6 @@
 language: elixir
 elixir:
-  - 1.6.0
+  - 1.6-dev
 otp_release:
   - 20.1
 sudo: false
