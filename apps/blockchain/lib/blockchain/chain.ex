@@ -81,7 +81,7 @@ defmodule Blockchain.Chain do
 
   defp validate_block_data(%Block{data: data}, chain), do: BlockData.verify(data, chain)
 
-  def validate_chain(blockchain) when length(blockchain) == 0, do: {:error, "empty chain"}
+  def validate_chain([]), do: {:error, "empty chain"}
 
   def validate_chain([genesis_block | _] = blockchain) when length(blockchain) == 1 do
     if genesis_block == Block.genesis_block() do

@@ -24,7 +24,7 @@ defmodule CoincoinUmbrella.Mixfile do
   # and cannot be accessed from applications inside the apps folder
   defp deps do
     [
-      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
+      {:credo, github: "rrrene/credo", branch: "master"},
       {:distillery, "~> 1.5", runtime: false}
     ]
   end
