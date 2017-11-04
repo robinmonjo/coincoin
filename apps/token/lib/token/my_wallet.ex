@@ -20,6 +20,7 @@ defmodule Token.MyWallet do
 
   def handle_call(:address, _from, wallet), do: {:reply, wallet.address, wallet}
   def handle_call(:balance, _from, wallet), do: {:reply, Wallet.balance(wallet), wallet}
+
   def handle_call({:send, amount, recipient}, _from, wallet) do
     {:reply, Wallet.send(amount, recipient, wallet), wallet}
   end

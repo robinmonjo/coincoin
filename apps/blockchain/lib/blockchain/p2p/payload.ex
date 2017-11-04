@@ -46,9 +46,12 @@ defmodule Blockchain.P2P.Payload do
   def encode!(%Payload{} = payload), do: Poison.encode!(payload)
 
   def decode(input) do
-    case Poison.decode(input, as: %Payload{blocks: [%Block{data: %TypedData{}}], data: %TypedData{}}) do
+    pattern = %Payload{blocks: [%Block{data: %TypedData{}}], data: %TypedData{}}
+
+    case Poison.decode(input, as: pattern) do
       {:ok, _} = result ->
         result
+
       {:error, {reason, _, _}} ->
         {:error, reason}
     end
@@ -58,6 +61,7 @@ defmodule Blockchain.P2P.Payload do
     def encode(%{data: data} = struct, options) do
       # embed data into TypedData
       typed_data = typed_data(data)
+
       %{struct | data: typed_data}
       |> Map.from_struct()
       |> Poison.Encoder.Map.encode(options)
@@ -69,6 +73,7 @@ defmodule Blockchain.P2P.Payload do
 
   defimpl Poison.Decoder, for: TypedData do
     def decode(%TypedData{type: nil, data: data}, _options), do: data
+
     def decode(%TypedData{type: type, data: data}, _options) do
       m = for {key, val} <- data, into: %{}, do: {String.to_atom(key), val}
       struct(Module.concat([type]), m)

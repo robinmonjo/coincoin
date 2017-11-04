@@ -1,9 +1,9 @@
 # every data that are incorporated in the blockchain must implement this protocol
 defprotocol Blockchain.BlockData do
-  @spec hash(any) :: String.t
+  @spec hash(any) :: String.t()
   def hash(data)
 
-  @spec verify(any, [Blockchain.Block]) :: :ok | {:error, String.t}
+  @spec verify(any, [Blockchain.Block]) :: :ok | {:error, String.t()}
   def verify(data, chain)
 end
 

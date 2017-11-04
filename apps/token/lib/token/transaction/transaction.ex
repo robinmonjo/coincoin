@@ -7,10 +7,12 @@ defmodule Token.Transaction do
 
   defstruct [
     :hash,
-    :inputs, # a list of list of the form [[previous_tx_hash, output_index]]
+    # a list of list of the form [[previous_tx_hash, output_index]]
+    :inputs,
     :public_key,
     :signature,
-    :outputs # a list of list of the form [[recipient, value]]
+    # a list of list of the form [[recipient, value]]
+    :outputs
   ]
 
   def new_transaction(%Wallet{} = wallet, inputs, outputs) do
@@ -19,10 +21,12 @@ defmodule Token.Transaction do
       public_key: wallet.public_key,
       outputs: outputs
     }
+
     sig =
       tx
       |> signing_string()
       |> Wallet.sign(wallet)
+
     signed_tx = %{tx | signature: sig}
     %{signed_tx | hash: compute_hash(signed_tx)}
   end
@@ -30,15 +34,19 @@ defmodule Token.Transaction do
   def new_coinbase_transaction(outputs) do
     tx = %Transaction{
       outputs: outputs,
-      inputs: [["0", 0]] # coinbase transaction not validated
+      # coinbase transaction not validated
+      inputs: [["0", 0]]
     }
+
     %{tx | hash: compute_hash(tx)}
   end
 
   def signing_string(%Transaction{} = tx) do
-    s = Enum.reduce(tx.inputs ++ tx.outputs, "", fn([str, int], acc) ->
-      acc <> str <> Integer.to_string(int)
-    end)
+    s =
+      Enum.reduce(tx.inputs ++ tx.outputs, "", fn [str, int], acc ->
+        acc <> str <> Integer.to_string(int)
+      end)
+
     "#{s}#{tx.public_key}"
   end
 

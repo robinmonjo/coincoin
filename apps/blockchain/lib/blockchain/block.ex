@@ -8,7 +8,8 @@ defmodule Blockchain.Block do
     :index,
     :previous_hash,
     :timestamp,
-    :data, # must follow the Blockchain.BlockData protocol
+    # must follow the Blockchain.BlockData protocol
+    :data,
     :nounce,
     :hash
   ]
@@ -25,22 +26,23 @@ defmodule Blockchain.Block do
   end
 
   def generate_next_block(data) do
-    generate_next_block(data, Chain.latest_block)
+    generate_next_block(data, Chain.latest_block())
   end
 
   def generate_next_block(data, %Block{} = latest_block) do
-    b = %Block {
+    b = %Block{
       index: latest_block.index + 1,
       previous_hash: latest_block.hash,
       timestamp: System.system_time(:second),
       data: data
     }
+
     hash = compute_hash(b)
     %{b | hash: hash}
   end
 
-  def compute_hash(%Block{index: i, previous_hash: h, timestamp: timestamp, data: data, nounce: nounce}) do
-    "#{i}#{h}#{timestamp}#{BlockData.hash(data)}#{nounce}"
+  def compute_hash(%Block{index: i, previous_hash: h, timestamp: ts, data: data, nounce: n}) do
+    "#{i}#{h}#{ts}#{BlockData.hash(data)}#{n}"
     |> Crypto.hash(:sha256)
     |> Base.encode16()
   end

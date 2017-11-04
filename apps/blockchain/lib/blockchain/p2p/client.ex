@@ -11,6 +11,7 @@ defmodule Blockchain.P2P.Client do
     case URI.parse(url) do
       %URI{host: host, scheme: "tcp", port: port} ->
         connect(to_charlist(host), port)
+
       _ ->
         [host, port] = String.split(url, ":")
         connect(to_charlist(host), String.to_integer(port))
@@ -25,6 +26,7 @@ defmodule Blockchain.P2P.Client do
     query =
       Payload.query_all()
       |> Payload.encode!()
+
     :ok = :gen_tcp.send(socket, query)
   end
 end

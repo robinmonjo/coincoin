@@ -29,9 +29,8 @@ use Mix.Config
 #
 #     import_config "#{Mix.env}.exs"
 
-config :token,
-  # the module to use as the underlying blockchain
-  # should expose add/1 and blocks/0
-  blockchain: Blockchain
+# the module to use as the underlying blockchain
+# should expose add/1 and blocks/0
+config :token, blockchain: Blockchain
 
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"

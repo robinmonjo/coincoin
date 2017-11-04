@@ -11,12 +11,14 @@ defmodule Blockchain.Difficulty do
 
   def benchmark(hashrate \\ nil) do
     block = Block.generate_next_block("data")
+
     [4, 8, 16, 20, 21]
     |> perform_benchmark(block, [], hashrate)
     |> print_data()
   end
 
   defp perform_benchmark([], _, acc, _), do: acc
+
   defp perform_benchmark([zeros | rest], block, acc, hashrate) do
     target = target_with_leading_zeros(zeros)
     data = compute_data(target, block, hashrate)
@@ -25,6 +27,7 @@ defmodule Blockchain.Difficulty do
 
   def test_target(target, hashrate \\ nil) do
     block = Block.generate_next_block("data")
+
     target
     |> base16_to_integer()
     |> compute_data(block, hashrate)
@@ -35,6 +38,7 @@ defmodule Blockchain.Difficulty do
     probab = target / max_target()
     estimated_trials = 1 / probab
     {%Block{nounce: nounce}, time} = benchmarked_proof_of_work(block, target)
+
     %{
       target: target,
       probab: probab,
@@ -49,12 +53,12 @@ defmodule Blockchain.Difficulty do
   defp calculate_estimated_time(_, nil), do: @not_applicable
   defp calculate_estimated_time(estimated_trials, hashrate), do: estimated_trials / hashrate
 
-  defp calculate_hashrate(time, nounce) when time >= 1, do: nounce/time
+  defp calculate_hashrate(time, nounce) when time >= 1, do: nounce / time
   defp calculate_hashrate(_, _), do: @not_applicable
 
   defp print_data(data) do
     headers = [
-      {:target, &("2^#{:math.log2(&1.target)}")},
+      {:target, &"2^#{:math.log2(&1.target)}"},
       :probab,
       :estimated_trials,
       :nounce,
@@ -62,12 +66,14 @@ defmodule Blockchain.Difficulty do
       :time,
       :hashrate
     ]
+
     Scribe.print(data, width: 150, data: headers)
   end
 
   # given a hasrate and a desired time what target should I use ?
   def target_for_time(time, hashrate) do
-    target = ((1 / time) / hashrate) * max_target()
+    target = 1 / time / hashrate * max_target()
+
     target
     |> round()
     |> format_base16()

@@ -26,22 +26,30 @@ defmodule Blockchain.Mempool do
     case verify_data(data, pool) do
       :ok ->
         {:reply, :ok, add_to_pool(state, data)}
+
       {:error, _reason} = error ->
         {:reply, error, state}
     end
   end
 
-  def handle_call({:block_mined, %Block{index: i} = b}, _from, {pool, {_, pid, %Block{index: j}} = mining}) when i == j do
+  def handle_call(
+        {:block_mined, %Block{index: i} = b},
+        _from,
+        {pool, {_, pid, %Block{index: j}} = mining}
+      )
+      when i == j do
     Process.exit(pid, :kill)
     pool = remove_from_pool(b, pool)
     {:reply, :ok, {pool, mining}}
   end
+
   def handle_call({:block_mined, b}, _from, {pool, mining}) do
     pool = remove_from_pool(b, pool)
     {:reply, :ok, {pool, mining}}
   end
 
-  def handle_info({:DOWN, ref, :process, _pid, _reason}, {pool, {mref, _, block}}) when ref == mref do
+  def handle_info({:DOWN, ref, :process, _pid, _reason}, {pool, {mref, _, block}})
+      when ref == mref do
     pool = remove_from_pool(block, pool)
     {:noreply, mine_next_block(pool)}
   end
@@ -55,6 +63,7 @@ defmodule Blockchain.Mempool do
   end
 
   defp add_to_pool({pool, {}}, data), do: {pool ++ [data], start_mining(data)}
+
   defp add_to_pool({pool, mining}, data) do
     {pool ++ [data], mining}
   end
@@ -68,18 +77,21 @@ defmodule Blockchain.Mempool do
 
   defp start_mining(data) do
     b = Block.generate_next_block(data)
-    {pid, ref} = spawn_monitor(fn() -> mine_block(b) end)
+    {pid, ref} = spawn_monitor(fn -> mine_block(b) end)
     {ref, pid, b}
   end
 
   defp mine_block(%Block{} = b) do
     mined_block = proof_of_work().compute(b)
+
     case Chain.add_block(mined_block) do
       :ok ->
-        Logger.info fn -> "I mined block number #{mined_block.index}" end
+        Logger.info(fn -> "I mined block number #{mined_block.index}" end)
         Command.broadcast_new_block(mined_block)
         :ok
-      {:error, _reason} = error -> error
+
+      {:error, _reason} = error ->
+        error
     end
   end
 

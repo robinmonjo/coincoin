@@ -5,7 +5,7 @@ defmodule Blockchain.MerkleTree do
 
   def build(chunks) do
     chunks
-    |> Enum.map(&(BlockData.hash(&1)))
+    |> Enum.map(&BlockData.hash(&1))
     |> build_tree()
   end
 
@@ -17,6 +17,7 @@ defmodule Blockchain.MerkleTree do
 
   defp build_tree(leaves), do: build_tree(leaves, [])
   defp build_tree([root], heap), do: [root | heap]
+
   defp build_tree(leaves, heap) do
     leaves
     |> Enum.chunk_every(2)
@@ -25,6 +26,7 @@ defmodule Blockchain.MerkleTree do
   end
 
   defp concatenate_and_hash([h]), do: concatenate_and_hash([h, ""])
+
   defp concatenate_and_hash([h1, h2]) do
     "#{h1}#{h2}"
     |> Crypto.hash(:sha256)

@@ -6,27 +6,27 @@ defmodule Blockchain.P2P.Peers do
   end
 
   def add(peer) do
-    Agent.update(__MODULE__, fn(peers) ->
+    Agent.update(__MODULE__, fn peers ->
       [peer | peers]
     end)
   end
 
   def remove(peer) do
-    Agent.update(__MODULE__, fn(peers) ->
-      Enum.filter(peers, fn(p) ->
+    Agent.update(__MODULE__, fn peers ->
+      Enum.filter(peers, fn p ->
         p != peer
       end)
     end)
   end
 
   def get_all do
-    Agent.get(__MODULE__, fn(peers) ->
+    Agent.get(__MODULE__, fn peers ->
       peers
     end)
   end
 
   def remove_all do
-    Agent.update(__MODULE__, fn(_peers) ->
+    Agent.update(__MODULE__, fn _peers ->
       []
     end)
   end

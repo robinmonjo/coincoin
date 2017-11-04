@@ -6,12 +6,15 @@ defmodule Blockchain.Fixtures do
   # mock a valid blockchain of n elements + genesis block
   def mock_blockchain(n), do: mock_blockchain([Block.genesis_block()], n)
   def mock_blockchain(acc, n) when n == 0, do: acc
+
   def mock_blockchain(acc, n) when n > 0 do
     [latest_block | _] = acc
+
     b =
       "some block data #{n}"
       |> Block.generate_next_block(latest_block)
       |> proof_of_work().compute()
+
     mock_blockchain([b | acc], n - 1)
   end
 
@@ -26,9 +29,11 @@ defmodule Blockchain.Fixtures do
 
   def open_connection_and_ping do
     {:ok, socket} = open_connection()
+
     ping =
       Payload.ping()
       |> Payload.encode!()
+
     "pong" = send_and_recv(socket, ping)
     {:ok, socket}
   end

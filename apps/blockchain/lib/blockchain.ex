@@ -15,14 +15,16 @@ defmodule Blockchain do
 
   # list connected peers
   def peers do
-    Enum.map Peers.get_all(), fn(p) ->
+    Enum.map(Peers.get_all(), fn p ->
       {:ok, {addr, port}} = :inet.peername(p)
+
       address =
         addr
         |> :inet_parse.ntoa()
         |> to_string()
+
       %{address: address, port: port}
-    end
+    end)
   end
 
   # returns all blocks

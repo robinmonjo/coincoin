@@ -18,6 +18,7 @@ defmodule Blockchain.ProofOfWork do
   # verify that a givens hash satisfy the blockchain
   # proof-of-work
   def verify(hash), do: verify(hash, target())
+
   def verify(hash, target) do
     {n, _} = Integer.parse(hash, 16)
     n < target
@@ -32,6 +33,7 @@ defmodule Blockchain.ProofOfWork do
   defp proof_of_work(%Block{} = block, target, nounce \\ 0) do
     b = %{block | nounce: nounce}
     hash = Block.compute_hash(b)
+
     case verify(hash, target) do
       true -> {hash, nounce}
       _ -> proof_of_work(block, target, nounce + 1)

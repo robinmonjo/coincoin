@@ -43,9 +43,11 @@ defmodule Blockchain.Chain do
 
   def handle_call({:add_block, %Block{} = b}, _from, chain) do
     [previous_block | _] = chain
+
     case validate_block(previous_block, b, chain) do
       {:error, reason} ->
         {:reply, {:error, reason}, chain}
+
       :ok ->
         {:reply, :ok, [b | chain]}
     end
@@ -62,12 +64,16 @@ defmodule Blockchain.Chain do
     cond do
       previous_block.index + 1 != block.index ->
         {:error, "invalid index"}
+
       previous_block.hash != block.previous_hash ->
         {:error, "invalid previous hash"}
+
       proof_of_work().verify(block.hash) == false ->
         {:error, "proof of work not verified"}
+
       block.hash != Block.compute_hash(block) ->
         {:error, "invalid block hash"}
+
       true ->
         validate_block_data(block, chain)
     end
@@ -76,6 +82,7 @@ defmodule Blockchain.Chain do
   defp validate_block_data(%Block{data: data}, chain), do: BlockData.verify(data, chain)
 
   def validate_chain(blockchain) when length(blockchain) == 0, do: {:error, "empty chain"}
+
   def validate_chain([genesis_block | _] = blockchain) when length(blockchain) == 1 do
     if genesis_block == Block.genesis_block() do
       :ok
@@ -83,6 +90,7 @@ defmodule Blockchain.Chain do
       {:error, "chain doesn't start with genesis block"}
     end
   end
+
   def validate_chain([block | [previous_block | rest] = chain]) do
     case validate_block(previous_block, block, chain) do
       {:error, _} = error -> error

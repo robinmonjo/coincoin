@@ -25,7 +25,8 @@ defmodule Token.Crypto do
   end
 
   def verify_signature(public_key, msg, signature) do
-    :crypto.verify(:ecdsa, :sha256, msg, Base.decode16!(signature), [Base.decode16!(public_key), :secp256k1])
+    sig = Base.decode16!(signature)
+    pk = Base.decode16!(public_key)
+    :crypto.verify(:ecdsa, :sha256, msg, sig, [pk, :secp256k1])
   end
-
 end

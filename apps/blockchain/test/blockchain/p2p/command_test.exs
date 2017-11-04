@@ -34,6 +34,7 @@ defmodule Blockchain.P2P.CommandTest do
       Chain.all_blocks()
       |> Payload.response_blockchain()
       |> Payload.encode!()
+
     assert call(Payload.query_all()) == {:ok, expected}
   end
 
@@ -74,5 +75,4 @@ defmodule Blockchain.P2P.CommandTest do
   test "handle payload mining_request" do
     assert call(Payload.mining_request("data")) == :ok
   end
-
 end

@@ -15,9 +15,10 @@ defmodule Blockchain.P2P.Server do
     # 4. `reuseaddr: true` - allows us to reuse the address if the listener
     #                        crashes
     #
-    {:ok, listen_socket} = :gen_tcp.listen(port,
-                      [:binary, packet: 4, active: false, reuseaddr: true])
-    Logger.info fn -> "accepting connections on port #{port}" end
+    opts = [:binary, packet: 4, active: false, reuseaddr: true]
+    {:ok, listen_socket} = :gen_tcp.listen(port, opts)
+
+    Logger.info(fn -> "accepting connections on port #{port}" end)
     loop_acceptor(listen_socket)
   end
 
@@ -29,10 +30,12 @@ defmodule Blockchain.P2P.Server do
 
   def handle_socket(socket) do
     Peers.add(socket)
+
     {:ok, pid} =
       Task.Supervisor.start_child(Blockchain.P2P.Server.TasksSupervisor, fn ->
         serve(socket)
       end)
+
     :ok = :gen_tcp.controlling_process(socket, pid)
   end
 
@@ -41,8 +44,9 @@ defmodule Blockchain.P2P.Server do
       {:ok, data} ->
         handle_incoming_data(socket, data)
         serve(socket)
+
       {:error, _} ->
-        Logger.info fn -> "socket died" end
+        Logger.info(fn -> "socket died" end)
         Peers.remove(socket)
         exit(:shutdown)
     end
@@ -53,8 +57,9 @@ defmodule Blockchain.P2P.Server do
       case :gen_tcp.send(p, data) do
         {:error, _} ->
           # client is not reachable, forget it
-          Logger.info fn -> "socket not reachable, forgeting it" end
+          Logger.info(fn -> "socket not reachable, forgeting it" end)
           Peers.remove(p)
+
         _ ->
           :ok
       end
@@ -65,14 +70,18 @@ defmodule Blockchain.P2P.Server do
     case Command.handle(data) do
       {:ok, response} ->
         :gen_tcp.send(socket, response)
+
       :ok ->
         :ok
+
       {:error, :unknown_type} ->
         :gen_tcp.send(socket, "unknown type")
+
       {:error, :invalid} ->
         :gen_tcp.send(socket, "invalid json")
+
       {:error, reason} ->
-        Logger.info fn -> reason end
+        Logger.info(fn -> reason end)
     end
   end
 end

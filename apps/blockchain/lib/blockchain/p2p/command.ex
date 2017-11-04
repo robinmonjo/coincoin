@@ -11,6 +11,7 @@ defmodule Blockchain.P2P.Command do
     case Payload.decode(data) do
       {:ok, payload} ->
         handle_payload(payload)
+
       {:error, _reason} = err ->
         err
     end
@@ -21,20 +22,24 @@ defmodule Blockchain.P2P.Command do
   end
 
   defp handle_payload(%Payload{type: "query_latest"}) do
-    Logger.info fn -> "asking for latest block" end
+    Logger.info(fn -> "asking for latest block" end)
+
     response =
       [Chain.latest_block()]
       |> Payload.response_blockchain()
       |> Payload.encode!()
+
     {:ok, response}
   end
 
   defp handle_payload(%Payload{type: "query_all"}) do
-    Logger.info fn -> "asking for all blocks" end
+    Logger.info(fn -> "asking for all blocks" end)
+
     response =
       Chain.all_blocks()
       |> Payload.response_blockchain()
       |> Payload.encode!()
+
     {:ok, response}
   end
 
@@ -44,20 +49,25 @@ defmodule Blockchain.P2P.Command do
 
     cond do
       latest_block_held.index >= latest_block_received.index ->
-        Logger.info fn -> "received blockchain is no longer, doing nothing" end
+        Logger.info(fn -> "received blockchain is no longer, doing nothing" end)
         :ok
+
       latest_block_held.hash == latest_block_received.previous_hash ->
-        Logger.info fn -> "adding new block" end
+        Logger.info(fn -> "adding new block" end)
         add_block(latest_block_received)
         :ok
+
       length(received_chain) == 1 ->
-        Logger.info fn -> "asking for all blocks" end
+        Logger.info(fn -> "asking for all blocks" end)
+
         response =
           Payload.query_all()
           |> Payload.encode!()
+
         {:ok, response}
+
       true ->
-        Logger.info fn -> "replacing my chain" end
+        Logger.info(fn -> "replacing my chain" end)
         Chain.replace_chain(received_chain)
     end
   end
@@ -65,9 +75,10 @@ defmodule Blockchain.P2P.Command do
   defp handle_payload(%Payload{type: "mining_request", data: data}) do
     case Mempool.add(data) do
       :ok ->
-        Logger.info fn -> "received data to mine" end
+        Logger.info(fn -> "received data to mine" end)
         broadcast_mining_request(data)
         :ok
+
       {:error, _reason} ->
         # block is already in mining pool, or BlockData.verify failed
         :ok
@@ -79,9 +90,9 @@ defmodule Blockchain.P2P.Command do
   end
 
   defp add_block(block) do
+    # notify mining pool to stop working on this block
     with :ok <- Chain.add_block(block),
-         :ok <- Mempool.block_mined(block) # notify mining pool to stop working on this block
-    do
+         :ok <- Mempool.block_mined(block) do
       broadcast_new_block(block)
     else
       {:error, _reason} ->
@@ -93,7 +104,8 @@ defmodule Blockchain.P2P.Command do
   # sending
 
   def broadcast_new_block(%Block{} = block) do
-    Logger.info fn -> "broadcasting new block" end
+    Logger.info(fn -> "broadcasting new block" end)
+
     [block]
     |> Payload.response_blockchain()
     |> Payload.encode!()
@@ -101,11 +113,13 @@ defmodule Blockchain.P2P.Command do
   end
 
   def broadcast_mining_request(data) do
-    Logger.info fn -> "broadcasting mining request" end
+    Logger.info(fn -> "broadcasting mining request" end)
+
     data
     |> Payload.mining_request()
     |> Payload.encode!()
     |> Server.broadcast()
+
     Mempool.add(data)
   end
 end
