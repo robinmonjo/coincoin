@@ -50,7 +50,7 @@ And of course, same thing in **base 10** (8 bits can store decimal numbers from 
 
 **Conclusion**
 
-Leadings zeros do affect the time required to compute a proof-of-work because they reduce the **target**. Adding a leading zero divide the target by two. However, a target is **just a number** stored on 256 bits.
+Leading zeros do affect the time required to compute a proof-of-work because they reduce the **target**. Adding a leading zero divide the target by two. However, a target is **just a number** stored on 256 bits.
 
 ## Finding a target
 
