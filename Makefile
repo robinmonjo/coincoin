@@ -6,6 +6,7 @@ docker:
 	docker push robinmonjo/coincoin
 
 test: dep
+	mix credo
 	mix format --check-formatted
 	mix test
 
