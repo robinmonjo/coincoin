@@ -3,10 +3,12 @@ defmodule Blockchain.P2P.Client do
 
   alias Blockchain.P2P.{Server, Payload}
 
+  @spec connect(integer) :: no_return()
   def connect(port) when is_integer(port) do
     connect('localhost', port)
   end
 
+  @spec connect(String.t()) :: no_return()
   def connect(url) when is_binary(url) do
     case URI.parse(url) do
       %URI{host: host, scheme: "tcp", port: port} ->
@@ -18,6 +20,7 @@ defmodule Blockchain.P2P.Client do
     end
   end
 
+  @spec connect(String.t(), integer) :: no_return()
   def connect(host, port) do
     opts = [:binary, packet: 4, active: false]
     {:ok, socket} = :gen_tcp.connect(host, port, opts)

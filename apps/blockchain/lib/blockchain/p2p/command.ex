@@ -7,6 +7,7 @@ defmodule Blockchain.P2P.Command do
 
   # reception
 
+  @spec handle(String.t()) :: :ok | {:ok, String.t()} | {:error, String.t()}
   def handle(data) do
     case Payload.decode(data) do
       {:ok, payload} ->
@@ -17,10 +18,12 @@ defmodule Blockchain.P2P.Command do
     end
   end
 
+  @spec handle_payload(%Payload{type: String.t()}) :: {:ok, String.t()}
   defp handle_payload(%Payload{type: "ping"}) do
     {:ok, "pong"}
   end
 
+  @spec handle_payload(%Payload{type: String.t()}) :: {:ok, String.t()}
   defp handle_payload(%Payload{type: "query_latest"}) do
     Logger.info(fn -> "asking for latest block" end)
 
@@ -32,6 +35,7 @@ defmodule Blockchain.P2P.Command do
     {:ok, response}
   end
 
+  @spec handle_payload(%Payload{type: String.t()}) :: {:ok, String.t()}
   defp handle_payload(%Payload{type: "query_all"}) do
     Logger.info(fn -> "asking for all blocks" end)
 
@@ -43,6 +47,8 @@ defmodule Blockchain.P2P.Command do
     {:ok, response}
   end
 
+  @spec handle_payload(%Payload{type: String.t(), blocks: [%Block{}]}) ::
+          :ok | {:ok, String.t()} | {:error, String.t()}
   defp handle_payload(%Payload{type: "response_blockchain", blocks: received_chain}) do
     latest_block_held = Chain.latest_block()
     [latest_block_received | _] = received_chain
@@ -72,6 +78,7 @@ defmodule Blockchain.P2P.Command do
     end
   end
 
+  @spec handle_payload(%Payload{type: String.t(), data: any()}) :: :ok
   defp handle_payload(%Payload{type: "mining_request", data: data}) do
     case Mempool.add(data) do
       :ok ->
@@ -85,11 +92,13 @@ defmodule Blockchain.P2P.Command do
     end
   end
 
+  @spec handle_payload(any()) :: {:error, :unknown_type}
   defp handle_payload(_) do
     {:error, :unknown_type}
   end
 
-  defp add_block(block) do
+  @spec add_block(%Block{}) :: :ok
+  defp add_block(%Block{} = block) do
     # notify mining pool to stop working on this block
     with :ok <- Chain.add_block(block),
          :ok <- Mempool.block_mined(block) do
@@ -102,7 +111,7 @@ defmodule Blockchain.P2P.Command do
   end
 
   # sending
-
+  @spec broadcast_new_block(%Block{}) :: [:ok]
   def broadcast_new_block(%Block{} = block) do
     Logger.info(fn -> "broadcasting new block" end)
 
@@ -112,6 +121,7 @@ defmodule Blockchain.P2P.Command do
     |> Server.broadcast()
   end
 
+  @spec broadcast_mining_request(any()) :: :ok | {:error, String.t()}
   def broadcast_mining_request(data) do
     Logger.info(fn -> "broadcasting mining request" end)
 
