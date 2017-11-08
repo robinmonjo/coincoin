@@ -16,18 +16,22 @@ defmodule Blockchain.Chain do
     {:ok, [Block.genesis_block()]}
   end
 
+  @spec latest_block() :: Block.t()
   def latest_block do
     GenServer.call(__MODULE__, :latest_block)
   end
 
+  @spec all_blocks() :: [Block.t()]
   def all_blocks do
     GenServer.call(__MODULE__, :all_blocks)
   end
 
+  @spec add_block(Block.t()) :: :ok | {:error, String.t()}
   def add_block(%Block{} = b) do
     GenServer.call(__MODULE__, {:add_block, b})
   end
 
+  @spec replace_chain([Block.t()]) :: :ok | {:error, String.t()}
   def replace_chain(chain) do
     GenServer.call(__MODULE__, {:replace_chain, chain})
   end
@@ -60,6 +64,7 @@ defmodule Blockchain.Chain do
     end
   end
 
+  @spec validate_block(Block.t(), Block.t(), [Block.t()]) :: :ok | {:error, String.t()}
   defp validate_block(previous_block, block, chain) do
     cond do
       previous_block.index + 1 != block.index ->
@@ -79,8 +84,10 @@ defmodule Blockchain.Chain do
     end
   end
 
+  @spec validate_block_data(Block.t(), [Block.t()]) :: :ok | {:error, String.t()}
   defp validate_block_data(%Block{data: data}, chain), do: BlockData.verify(data, chain)
 
+  @spec validate_chain([Block.t()]) :: :ok | {:error, String.t()}
   def validate_chain([]), do: {:error, "empty chain"}
 
   def validate_chain([genesis_block | _] = blockchain) when length(blockchain) == 1 do
@@ -98,5 +105,6 @@ defmodule Blockchain.Chain do
     end
   end
 
+  @spec proof_of_work() :: module()
   defp proof_of_work, do: Application.fetch_env!(:blockchain, :proof_of_work)
 end
