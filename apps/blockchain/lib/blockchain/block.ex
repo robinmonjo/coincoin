@@ -3,6 +3,15 @@ defmodule Blockchain.Block do
 
   alias Blockchain.{Block, Chain, BlockData, Crypto}
 
+  @type t :: %__MODULE__{
+          index: integer,
+          previous_hash: String.t(),
+          timestamp: integer,
+          data: any,
+          nounce: integer | nil,
+          hash: String.t() | nil
+        }
+
   @derive [Poison.Encoder]
   defstruct [
     :index,
@@ -14,6 +23,7 @@ defmodule Blockchain.Block do
     :hash
   ]
 
+  @spec genesis_block() :: t
   def genesis_block do
     %Block{
       index: 0,
@@ -25,9 +35,8 @@ defmodule Blockchain.Block do
     }
   end
 
-  def generate_next_block(data) do
-    generate_next_block(data, Chain.latest_block())
-  end
+  @spec generate_next_block(any() | any(), t) :: t
+  def generate_next_block(data, block \\ Chain.latest_block())
 
   def generate_next_block(data, %Block{} = latest_block) do
     b = %Block{
@@ -41,6 +50,7 @@ defmodule Blockchain.Block do
     %{b | hash: hash}
   end
 
+  @spec compute_hash(t) :: String.t()
   def compute_hash(%Block{index: i, previous_hash: h, timestamp: ts, data: data, nounce: n}) do
     "#{i}#{h}#{ts}#{BlockData.hash(data)}#{n}"
     |> Crypto.hash(:sha256)
