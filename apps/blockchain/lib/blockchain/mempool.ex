@@ -10,14 +10,20 @@ defmodule Blockchain.Mempool do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
+  @opaque pool :: [any()]
+  @opaque mining :: {} | {reference(), pid(), Block.t()}
+  @type state :: {pool, mining}
+
   def init(_state) do
     {:ok, {[], {}}}
   end
 
+  @spec add(any()) :: :ok | {:error, atom()} | {:error, String.t()}
   def add(data) do
     GenServer.call(__MODULE__, {:mine, data})
   end
 
+  @spec block_mined(Block.t()) :: :ok
   def block_mined(%Block{} = b) do
     GenServer.call(__MODULE__, {:block_mined, b})
   end
@@ -54,6 +60,7 @@ defmodule Blockchain.Mempool do
     {:noreply, mine_next_block(pool)}
   end
 
+  @spec verify_data(any(), pool) :: :ok | {:error, atom()} | {:error, String.t()}
   defp verify_data(data, pool) do
     if Enum.find(pool, &(BlockData.hash(&1) == BlockData.hash(data))) != nil do
       {:error, :already_in_pool}
@@ -62,25 +69,30 @@ defmodule Blockchain.Mempool do
     end
   end
 
+  @spec add_to_pool(state, any()) :: state
   defp add_to_pool({pool, {}}, data), do: {pool ++ [data], start_mining(data)}
 
   defp add_to_pool({pool, mining}, data) do
     {pool ++ [data], mining}
   end
 
+  @spec remove_from_pool(Block.t(), pool) :: list
   defp remove_from_pool(%Block{data: data}, pool) do
     Enum.reject(pool, &(BlockData.hash(&1) == BlockData.hash(data)))
   end
 
+  @spec mine_next_block(pool) :: state
   defp mine_next_block([]), do: {[], {}}
   defp mine_next_block([data | _] = pool), do: {pool, start_mining(data)}
 
+  @spec start_mining(any()) :: mining
   defp start_mining(data) do
     b = Block.generate_next_block(data)
     {pid, ref} = spawn_monitor(fn -> mine_block(b) end)
     {ref, pid, b}
   end
 
+  @spec mine_block(Block.t()) :: :ok | {:error, String.t()}
   defp mine_block(%Block{} = b) do
     mined_block = proof_of_work().compute(b)
 
@@ -95,5 +107,6 @@ defmodule Blockchain.Mempool do
     end
   end
 
+  @spec proof_of_work() :: module()
   defp proof_of_work, do: Application.fetch_env!(:blockchain, :proof_of_work)
 end
