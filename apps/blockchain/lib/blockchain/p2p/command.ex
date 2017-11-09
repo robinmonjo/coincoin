@@ -5,9 +5,12 @@ defmodule Blockchain.P2P.Command do
 
   alias Blockchain.{Chain, Block, P2P.Payload, P2P.Server, Mempool}
 
+  @type error :: {:error, atom()} | {:error, String.t()}
+  @type return :: :ok | {:ok, String.t()} | error
+
   # reception
 
-  @spec handle(String.t()) :: :ok | {:ok, String.t()} | {:error, String.t()}
+  @spec handle(String.t()) :: return
   def handle(data) do
     case Payload.decode(data) do
       {:ok, payload} ->
@@ -18,12 +21,12 @@ defmodule Blockchain.P2P.Command do
     end
   end
 
-  @spec handle_payload(%Payload{type: String.t()}) :: {:ok, String.t()}
+  @spec handle_payload(%Payload{type: String.t(), blocks: [%Block{}], data: any()}) :: return
+
   defp handle_payload(%Payload{type: "ping"}) do
     {:ok, "pong"}
   end
 
-  @spec handle_payload(%Payload{type: String.t()}) :: {:ok, String.t()}
   defp handle_payload(%Payload{type: "query_latest"}) do
     Logger.info(fn -> "asking for latest block" end)
 
@@ -35,7 +38,6 @@ defmodule Blockchain.P2P.Command do
     {:ok, response}
   end
 
-  @spec handle_payload(%Payload{type: String.t()}) :: {:ok, String.t()}
   defp handle_payload(%Payload{type: "query_all"}) do
     Logger.info(fn -> "asking for all blocks" end)
 
@@ -47,8 +49,6 @@ defmodule Blockchain.P2P.Command do
     {:ok, response}
   end
 
-  @spec handle_payload(%Payload{type: String.t(), blocks: [%Block{}]}) ::
-          :ok | {:ok, String.t()} | {:error, String.t()}
   defp handle_payload(%Payload{type: "response_blockchain", blocks: received_chain}) do
     latest_block_held = Chain.latest_block()
     [latest_block_received | _] = received_chain
@@ -78,7 +78,6 @@ defmodule Blockchain.P2P.Command do
     end
   end
 
-  @spec handle_payload(%Payload{type: String.t(), data: any()}) :: :ok
   defp handle_payload(%Payload{type: "mining_request", data: data}) do
     case Mempool.add(data) do
       :ok ->
@@ -92,7 +91,6 @@ defmodule Blockchain.P2P.Command do
     end
   end
 
-  @spec handle_payload(any()) :: {:error, :unknown_type}
   defp handle_payload(_) do
     {:error, :unknown_type}
   end
@@ -111,7 +109,7 @@ defmodule Blockchain.P2P.Command do
   end
 
   # sending
-  @spec broadcast_new_block(%Block{}) :: [:ok]
+  @spec broadcast_new_block(%Block{}) :: :ok
   def broadcast_new_block(%Block{} = block) do
     Logger.info(fn -> "broadcasting new block" end)
 
@@ -131,5 +129,12 @@ defmodule Blockchain.P2P.Command do
     |> Server.broadcast()
 
     Mempool.add(data)
+  end
+
+  @spec ask_all_blocks(port()) :: :ok | {:error, atom()}
+  def ask_all_blocks(socket) do
+    Payload.query_all()
+    |> Payload.encode!()
+    |> Server.send_data(socket)
   end
 end

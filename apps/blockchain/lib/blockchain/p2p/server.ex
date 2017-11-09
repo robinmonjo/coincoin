@@ -5,7 +5,7 @@ defmodule Blockchain.P2P.Server do
 
   alias Blockchain.P2P.{Peers, Command}
 
-  # Servers
+  @spec accept(integer) :: no_return()
   def accept(port) do
     # The options below mean:
     #
@@ -22,12 +22,20 @@ defmodule Blockchain.P2P.Server do
     loop_acceptor(listen_socket)
   end
 
+  @spec loop_acceptor(port()) :: no_return()
   defp loop_acceptor(listen_socket) do
     {:ok, socket} = :gen_tcp.accept(listen_socket)
-    handle_socket(socket)
-    loop_acceptor(listen_socket)
+
+    case handle_socket(socket) do
+      :ok ->
+        loop_acceptor(listen_socket)
+
+      {:error, reason} ->
+        Logger.info(fn -> "unable to accept connection: #{reason}" end)
+    end
   end
 
+  @spec handle_socket(port()) :: :ok | {:error, atom()}
   def handle_socket(socket) do
     Peers.add(socket)
 
@@ -36,9 +44,10 @@ defmodule Blockchain.P2P.Server do
         serve(socket)
       end)
 
-    :ok = :gen_tcp.controlling_process(socket, pid)
+    :gen_tcp.controlling_process(socket, pid)
   end
 
+  @spec serve(port()) :: no_return()
   defp serve(socket) do
     case :gen_tcp.recv(socket, 0) do
       {:ok, data} ->
@@ -52,36 +61,44 @@ defmodule Blockchain.P2P.Server do
     end
   end
 
-  def broadcast(data) do
-    for p <- Peers.get_all() do
-      case :gen_tcp.send(p, data) do
-        {:error, _} ->
-          # client is not reachable, forget it
-          Logger.info(fn -> "socket not reachable, forgeting it" end)
-          Peers.remove(p)
+  @spec broadcast(String.t(), [port()]) :: :ok
+  def broadcast(_data, peers \\ Peers.get_all())
+  def broadcast(_data, []), do: :ok
 
-        _ ->
-          :ok
-      end
+  def broadcast(data, [p | peers]) do
+    case send_data(data, p) do
+      {:error, _} ->
+        # client is not reachable, forget it
+        Logger.info(fn -> "socket not reachable, forgeting it" end)
+        Peers.remove(p)
+
+      _ ->
+        broadcast(data, peers)
     end
   end
 
+  @spec handle_incoming_data(port(), String.t()) :: :ok | {:error, atom()} | no_return()
   defp handle_incoming_data(socket, data) do
     case Command.handle(data) do
       {:ok, response} ->
-        :gen_tcp.send(socket, response)
+        send_data(response, socket)
 
       :ok ->
         :ok
 
       {:error, :unknown_type} ->
-        :gen_tcp.send(socket, "unknown type")
+        send_data("unknown type", socket)
 
       {:error, :invalid} ->
-        :gen_tcp.send(socket, "invalid json")
+        send_data("invalid json", socket)
 
       {:error, reason} ->
         Logger.info(fn -> reason end)
     end
+  end
+
+  @spec send_data(iodata(), port()) :: :ok | {:error, atom()}
+  def send_data(data, socket) do
+    :gen_tcp.send(socket, data)
   end
 end

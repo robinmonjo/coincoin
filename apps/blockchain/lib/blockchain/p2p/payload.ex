@@ -18,6 +18,8 @@ defmodule Blockchain.P2P.Payload do
   # to transmit data to be mined
   @mining_request "mining_request"
 
+  @type t :: %Payload{}
+
   @derive [Poison.Encoder]
   defstruct [
     :type,
@@ -25,14 +27,19 @@ defmodule Blockchain.P2P.Payload do
     :data
   ]
 
+  @spec ping() :: t
   def ping, do: %Payload{type: @ping}
 
+  @spec query_all() :: t
   def query_all, do: %Payload{type: @query_all}
 
+  @spec query_latest() :: t
   def query_latest, do: %Payload{type: @query_latest}
 
+  @spec response_blockchain([%Block{}]) :: t
   def response_blockchain(chain), do: %Payload{type: @response_blockchain, blocks: chain}
 
+  @spec mining_request(any()) :: t
   def mining_request(data), do: %Payload{type: @mining_request, data: data}
 
   defmodule TypedData do
@@ -43,8 +50,10 @@ defmodule Blockchain.P2P.Payload do
     defstruct [:type, :data]
   end
 
+  @spec encode!(t) :: String.t()
   def encode!(%Payload{} = payload), do: Poison.encode!(payload)
 
+  @spec decode(String.t()) :: {:ok, t} | {:error, atom()}
   def decode(input) do
     pattern = %Payload{blocks: [%Block{data: %TypedData{}}], data: %TypedData{}}
 

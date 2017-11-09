@@ -6,7 +6,8 @@ defmodule CoincoinUmbrella.Mixfile do
       apps_path: "apps",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      dialyzer: [ignore_warnings: ".dialyzer_ignore"]
     ]
   end
 
@@ -24,7 +25,8 @@ defmodule CoincoinUmbrella.Mixfile do
   # and cannot be accessed from applications inside the apps folder
   defp deps do
     [
-      {:credo, github: "rrrene/credo", branch: "master"},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
+      {:credo, github: "rrrene/credo", branch: "master", only: [:dev, :test], runtime: false},
       {:distillery, "~> 1.5", runtime: false}
     ]
   end

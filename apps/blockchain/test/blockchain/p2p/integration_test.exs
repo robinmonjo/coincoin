@@ -69,7 +69,7 @@ defmodule Blockchain.P2P.IntegrationTest do
     n = length(Peers.get_all())
     assert n == 2
     payload = "test"
-    assert Server.broadcast(payload) == [:ok, :ok]
+    assert :ok = Server.broadcast(payload)
     for s <- [socket, socket1], do: assert(recv(s) == payload)
   end
 end
