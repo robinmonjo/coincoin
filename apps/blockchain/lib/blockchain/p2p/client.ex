@@ -6,7 +6,7 @@ defmodule Blockchain.P2P.Client do
   @opaque address :: :inet.socket_address() | :inet.hostname()
   @opaque port_number :: :inet.port_number()
 
-  @spec connect(integer | String.t | address, port_number) :: {:ok, port()} | {:error, atom()}
+  @spec connect(integer | String.t() | address, port_number) :: {:ok, port()} | {:error, atom()}
 
   def connect(port) when is_integer(port) do
     connect('localhost', port)
