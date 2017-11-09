@@ -8,7 +8,7 @@ defmodule Blockchain.Chain do
 
   alias Blockchain.{Block, BlockData}
 
-  def start_link do
+  def start_link(_opts) do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 

@@ -6,7 +6,7 @@ defmodule Blockchain.Mempool do
 
   alias Blockchain.{Chain, Block, P2P.Command, BlockData}
 
-  def start_link do
+  def start_link(_opts) do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
