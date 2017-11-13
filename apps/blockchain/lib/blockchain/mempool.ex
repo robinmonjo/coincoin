@@ -60,7 +60,7 @@ defmodule Blockchain.Mempool do
     {:noreply, mine_next_block(pool)}
   end
 
-  @spec verify_data(any(), pool) :: :ok | {:error, atom()} | {:error, String.t()}
+  @spec verify_data(BlockData.t(), pool) :: :ok | {:error, atom()} | {:error, String.t()}
   defp verify_data(data, pool) do
     if Enum.find(pool, &(BlockData.hash(&1) == BlockData.hash(data))) != nil do
       {:error, :already_in_pool}
@@ -69,7 +69,7 @@ defmodule Blockchain.Mempool do
     end
   end
 
-  @spec add_to_pool(state, any()) :: state
+  @spec add_to_pool(state, BlockData.t()) :: state
   defp add_to_pool({pool, {}}, data), do: {pool ++ [data], start_mining(data)}
 
   defp add_to_pool({pool, mining}, data) do
@@ -85,7 +85,7 @@ defmodule Blockchain.Mempool do
   defp mine_next_block([]), do: {[], {}}
   defp mine_next_block([data | _] = pool), do: {pool, start_mining(data)}
 
-  @spec start_mining(any()) :: mining
+  @spec start_mining(BlockData.t()) :: mining
   defp start_mining(data) do
     b = Block.generate_next_block(data)
     {pid, ref} = spawn_monitor(fn -> mine_block(b) end)

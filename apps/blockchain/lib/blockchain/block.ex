@@ -17,7 +17,6 @@ defmodule Blockchain.Block do
     :index,
     :previous_hash,
     :timestamp,
-    # must follow the Blockchain.BlockData protocol
     :data,
     :nounce,
     :hash
