@@ -6,7 +6,7 @@ defmodule Blockchain do
   alias Blockchain.{Chain, P2P.Client, P2P.Command, P2P.Peers}
 
   # add a block to the blockchain
-  @spec add(any()) :: :ok
+  @spec add(any()) :: :ok | {:error, String.t()}
   def add(data), do: Command.broadcast_mining_request(data)
 
   # connect to an existing peer (only localhost for now, just specify a port)

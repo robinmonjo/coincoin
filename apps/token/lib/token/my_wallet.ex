@@ -14,8 +14,13 @@ defmodule Token.MyWallet do
     {:ok, Wallet.generate_wallet()}
   end
 
+  @spec address() :: String.t()
   def address, do: GenServer.call(__MODULE__, :address)
+
+  @spec balance() :: integer
   def balance, do: GenServer.call(__MODULE__, :balance)
+
+  @spec send(integer, String.t()) :: :ok | {:error, String.t()}
   def send(amount, recipient), do: GenServer.call(__MODULE__, {:send, amount, recipient})
 
   def handle_call(:address, _from, wallet), do: {:reply, wallet.address, wallet}

@@ -5,6 +5,17 @@ defmodule Token.Transaction do
 
   alias Token.{Wallet, Transaction, Crypto}
 
+  @type input :: [String.t() | [integer | []]] | Enum.t()
+  @type output :: [String.t() | [integer | []]] | Enum.t()
+
+  @type t :: %__MODULE__{
+          hash: String.t() | nil,
+          inputs: [input],
+          public_key: String.t() | nil,
+          signature: String.t() | nil,
+          outputs: [output]
+        }
+
   defstruct [
     :hash,
     # a list of list of the form [[previous_tx_hash, output_index]]
@@ -15,6 +26,7 @@ defmodule Token.Transaction do
     :outputs
   ]
 
+  @spec new_transaction(Wallet.t(), [input], [output]) :: t
   def new_transaction(%Wallet{} = wallet, inputs, outputs) do
     tx = %Transaction{
       inputs: inputs,
@@ -31,6 +43,7 @@ defmodule Token.Transaction do
     %{signed_tx | hash: compute_hash(signed_tx)}
   end
 
+  @spec new_coinbase_transaction([output]) :: t
   def new_coinbase_transaction(outputs) do
     tx = %Transaction{
       outputs: outputs,
@@ -41,6 +54,7 @@ defmodule Token.Transaction do
     %{tx | hash: compute_hash(tx)}
   end
 
+  @spec signing_string(t) :: String.t()
   def signing_string(%Transaction{} = tx) do
     s =
       Enum.reduce(tx.inputs ++ tx.outputs, "", fn [str, int], acc ->
@@ -50,6 +64,7 @@ defmodule Token.Transaction do
     "#{s}#{tx.public_key}"
   end
 
+  @spec compute_hash(t) :: String.t()
   defp compute_hash(%Transaction{} = tx) do
     "#{signing_string(tx)}#{tx.signature}"
     |> Crypto.hash(:sha256)
