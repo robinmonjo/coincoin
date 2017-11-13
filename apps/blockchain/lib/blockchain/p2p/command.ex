@@ -119,7 +119,7 @@ defmodule Blockchain.P2P.Command do
     |> Server.broadcast()
   end
 
-  @spec broadcast_mining_request(any()) :: :ok | {:error, String.t()}
+  @spec broadcast_mining_request(Blockchain.BlockData.t()) :: :ok | {:error, String.t()}
   def broadcast_mining_request(data) do
     Logger.info(fn -> "broadcasting mining request" end)
 

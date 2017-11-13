@@ -7,7 +7,7 @@ defmodule Blockchain.Block do
           index: integer,
           previous_hash: String.t(),
           timestamp: integer,
-          data: any,
+          data: BlockData.t(),
           nounce: integer | nil,
           hash: String.t() | nil
         }
@@ -35,7 +35,7 @@ defmodule Blockchain.Block do
     }
   end
 
-  @spec generate_next_block(any() | any(), t) :: t
+  @spec generate_next_block(BlockData.t(), t) :: t
   def generate_next_block(data, block \\ Chain.latest_block())
 
   def generate_next_block(data, %Block{} = latest_block) do

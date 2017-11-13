@@ -18,7 +18,11 @@ defmodule Blockchain.P2P.Payload do
   # to transmit data to be mined
   @mining_request "mining_request"
 
-  @type t :: %Payload{}
+  @type t :: %Payload{
+          type: String.t(),
+          blocks: [Block.t()] | nil,
+          data: Blockchain.BlockData.t() | nil
+        }
 
   @derive [Poison.Encoder]
   defstruct [
@@ -39,7 +43,7 @@ defmodule Blockchain.P2P.Payload do
   @spec response_blockchain([%Block{}]) :: t
   def response_blockchain(chain), do: %Payload{type: @response_blockchain, blocks: chain}
 
-  @spec mining_request(any()) :: t
+  @spec mining_request(Blockchain.BlockData.t()) :: t
   def mining_request(data), do: %Payload{type: @mining_request, data: data}
 
   defmodule TypedData do

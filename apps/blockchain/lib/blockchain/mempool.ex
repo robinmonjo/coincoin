@@ -18,7 +18,7 @@ defmodule Blockchain.Mempool do
     {:ok, {[], {}}}
   end
 
-  @spec add(any()) :: :ok | {:error, atom()} | {:error, String.t()}
+  @spec add(BlockData.t()) :: :ok | {:error, atom()} | {:error, String.t()}
   def add(data) do
     GenServer.call(__MODULE__, {:mine, data})
   end

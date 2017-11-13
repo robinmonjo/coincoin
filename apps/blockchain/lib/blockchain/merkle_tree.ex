@@ -3,21 +3,21 @@ defmodule Blockchain.MerkleTree do
 
   alias Blockchain.{Crypto, BlockData}
 
-  @spec build([any()]) :: [String.t()]
+  @spec build([BlockData.t()]) :: [String.t()]
   def build(chunks) do
     chunks
     |> Enum.map(&BlockData.hash(&1))
     |> build_tree()
   end
 
-  @spec root([any()]) :: String.t()
+  @spec root([BlockData.t()]) :: String.t()
   def root(chunks) do
     chunks
     |> build()
     |> Enum.at(0)
   end
 
-  @spec build_tree([any] | [any()], [String.t()]) :: [String.t()]
+  @spec build_tree([String.t()], [String.t()]) :: [String.t()]
   defp build_tree(leaves, heap \\ [])
   defp build_tree([root], heap), do: [root | heap]
 
@@ -28,7 +28,7 @@ defmodule Blockchain.MerkleTree do
     |> build_tree(leaves ++ heap)
   end
 
-  @spec concatenate_and_hash([any()]) :: String.t()
+  @spec concatenate_and_hash([String.t()]) :: String.t()
   defp concatenate_and_hash([h]), do: concatenate_and_hash([h, ""])
 
   defp concatenate_and_hash([h1, h2]) do
