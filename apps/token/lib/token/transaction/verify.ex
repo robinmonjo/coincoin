@@ -141,7 +141,7 @@ defmodule Token.Transaction.Verify do
     end
   end
 
-  @spec ensure_public_key_ownership(Transaction.t) :: return
+  @spec ensure_public_key_ownership(Transaction.t()) :: return
   defp ensure_public_key_ownership(%Transaction{public_key: pk, signature: sig} = tx) do
     signing_string = Transaction.signing_string(tx)
 

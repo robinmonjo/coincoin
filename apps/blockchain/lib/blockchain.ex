@@ -9,8 +9,8 @@ defmodule Blockchain do
   @spec add(any()) :: :ok | {:error, String.t()}
   def add(data), do: Command.broadcast_mining_request(data)
 
-  # connect to an existing peer (only localhost for now, just specify a port)
-  @spec connect(any()) :: :ok | {:error, atom()}
+  # connect to an existing peer
+  @spec connect(String.t() | integer) :: :ok | {:error, atom()}
   def connect(uri) do
     case Client.connect(uri) do
       {:ok, socket} ->
