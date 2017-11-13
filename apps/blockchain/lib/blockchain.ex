@@ -22,7 +22,7 @@ defmodule Blockchain do
   end
 
   # list connected peers
-  @spec peers :: [%{address: String.t(), port: integer}]
+  @spec peers() :: [%{address: String.t(), port: integer}]
   def peers do
     Enum.map(Peers.get_all(), fn p ->
       {:ok, {addr, port}} = :inet.peername(p)
