@@ -29,13 +29,13 @@ defmodule Token.Wallet do
   end
 
   @spec sign(String.t(), t) :: String.t()
-  def sign(msg, %Wallet{} = wallet) do
-    Crypto.sign(wallet.private_key, msg)
+  def sign(msg, %Wallet{private_key: key}) do
+    Crypto.sign(key, msg)
   end
 
   @spec verify(String.t(), String.t(), t) :: boolean
-  def verify(msg, signature, %Wallet{} = wallet) do
-    Crypto.verify_signature(wallet.public_key, msg, signature)
+  def verify(msg, signature, %Wallet{public_key: key}) do
+    Crypto.verify_signature(key, msg, signature)
   end
 
   @spec balance(t) :: integer
@@ -51,8 +51,9 @@ defmodule Token.Wallet do
          inputs <- prepare_inputs(unspent_outputs),
          outputs <- [[recipient, value]],
          outputs <- add_change_output(value, outputs, unspent_outputs, wallet) do
-      tx = Transaction.new_transaction(wallet, inputs, outputs)
-      Ledger.write(tx)
+      wallet
+      |> Transaction.new_transaction(inputs, outputs)
+      |> Ledger.write()
     end
   end
 
