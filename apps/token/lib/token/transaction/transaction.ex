@@ -5,8 +5,10 @@ defmodule Token.Transaction do
 
   alias Token.{Wallet, Transaction, Crypto}
 
-  @type input :: [String.t() | [integer | []]] | Enum.t()
-  @type output :: [String.t() | [integer | []]] | Enum.t()
+  # this is not ideal but we can't define spec like [String.t(), integer]
+  # we can't use tuple here as it will be serialized as lists
+  @type input :: [String.t() | integer]
+  @type output :: [String.t() | integer]
 
   @type t :: %__MODULE__{
           hash: String.t() | nil,

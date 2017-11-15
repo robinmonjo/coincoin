@@ -69,12 +69,9 @@ defmodule Token.Wallet do
     end
   end
 
-  @spec prepare_inputs([Ledger.output()], [Transaction.input()]) :: [Transaction.input()]
-  defp prepare_inputs(outputs, inputs \\ [])
-  defp prepare_inputs([], inputs), do: inputs
-
-  defp prepare_inputs([{tx_hash, index, _value} | remaining], inputs) do
-    prepare_inputs(remaining, [[tx_hash, index] | inputs])
+  @spec prepare_inputs([Ledger.output()]) :: [Transaction.input()]
+  defp prepare_inputs(outputs) do
+    for {tx_hash, index, _value} <- outputs, do: [tx_hash, index]
   end
 
   @spec unspent_outputs_for_value(integer, t) ::
@@ -86,7 +83,7 @@ defmodule Token.Wallet do
     |> select_outputs(target_value, [])
   end
 
-  @spec select_outputs([Ledger.output()], integer, [Transaction.output()]) ::
+  @spec select_outputs([Ledger.output()], integer, [Ledger.output()]) ::
           {:ok, [Transaction.output()]} | {:error, String.t()}
   defp select_outputs(_, value, outputs) when value <= 0, do: {:ok, outputs}
   defp select_outputs([], _value, _outputs), do: {:error, "not enough coins"}
