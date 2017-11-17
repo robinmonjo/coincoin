@@ -26,7 +26,7 @@ defmodule CoincoinUmbrella.Mixfile do
   defp deps do
     [
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
-      {:credo, github: "rrrene/credo", branch: "master", only: [:dev, :test], runtime: false},
+      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:distillery, "~> 1.5", runtime: false}
     ]
   end
