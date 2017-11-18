@@ -21,7 +21,7 @@ defmodule Blockchain.P2P.Command do
     end
   end
 
-  @spec handle_payload(%Payload{type: String.t(), blocks: [%Block{}], data: any()}) :: return
+  @spec handle_payload(Payload.t()) :: return
 
   defp handle_payload(%Payload{type: "ping"}) do
     {:ok, "pong"}
@@ -95,7 +95,7 @@ defmodule Blockchain.P2P.Command do
     {:error, :unknown_type}
   end
 
-  @spec add_block(%Block{}) :: :ok
+  @spec add_block(Block.t()) :: :ok
   defp add_block(%Block{} = block) do
     # notify mining pool to stop working on this block
     with :ok <- Chain.add_block(block),
@@ -109,7 +109,7 @@ defmodule Blockchain.P2P.Command do
   end
 
   # sending
-  @spec broadcast_new_block(%Block{}) :: :ok
+  @spec broadcast_new_block(Block.t()) :: :ok
   def broadcast_new_block(%Block{} = block) do
     Logger.info(fn -> "broadcasting new block" end)
 
