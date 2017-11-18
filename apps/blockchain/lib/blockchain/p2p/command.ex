@@ -5,8 +5,7 @@ defmodule Blockchain.P2P.Command do
 
   alias Blockchain.{Chain, Block, P2P.Payload, P2P.Server, Mempool}
 
-  @type error :: {:error, atom()} | {:error, String.t()}
-  @type return :: :ok | {:ok, String.t()} | error
+  @type return :: :ok | {:ok, String.t()} | {:error, atom()}
 
   # reception
 
@@ -118,7 +117,7 @@ defmodule Blockchain.P2P.Command do
     |> Server.broadcast()
   end
 
-  @spec broadcast_mining_request(Blockchain.BlockData.t()) :: :ok | {:error, String.t()}
+  @spec broadcast_mining_request(Blockchain.BlockData.t()) :: :ok | {:error, atom()}
   def broadcast_mining_request(data) do
     Logger.info(fn -> "broadcasting mining request" end)
 

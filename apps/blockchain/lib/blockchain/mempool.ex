@@ -18,7 +18,7 @@ defmodule Blockchain.Mempool do
     {:ok, {[], {}}}
   end
 
-  @spec add(BlockData.t()) :: :ok | {:error, atom()} | {:error, String.t()}
+  @spec add(BlockData.t()) :: :ok | {:error, atom()}
   def add(data) do
     GenServer.call(__MODULE__, {:mine, data})
   end
@@ -60,7 +60,7 @@ defmodule Blockchain.Mempool do
     {:noreply, mine_next_block(pool)}
   end
 
-  @spec verify_data(BlockData.t(), pool) :: :ok | {:error, atom()} | {:error, String.t()}
+  @spec verify_data(BlockData.t(), pool) :: :ok | {:error, atom()}
   defp verify_data(data, pool) do
     if Enum.find(pool, &(BlockData.hash(&1) == BlockData.hash(data))) != nil do
       {:error, :already_in_pool}
@@ -76,7 +76,7 @@ defmodule Blockchain.Mempool do
     {pool ++ [data], mining}
   end
 
-  @spec remove_from_pool(Block.t(), pool) :: list
+  @spec remove_from_pool(Block.t(), pool) :: [BlockData.t()]
   defp remove_from_pool(%Block{data: data}, pool) do
     Enum.reject(pool, &(BlockData.hash(&1) == BlockData.hash(data)))
   end
@@ -92,7 +92,7 @@ defmodule Blockchain.Mempool do
     {ref, pid, b}
   end
 
-  @spec mine_block(Block.t()) :: :ok | {:error, String.t()}
+  @spec mine_block(Block.t()) :: :ok | {:error, atom()}
   defp mine_block(%Block{} = b) do
     mined_block = proof_of_work().compute(b)
 
