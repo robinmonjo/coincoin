@@ -22,7 +22,6 @@ defmodule Blockchain.P2P.Command do
   end
 
   @spec handle_payload(Payload.t()) :: return
-
   defp handle_payload(%Payload{type: "ping"}) do
     {:ok, "pong"}
   end
