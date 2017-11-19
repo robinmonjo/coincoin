@@ -6,7 +6,8 @@ defmodule Token.Transaction.Verify do
 
   alias Token.{Crypto, Transaction}
 
-  @typep return :: :ok | {:error, String.t()}
+  @typep error :: {:error, atom()}
+  @typep return :: :ok | error
   @typep find_func :: Token.Ledger.find_func()
 
   @spec verify_transaction(Transaction.t(), find_func) :: return
@@ -23,11 +24,11 @@ defmodule Token.Transaction.Verify do
   @spec ensure_format(Transaction.t()) :: return
   defp ensure_format(%Transaction{} = tx) do
     cond do
-      !sha256_string?(tx.hash) -> {:error, "invalid hash format"}
-      length(tx.inputs) <= 0 -> {:error, "no input"}
-      length(tx.outputs) <= 0 -> {:error, "no output"}
-      !valid_inputs_format?(tx.inputs) -> {:error, "invalid input"}
-      !valid_outputs_format?(tx.outputs) -> {:error, "invalid output"}
+      !sha256_string?(tx.hash) -> {:error, :invalid_hash_format}
+      length(tx.inputs) <= 0 -> {:error, :no_input}
+      length(tx.outputs) <= 0 -> {:error, :no_output}
+      !valid_inputs_format?(tx.inputs) -> {:error, :invalid_input}
+      !valid_outputs_format?(tx.outputs) -> {:error, :invalid_output}
       true -> :ok
     end
   end
@@ -59,18 +60,18 @@ defmodule Token.Transaction.Verify do
   defp ensure_doesnt_already_exist(%Transaction{} = tx, find_in_ledger) do
     case find_in_ledger.(&(&1.hash == tx.hash)) do
       nil -> :ok
-      _ -> {:error, "transaction already exists"}
+      _ -> {:error, :transaction_already_exists}
     end
   end
 
   @spec ensure_input_transactions_exist(Transaction.t(), find_func) ::
-          {:ok, [Transaction.input()]} | {:error, String.t()}
+          {:ok, [Transaction.input()]} | error
   defp ensure_input_transactions_exist(%Transaction{inputs: inputs}, find_in_ledger) do
     find_inputs(inputs, find_in_ledger, [])
   end
 
   @spec find_inputs([Transaction.input()], find_func, [Transaction.input()]) ::
-          {:ok, [Transaction.input()]} | {:error, String.t()}
+          {:ok, [Transaction.input()]} | error
   defp find_inputs([], _, acc), do: {:ok, acc}
 
   defp find_inputs([[prev_ref, index] | remaining], find_in_ledger, acc) do
@@ -78,7 +79,7 @@ defmodule Token.Transaction.Verify do
          {:ok, [_recipient, _value] = input_ref} <- Enum.fetch(prev_tx.outputs, index) do
       find_inputs(remaining, find_in_ledger, [input_ref | acc])
     else
-      _ -> {:error, "input doesn't exist"}
+      _ -> {:error, :input_not_found}
     end
   end
 
@@ -92,7 +93,7 @@ defmodule Token.Transaction.Verify do
 
   defp ensure_inputs_not_already_spent([input | remaining], find_in_ledger) do
     case input_spent?(input, find_in_ledger) do
-      true -> {:error, "input already spent"}
+      true -> {:error, :input_already_spent}
       false -> ensure_inputs_not_already_spent(remaining, find_in_ledger)
     end
   end
@@ -111,7 +112,7 @@ defmodule Token.Transaction.Verify do
     outputs_sum = compute_sum(outputs)
 
     if inputs_sum < outputs_sum do
-      {:error, "input sum below output sum"}
+      {:error, :input_sum_below_output_sum}
     else
       :ok
     end
@@ -137,7 +138,7 @@ defmodule Token.Transaction.Verify do
     if recipient == pkh do
       ensure_inputs_public_key_hash(remaining, pkh)
     else
-      {:error, "recipient in input doesn't match transaction public key"}
+      {:error, :not_input_owner}
     end
   end
 
@@ -145,15 +146,10 @@ defmodule Token.Transaction.Verify do
   defp ensure_public_key_ownership(%Transaction{public_key: pk, signature: sig} = tx) do
     signing_string = Transaction.signing_string(tx)
 
-    case Crypto.verify_signature(pk, signing_string, sig) do
-      true ->
-        :ok
-
-      _ ->
-        reason =
-          "unable to verify signature, public key is not associated to the signing key or the transaction was altered"
-
-        {:error, reason}
+    if Crypto.verify_signature(pk, signing_string, sig) do
+      :ok
+    else
+      {:error, :signature_mismatch}
     end
   end
 end
