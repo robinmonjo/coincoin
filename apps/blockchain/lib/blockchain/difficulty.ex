@@ -8,7 +8,7 @@ defmodule Blockchain.Difficulty do
 
   @bit_length 256
 
-  @opaque optional_float :: nil | float
+  @typep optional_float :: nil | float
 
   @type t :: %{
           target: integer,

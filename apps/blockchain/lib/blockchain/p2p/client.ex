@@ -3,8 +3,8 @@ defmodule Blockchain.P2P.Client do
 
   alias Blockchain.P2P.Server
 
-  @opaque address :: :inet.socket_address() | :inet.hostname()
-  @opaque port_number :: :inet.port_number()
+  @typep address :: :inet.socket_address() | :inet.hostname()
+  @typep port_number :: :inet.port_number()
 
   @spec connect(integer | String.t() | address, port_number) :: {:ok, port()} | {:error, atom()}
 

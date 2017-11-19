@@ -4,12 +4,10 @@ defmodule Blockchain.Web.Application do
   use Application
 
   def start(_type, _args) do
-    import Supervisor.Spec
-
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(Blockchain.Web.Endpoint, [])
+      Blockchain.Web.Endpoint
       # Start your own worker by calling: Blockchain.Web.Worker.start_link(arg1, arg2, arg3)
       # worker(Blockchain.Web.Worker, [arg1, arg2, arg3]),
     ]

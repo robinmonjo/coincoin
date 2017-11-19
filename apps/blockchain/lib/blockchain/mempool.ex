@@ -10,8 +10,8 @@ defmodule Blockchain.Mempool do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
-  @opaque pool :: [any()]
-  @opaque mining :: {} | {reference(), pid(), Block.t()}
+  @typep pool :: [any()]
+  @typep mining :: {} | {reference(), pid(), Block.t()}
   @type state :: {pool, mining}
 
   def init(_state) do
