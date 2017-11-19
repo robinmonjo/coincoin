@@ -1,3 +1,5 @@
+# We don' want to implement the Blockchain.BlockData protocol on every types
+
 :0: Unknown function 'Elixir.Blockchain.BlockData.Atom':'__impl__'/1
 :0: Unknown function 'Elixir.Blockchain.BlockData.Float':'__impl__'/1
 :0: Unknown function 'Elixir.Blockchain.BlockData.Function':'__impl__'/1
@@ -8,6 +10,9 @@
 :0: Unknown function 'Elixir.Blockchain.BlockData.Port':'__impl__'/1
 :0: Unknown function 'Elixir.Blockchain.BlockData.Reference':'__impl__'/1
 :0: Unknown function 'Elixir.Blockchain.BlockData.Tuple':'__impl__'/1
+
+# this looks like a bug. See if it's still happening when Elixir 1.6 is shipped
+# https://elixirforum.com/t/elixir-1-6-dialyzer-genserver-issue/9982
 
 lib/agent.ex:162: The call 'Elixir.Supervisor':child_spec(_@2::#{'id':='Elixir.Blockchain.P2P.Peers', 'start':={'Elixir.Blockchain.P2P.Peers','start_link',[any(),...]}},[]) breaks the contract (child_spec() | {module(),arg::term()} | module(),elixir:keyword()) -> child_spec()
 lib/gen_server.ex:581: The call 'Elixir.Supervisor':child_spec(_@2::#{'id':='Elixir.Blockchain.Chain', 'start':={'Elixir.Blockchain.Chain','start_link',[any(),...]}},[]) breaks the contract (child_spec() | {module(),arg::term()} | module(),elixir:keyword()) -> child_spec()
