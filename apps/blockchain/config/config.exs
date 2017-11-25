@@ -31,12 +31,10 @@ use Mix.Config
 
 config :blockchain,
   port: String.to_integer(System.get_env("P2P_PORT") || "5000"),
-  # the module to use for Proof-of-work
-  # should expose compute/1 and verify/1
   proof_of_work: Blockchain.ProofOfWork
 
+# around 3 seconds for a 132_904 hash/s
 config :blockchain, Blockchain.ProofOfWork,
-  # around 3 seconds for a 132_904 hash/s
   target: "00000C6D750EBFA67C0000000000000000000000000000000000000000000000"
 
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"

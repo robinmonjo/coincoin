@@ -3,16 +3,26 @@ defmodule Blockchain.Block do
 
   alias Blockchain.{Block, Chain, BlockData, Crypto}
 
+  @type t :: %__MODULE__{
+          index: integer,
+          previous_hash: String.t(),
+          timestamp: integer,
+          data: BlockData.t(),
+          nounce: integer | nil,
+          hash: String.t() | nil
+        }
+
   @derive [Poison.Encoder]
   defstruct [
     :index,
     :previous_hash,
     :timestamp,
-    :data, # must follow the Blockchain.BlockData protocol
+    :data,
     :nounce,
     :hash
   ]
 
+  @spec genesis_block() :: t
   def genesis_block do
     %Block{
       index: 0,
@@ -24,23 +34,24 @@ defmodule Blockchain.Block do
     }
   end
 
-  def generate_next_block(data) do
-    generate_next_block(data, Chain.latest_block)
-  end
+  @spec generate_next_block(BlockData.t(), t) :: t
+  def generate_next_block(data, block \\ Chain.latest_block())
 
   def generate_next_block(data, %Block{} = latest_block) do
-    b = %Block {
+    b = %Block{
       index: latest_block.index + 1,
       previous_hash: latest_block.hash,
       timestamp: System.system_time(:second),
       data: data
     }
+
     hash = compute_hash(b)
     %{b | hash: hash}
   end
 
-  def compute_hash(%Block{index: i, previous_hash: h, timestamp: timestamp, data: data, nounce: nounce}) do
-    "#{i}#{h}#{timestamp}#{BlockData.hash(data)}#{nounce}"
+  @spec compute_hash(t) :: String.t()
+  def compute_hash(%Block{index: i, previous_hash: h, timestamp: ts, data: data, nounce: n}) do
+    "#{i}#{h}#{ts}#{BlockData.hash(data)}#{n}"
     |> Crypto.hash(:sha256)
     |> Base.encode16()
   end

@@ -33,7 +33,7 @@ defmodule Token.WalletTest do
 
   @tag mock_ledger: true
   test "send", %{alice: alice, bob: bob, joe: joe} do
-    compute_balances = fn() ->
+    compute_balances = fn ->
       for p <- [alice, bob, joe], do: Wallet.balance(p)
     end
 
@@ -45,9 +45,12 @@ defmodule Token.WalletTest do
 
     [a1, b1, j1] = compute_balances.()
 
-    assert a1 == a0 - amount # 26
-    assert b1 == b0 + amount # 34
-    assert j1 == j0 # 10
+    # 26
+    assert a1 == a0 - amount
+    # 34
+    assert b1 == b0 + amount
+    # 10
+    assert j1 == j0
 
     # second transaction
     amount = 13
@@ -55,9 +58,12 @@ defmodule Token.WalletTest do
 
     [a2, b2, j2] = compute_balances.()
 
-    assert a2 == a1 - amount # 13
-    assert b2 == b1 # 34
-    assert j2 == j1 + amount # 23
+    # 13
+    assert a2 == a1 - amount
+    # 34
+    assert b2 == b1
+    # 23
+    assert j2 == j1 + amount
 
     # third transaction
     amount = 1
@@ -65,9 +71,12 @@ defmodule Token.WalletTest do
 
     [a3, b3, j3] = compute_balances.()
 
-    assert a3 == a2 # 13
-    assert b3 == b2 + amount # 35
-    assert j3 == j2 - amount # 23
+    # 13
+    assert a3 == a2
+    # 35
+    assert b3 == b2 + amount
+    # 23
+    assert j3 == j2 - amount
 
     # fourth transaction
     amount = 35
@@ -75,9 +84,12 @@ defmodule Token.WalletTest do
 
     [a4, b4, j4] = compute_balances.()
 
-    assert a4 == a3 # 13
-    assert b4 == b3 - amount # 0
-    assert j4 == j3 + amount # 58
+    # 13
+    assert a4 == a3
+    # 0
+    assert b4 == b3 - amount
+    # 58
+    assert j4 == j3 + amount
 
     # fifth transaction
     amount = 19
@@ -85,9 +97,12 @@ defmodule Token.WalletTest do
 
     [a5, b5, j5] = compute_balances.()
 
-    assert a5 == a4 # 13
-    assert b5 == b4 # 0
-    assert j5 == j4 # 58
+    # 13
+    assert a5 == a4
+    # 0
+    assert b5 == b4
+    # 58
+    assert j5 == j4
 
     # sixth transaction
     amount = 29
@@ -95,8 +110,11 @@ defmodule Token.WalletTest do
 
     [a6, b6, j6] = compute_balances.()
 
-    assert a6 == a5 # 13
-    assert b6 == b5 + amount # 29
-    assert j6 == j5 - amount # 29
+    # 13
+    assert a6 == a5
+    # 29
+    assert b6 == b5 + amount
+    # 29
+    assert j6 == j5 - amount
   end
 end

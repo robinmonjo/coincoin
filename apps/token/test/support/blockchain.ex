@@ -25,6 +25,7 @@ defmodule Token.Test.Blockchain do
       {:error, _} = error -> {:reply, error, chain}
     end
   end
+
   def handle_call(:clear, _from, _chain), do: {:reply, :ok, []}
   def handle_call(:blocks, _from, chain), do: {:reply, chain, chain}
 end

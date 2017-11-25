@@ -1,1 +1,6 @@
 _build
+deps
+tmp
+.fetch
+*.ez
+erl_crash.dump

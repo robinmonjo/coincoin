@@ -19,21 +19,21 @@ defmodule Token.LedgerTest do
   test "unspent outputs", %{alice: alice, bob: bob, joe: joe} do
     # see fixtures to see why
     assert [
-      {_tx1_hash, 0, 3},
-      {_tx2_hash, 0, 6},
-      {_tx3_hash, 1, 7},
-      {_tx4_hash, 2, 20}
-    ] = Ledger.unspent_outputs(alice)
+             {_tx1_hash, 0, 3},
+             {_tx2_hash, 0, 6},
+             {_tx3_hash, 1, 7},
+             {_tx4_hash, 2, 20}
+           ] = Ledger.unspent_outputs(alice)
 
     assert [
-      {_tx1_hash, 2, 4},
-      {_tx2_hash, 0, 20}
-    ] = Ledger.unspent_outputs(bob)
+             {_tx1_hash, 2, 4},
+             {_tx2_hash, 0, 20}
+           ] = Ledger.unspent_outputs(bob)
 
     assert [
-      {_tx1_hash, 1, 1},
-      {_tx2_hash, 1, 4},
-      {_tx3_hash, 0, 5}
-    ] = Ledger.unspent_outputs(joe)
+             {_tx1_hash, 1, 1},
+             {_tx2_hash, 1, 4},
+             {_tx3_hash, 0, 5}
+           ] = Ledger.unspent_outputs(joe)
   end
 end

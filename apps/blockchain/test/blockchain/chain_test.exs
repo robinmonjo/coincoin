@@ -15,6 +15,7 @@ defmodule Blockchain.ChainTest do
       "some data"
       |> Block.generate_next_block()
       |> proof_of_work().compute()
+
     assert :ok = Chain.add_block(b)
   end
 
@@ -25,17 +26,17 @@ defmodule Blockchain.ChainTest do
       |> proof_of_work().compute()
 
     invalid_block = %{valid_block | index: 1000}
-    assert {:error, "invalid index"} = Chain.add_block(invalid_block)
+    assert {:error, :invalid_block_index} = Chain.add_block(invalid_block)
 
     invalid_block = %{valid_block | previous_hash: "not the good previous hash"}
-    assert {:error, "invalid previous hash"} = Chain.add_block(invalid_block)
+    assert {:error, :invalid_block_previous_hash} = Chain.add_block(invalid_block)
 
     invalid_block = %{valid_block | hash: "0#{valid_block.hash}"}
-    assert {:error, "invalid block hash"} = Chain.add_block(invalid_block)
+    assert {:error, :invalid_block_hash} = Chain.add_block(invalid_block)
 
     invalid_hash = "F#{String.slice(valid_block.hash, 1..-1)}"
     invalid_block = %{valid_block | hash: invalid_hash}
-    assert {:error, "proof of work not verified"} = Chain.add_block(invalid_block)
+    assert {:error, :proof_of_work_not_verified} = Chain.add_block(invalid_block)
   end
 
   test "validate a blockchain" do
@@ -45,7 +46,8 @@ defmodule Blockchain.ChainTest do
       timestamp: 1_465_154_705,
       data: "genesis block"
     }
-    assert {:error, "chain doesn't start with genesis block"} = Chain.validate_chain([invalid_genesis_block])
+
+    assert {:error, :no_genesis_block} = Chain.validate_chain([invalid_genesis_block])
 
     genesis_block = Block.genesis_block()
     chain = [genesis_block]
@@ -56,7 +58,9 @@ defmodule Blockchain.ChainTest do
       timestamp: 1_465_154_706,
       data: "first block"
     }
-    assert {:error, "invalid previous hash"} = Chain.validate_chain([invalid_next_block | chain])
+
+    assert {:error, :invalid_block_previous_hash} =
+             Chain.validate_chain([invalid_next_block | chain])
 
     assert Chain.validate_chain(mock_blockchain(3))
   end

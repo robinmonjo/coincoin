@@ -11,7 +11,9 @@ defmodule Token.Transaction.VerifyTest do
   test "transaction can't be added if a transaction with the same hash exists" do
     transactions = Ledger.all_transactions()
     tx = Enum.at(transactions, 3)
-    assert Verify.verify_transaction(tx, Ledger.find_func) == {:error, "transaction already exists"}
+
+    assert Verify.verify_transaction(tx, Ledger.find_func()) ==
+             {:error, :transaction_already_exists}
   end
 
   test "transaction inputs must refer to an existing transaction", %{bob: bob, alice: alice} do
@@ -24,7 +26,7 @@ defmodule Token.Transaction.VerifyTest do
     outputs = [[alice.address, 3]]
     tx = Transaction.new_transaction(bob, inputs, outputs)
 
-    assert Verify.verify_transaction(tx, Ledger.find_func) == :ok
+    assert Verify.verify_transaction(tx, Ledger.find_func()) == :ok
 
     unknown_hash =
       "unknown"
@@ -34,64 +36,80 @@ defmodule Token.Transaction.VerifyTest do
     inputs = [[unknown_hash, idx]]
     tx = Transaction.new_transaction(bob, inputs, outputs)
 
-    assert Verify.verify_transaction(tx, Ledger.find_func) == {:error, "input doesn't exist"}
+    assert Verify.verify_transaction(tx, Ledger.find_func()) == {:error, :input_not_found}
   end
 
   test "transaction inputs must refer to an unspent transaction", %{bob: bob, alice: alice} do
-    last_tx = Enum.at(Ledger.all_transactions, -1)
+    last_tx = Enum.at(Ledger.all_transactions(), -1)
 
     # in mock_ledger, bob did the last transaction
     # he shouldn't be able to do another transaction using the same inputs
     inputs = last_tx.inputs
     outputs = [[alice.address, 3]]
     tx = Transaction.new_transaction(bob, inputs, outputs)
-    assert Verify.verify_transaction(tx, Ledger.find_func) == {:error, "input already spent"}
+    assert Verify.verify_transaction(tx, Ledger.find_func()) == {:error, :input_already_spent}
   end
 
-  test "transaction inputs sum must be superior or equal to transaction output sum", %{bob: bob, alice: alice, joe: joe} do
+  test "transaction inputs sum must be superior or equal to transaction output sum", %{
+    bob: bob,
+    alice: alice,
+    joe: joe
+  } do
     bob_unspent_outputs = Ledger.unspent_outputs(bob)
     available = Wallet.balance(bob)
 
-    inputs = Enum.reduce(bob_unspent_outputs, [], fn({tx_hash, idx, _}, acc) ->
-      [[tx_hash, idx] | acc]
-    end)
+    inputs =
+      Enum.reduce(bob_unspent_outputs, [], fn {tx_hash, idx, _}, acc ->
+        [[tx_hash, idx] | acc]
+      end)
 
     outputs = [[alice.address, available]]
     tx = Transaction.new_transaction(bob, inputs, outputs)
-    assert Verify.verify_transaction(tx, Ledger.find_func) == :ok
+    assert Verify.verify_transaction(tx, Ledger.find_func()) == :ok
 
     outputs = [[joe.address, 1] | outputs]
     tx = Transaction.new_transaction(bob, inputs, outputs)
-    assert Verify.verify_transaction(tx, Ledger.find_func) == {:error, "input sum below output sum"}
+
+    assert Verify.verify_transaction(tx, Ledger.find_func()) ==
+             {:error, :input_sum_below_output_sum}
   end
 
   test "transaction inputs must be owned by the public key", %{bob: bob, alice: alice, joe: joe} do
     # what if bob tries to to spend alice's token ??
     alice_unspent_outputs = Ledger.unspent_outputs(alice)
-    inputs = Enum.reduce(alice_unspent_outputs, [], fn({tx_hash, idx, _}, acc) ->
-      [[tx_hash, idx] | acc]
-    end)
+
+    inputs =
+      Enum.reduce(alice_unspent_outputs, [], fn {tx_hash, idx, _}, acc ->
+        [[tx_hash, idx] | acc]
+      end)
 
     outputs = [[joe.address, 10]]
     tx = Transaction.new_transaction(bob, inputs, outputs)
-    assert Verify.verify_transaction(tx, Ledger.find_func) ==
-      {:error, "recipient in input doesn't match transaction public key"}
+
+    assert Verify.verify_transaction(tx, Ledger.find_func()) == {:error, :not_input_owner}
   end
 
-  test "transaction signature must be verified by the public key", %{bob: bob, alice: alice, joe: joe} do
+  test "transaction signature must be verified by the public key", %{
+    bob: bob,
+    alice: alice,
+    joe: joe
+  } do
     # what if bob intercepts a transaction between alice and joe and modify the output
     # so tokens are transfered to himself ?
     alice_unspent_outputs = Ledger.unspent_outputs(alice)
-    inputs = Enum.reduce(alice_unspent_outputs, [], fn({tx_hash, idx, _}, acc) ->
-      [[tx_hash, idx] | acc]
-    end)
+
+    inputs =
+      Enum.reduce(alice_unspent_outputs, [], fn {tx_hash, idx, _}, acc ->
+        [[tx_hash, idx] | acc]
+      end)
 
     outputs = [[joe.address, 10]]
     tx = Transaction.new_transaction(alice, inputs, outputs)
-    assert Verify.verify_transaction(tx, Ledger.find_func) == :ok
+    assert Verify.verify_transaction(tx, Ledger.find_func()) == :ok
 
     altered_tx = %{tx | outputs: [[bob.address, 10]]}
-    assert Verify.verify_transaction(altered_tx, Ledger.find_func) ==
-      {:error, "unable to verify signature, public key is not associated to the signing key or the transaction was altered"}
+
+    assert Verify.verify_transaction(altered_tx, Ledger.find_func()) ==
+             {:error, :signature_mismatch}
   end
 end

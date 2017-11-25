@@ -6,23 +6,17 @@ defmodule Blockchain.Application do
   use Application
 
   def start(_type, _args) do
-    import Supervisor.Spec, warn: false
-
     port = Application.fetch_env!(:blockchain, :port)
 
     # Define workers and child supervisors to be supervised
     children = [
-      # Starts a worker by calling: Blockchain.Worker.start_link(a1, a2, a3)
-      # worker(Blockchain.Worker, [arg1, arg2, arg3]),
-      worker(Blockchain.Chain, []),
-      worker(Blockchain.Mempool, []),
+      {Blockchain.Chain, []},
+      {Blockchain.Mempool, []},
 
       # P2P processes
-      worker(Blockchain.P2P.Peers, []),
-      supervisor(Task.Supervisor, [
-        [name: Blockchain.P2P.Server.TasksSupervisor]
-      ]),
-      worker(Task, [Blockchain.P2P.Server, :accept, [port]])
+      {Blockchain.P2P.Peers, []},
+      {Task.Supervisor, name: Blockchain.P2P.Server.TasksSupervisor},
+      {Task, fn -> Blockchain.P2P.Server.accept(port) end}
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

@@ -11,6 +11,7 @@ defmodule Blockchain.MempoolTest do
     Process.monitor(pid)
     assert pool == [data]
     assert block.data == data
+
     receive do
       mess ->
         assert {:DOWN, ^ref, :process, ^pid, :normal} = mess
@@ -46,11 +47,15 @@ defmodule Blockchain.MempoolTest do
 
   test "handle_call block_mined stop block mining if block number matches" do
     data = "foobar"
-    {:reply, :ok, {[^data], {ref, pid, block} = mining} = state} = Mempool.handle_call({:mine, data}, nil, {[], {}})
+
+    {:reply, :ok, {[^data], {ref, pid, block} = mining} = state} =
+      Mempool.handle_call({:mine, data}, nil, {[], {}})
+
     mref = Process.monitor(pid)
     {:reply, response, new_state} = Mempool.handle_call({:block_mined, block}, nil, state)
     assert response == :ok
     assert new_state == {[], mining}
+
     for r <- [mref, ref] do
       receive do
         mess ->
@@ -61,7 +66,10 @@ defmodule Blockchain.MempoolTest do
 
   test "handle_info DOWN clean up mining state" do
     data = "foobar"
-    {:reply, :ok, {[^data], {ref, pid, _block}} = state} = Mempool.handle_call({:mine, data}, nil, {[], {}})
+
+    {:reply, :ok, {[^data], {ref, pid, _block}} = state} =
+      Mempool.handle_call({:mine, data}, nil, {[], {}})
+
     {:noreply, {_pool, mining}} = Mempool.handle_info({:DOWN, ref, :process, pid, :normal}, state)
     assert mining == {}
   end
@@ -69,8 +77,12 @@ defmodule Blockchain.MempoolTest do
   test "handle_info DOWN start mining next block in pool" do
     data1 = "foobar1"
     data2 = "foobar2"
-    {:reply, :ok, {[^data1], {ref, pid, _block}} = state} = Mempool.handle_call({:mine, data1}, nil, {[], {}})
-    {:reply, :ok, {[^data1, ^data2], {_ref, _pid, _block}} = state} = Mempool.handle_call({:mine, data2}, nil, state)
+
+    {:reply, :ok, {[^data1], {ref, pid, _block}} = state} =
+      Mempool.handle_call({:mine, data1}, nil, {[], {}})
+
+    {:reply, :ok, {[^data1, ^data2], {_ref, _pid, _block}} = state} =
+      Mempool.handle_call({:mine, data2}, nil, state)
 
     {:noreply, {_pool, mining}} = Mempool.handle_info({:DOWN, ref, :process, pid, :normal}, state)
     assert {_ref, _pid, %Block{data: ^data2}} = mining

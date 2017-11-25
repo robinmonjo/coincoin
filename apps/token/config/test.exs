@@ -1,4 +1,3 @@
 use Mix.Config
 
-config :token,
-  blockchain: Token.Test.Blockchain
+config :token, blockchain: Token.Test.Blockchain

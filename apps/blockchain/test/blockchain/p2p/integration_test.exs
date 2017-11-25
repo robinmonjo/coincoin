@@ -14,6 +14,7 @@ defmodule Blockchain.P2P.IntegrationTest do
     payload =
       Payload.ping()
       |> Payload.encode!()
+
     assert send_and_recv(socket, payload) == "pong"
   end
 
@@ -46,13 +47,14 @@ defmodule Blockchain.P2P.IntegrationTest do
     remote_chain = mock_blockchain(10)
 
     [block | _] = remote_chain
+
     payload =
       [block]
       |> Payload.response_blockchain()
       |> Payload.encode!()
 
-      {:ok, response} = Payload.decode(send_and_recv(socket, payload))
-      assert response == Payload.query_all()
+    {:ok, response} = Payload.decode(send_and_recv(socket, payload))
+    assert response == Payload.query_all()
   end
 
   test "open connection are stored in clients", %{socket: _socket} do
@@ -67,7 +69,7 @@ defmodule Blockchain.P2P.IntegrationTest do
     n = length(Peers.get_all())
     assert n == 2
     payload = "test"
-    assert Server.broadcast(payload) == [:ok, :ok]
-    for s <- [socket, socket1], do: assert recv(s) == payload
+    assert :ok = Server.broadcast(payload)
+    for s <- [socket, socket1], do: assert(recv(s) == payload)
   end
 end

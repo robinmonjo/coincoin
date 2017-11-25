@@ -2,10 +2,13 @@ defmodule CoincoinUmbrella.Mixfile do
   use Mix.Project
 
   def project do
-    [apps_path: "apps",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps()]
+    [
+      apps_path: "apps",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      dialyzer: [ignore_warnings: ".dialyzer_ignore"]
+    ]
   end
 
   # Dependencies can be Hex packages:
@@ -22,6 +25,7 @@ defmodule CoincoinUmbrella.Mixfile do
   # and cannot be accessed from applications inside the apps folder
   defp deps do
     [
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:distillery, "~> 1.5", runtime: false}
     ]
