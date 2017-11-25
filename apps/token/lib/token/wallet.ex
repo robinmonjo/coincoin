@@ -85,9 +85,9 @@ defmodule Token.Wallet do
   end
 
   @spec select_outputs([Ledger.output()], integer, [Ledger.output()]) ::
-          {:ok, [Transaction.output()]} | {:error, String.t()}
+          {:ok, [Transaction.output()]} | {:error, atom()}
   defp select_outputs(_, value, outputs) when value <= 0, do: {:ok, outputs}
-  defp select_outputs([], _value, _outputs), do: {:error, "not enough coins"}
+  defp select_outputs([], _value, _outputs), do: {:error, :not_enough_coins}
 
   defp select_outputs([{_, _, v} = output | remaining], value, outputs) do
     select_outputs(remaining, value - v, [output | outputs])

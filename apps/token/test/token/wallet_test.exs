@@ -116,5 +116,7 @@ defmodule Token.WalletTest do
     assert b6 == b5 + amount
     # 29
     assert j6 == j5 - amount
+
+    assert Wallet.send(a6 + 1, bob.address, alice) == {:error, :not_enough_coins}
   end
 end
