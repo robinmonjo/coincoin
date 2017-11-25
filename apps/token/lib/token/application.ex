@@ -8,7 +8,7 @@ defmodule Token.Application do
   def start(_type, _args) do
     # Define workers and child supervisors to be supervised
     children = [
-      Token.MyWallet
+      {Token.MyWallet, Token.Wallet.generate_wallet()}
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

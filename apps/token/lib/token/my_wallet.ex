@@ -6,12 +6,12 @@ defmodule Token.MyWallet do
 
   alias Token.Wallet
 
-  def start_link(_opts) do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start_link(%Wallet{} = w) do
+    GenServer.start_link(__MODULE__, w, name: __MODULE__)
   end
 
-  def init(_) do
-    {:ok, Wallet.generate_wallet()}
+  def init(%Wallet{} = w) do
+    {:ok, w}
   end
 
   @spec address() :: String.t()
