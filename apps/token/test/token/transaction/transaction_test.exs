@@ -5,8 +5,8 @@ defmodule Token.TransactionTest do
 
   setup do
     {:ok, %{
-      alice: Wallet.generate_wallet(),
-      bob: Wallet.generate_wallet()
+      alice: Wallet.generate(),
+      bob: Wallet.generate()
     }}
   end
 

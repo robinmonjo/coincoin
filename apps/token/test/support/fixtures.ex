@@ -26,9 +26,9 @@ defmodule Token.Fixtures do
     :ok = Blockchain.clear()
 
     # create wallets for each participants
-    alice = Wallet.generate_wallet()
-    bob = Wallet.generate_wallet()
-    joe = Wallet.generate_wallet()
+    alice = Wallet.generate()
+    bob = Wallet.generate()
+    joe = Wallet.generate()
 
     # initial founds
     alice_utx = Transaction.new_coinbase_transaction([[alice.address, 50]])

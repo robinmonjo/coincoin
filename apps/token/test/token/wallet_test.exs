@@ -8,11 +8,11 @@ defmodule Token.WalletTest do
     if tags[:mock_ledger] do
       {:ok, mock_ledger()}
     else
-      {:ok, wallet: Wallet.generate_wallet()}
+      {:ok, wallet: Wallet.generate()}
     end
   end
 
-  test "generate wallet", %{wallet: w} do
+  test "generate", %{wallet: w} do
     assert w.public_key != nil
     assert w.private_key != nil
     assert byte_size(w.address) == 40

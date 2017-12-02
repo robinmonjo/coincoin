@@ -17,8 +17,8 @@ defmodule Token.Wallet do
     :private_key
   ]
 
-  @spec generate_wallet() :: t
-  def generate_wallet do
+  @spec generate() :: t
+  def generate do
     {pub, priv} = Crypto.generate_key_pair()
 
     %Wallet{
