@@ -48,9 +48,9 @@ release :coincoin do
   set version: "0.1.0"
   set applications: [
     :runtime_tools,
-    blockchain: :permanent,
-    blockchain_web: :permanent,
-    token: :permanent
+    coincoin_blockchain: :permanent,
+    coincoin_blockchain_web: :permanent,
+    coincoin_token: :permanent
   ]
 end
 

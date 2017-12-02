@@ -25,9 +25,9 @@ To setup a 3 nodes blockchain, spawn 3 tabs in your terminal (node1, node2 and n
 Then connect the nodes to create a P2P network:
 
 ```elixir
-$node2> Blockchain.connect("localhost:5000") # connect node2 to node1
+$node2> Coincoin.Blockchain.connect("localhost:5000") # connect node2 to node1
 
-$node3> Blockchain.connect("localhost:5001") # connect node3 to node2
+$node3> Coincoin.Blockchain.connect("localhost:5001") # connect node3 to node2
 ```
 
 This will setup a simple network:
@@ -42,23 +42,23 @@ You can also use the `robinmonjo/coincoin` docker image available on the [docker
 docker run -it robinmonjo/coincoin
 ```
 
-If you use Docker, in the `Blockchain.connect/1` call make sure to pass your container IP address and that this address is reachable.
+If you use Docker, in the `Coincoin.Blockchain.connect/1` call make sure to pass your container IP address and that this address is reachable.
 
 **Notes:**
 
 - if you don't want to interact with the REST API, you can skip the `PORT` env var and use `iex -S mix` instead of `iex -S mix phx.server`
-- `Blockchain.connect(5000)` is equivalent to `Blockchain.connect("localhost:5000")`
+- `Coincoin.Blockchain.connect(5000)` is equivalent to `Coincoin.Blockchain.connect("localhost:5000")`
 - for releases use `make release`
 
 ## Usage
 
 When started, `coincoin` will start 3 apps:
 
-- [`blockchain`](apps/blockchain/README.md): a minimal blockchain
-- [`token`](apps/token/README.md): a minimal cryptocurrency implemented on top of the blockchain
-- [`blockchain_web`](apps/blockchain_web/README.md): a web interface to manage nodes of the blockchain
+- [`blockchain`](apps/coincoin_blockchain/README.md): a minimal blockchain
+- [`token`](apps/coincoin_token/README.md): a minimal cryptocurrency implemented on top of the blockchain
+- [`blockchain_web`](apps/coincoin_blockchain_web/README.md): a web interface to manage nodes of the blockchain
 
-To manipulate the blockchain and store random data in it using the `iex` console checkout the [`blockchain` app](apps/blockchain/README.md). To do the same using a REST API, checkout the [`blockchain_web` app](apps/blockchain_web/README.md). And finally to play with a cryptocurrency and use the blockchain as a distributed ledger, checkout the [`token` app](apps/token/README.md).
+To manipulate the blockchain and store random data in it using the `iex` console checkout the [`blockchain` app](apps/coincoin_blockchain/README.md). To do the same using a REST API, checkout the [`blockchain_web` app](apps/coincoin_blockchain_web/README.md). And finally to play with a cryptocurrency and use the blockchain as a distributed ledger, checkout the [`token` app](apps/coincoin_token/README.md).
 
 ## Why coincoin ?
 
