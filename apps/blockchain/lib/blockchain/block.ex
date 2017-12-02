@@ -8,7 +8,7 @@ defmodule Blockchain.Block do
           previous_hash: String.t(),
           timestamp: integer,
           data: BlockData.t(),
-          nounce: integer | nil,
+          nonce: integer | nil,
           hash: String.t() | nil
         }
 
@@ -18,7 +18,7 @@ defmodule Blockchain.Block do
     :previous_hash,
     :timestamp,
     :data,
-    :nounce,
+    :nonce,
     :hash
   ]
 
@@ -29,7 +29,7 @@ defmodule Blockchain.Block do
       previous_hash: "0",
       timestamp: 1_465_154_705,
       data: "genesis block",
-      nounce: 35_679,
+      nonce: 35_679,
       hash: "0000DA3553676AC53CC20564D8E956D03A08F7747823439FDE74ABF8E7EADF60"
     }
   end
@@ -50,7 +50,7 @@ defmodule Blockchain.Block do
   end
 
   @spec compute_hash(t) :: String.t()
-  def compute_hash(%Block{index: i, previous_hash: h, timestamp: ts, data: data, nounce: n}) do
+  def compute_hash(%Block{index: i, previous_hash: h, timestamp: ts, data: data, nonce: n}) do
     "#{i}#{h}#{ts}#{BlockData.hash(data)}#{n}"
     |> Crypto.hash(:sha256)
     |> Base.encode16()

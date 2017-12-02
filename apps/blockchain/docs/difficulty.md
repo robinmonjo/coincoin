@@ -6,7 +6,7 @@ Difficulty is a concept that relates to proof-of-work. It basically set the time
 
 In the Bitcoin protocol proof-of-work is simple to understand: https://en.bitcoin.it/wiki/Proof_of_work#Example
 
-`coincoin` proof-of-work works almost the same way: given some data (usually a block header), the goal is to find a `sha256` hash that is **below** a given **target**. The `sha256` is modified by a **nounce** everytime until a valid `sha256` hash is found.
+`coincoin` proof-of-work works almost the same way: given some data (usually a block header), the goal is to find a `sha256` hash that is **below** a given **target**. The `sha256` is modified by a **nonce** everytime until a valid `sha256` hash is found.
 
 ## What are the chances ?
 
@@ -63,7 +63,7 @@ The hash rate is the number of hashes a piece of hardware can compute per second
 ```elixir
 Blockchain.Difficulty.benchmark # this may take some times
 +-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
-| :target         | :probab                 | :estimated_trials     | :nounce        | :estimated_time      | :time         | :hashrate              |
+| :target         | :probab                 | :estimated_trials     | :nonce         | :estimated_time      | :time         | :hashrate              |
 +-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
 | "2^252.0"       | 0.0625                  | 16.0                  | 13             | "n/a"                | 0.0           | "n/a"                  |
 +-----------------+-------------------------+-----------------------+----------------+----------------------+---------------+------------------------+
@@ -81,8 +81,8 @@ In this table you see:
 - `:target` the target (expressed in power of 2)
 - `:probab` the probability of finding a hash that is below the target (a valid proof-of-work)
 - `:estimated_trials` the estimated number of trials according to the probability
-- `:nounce` the nounce that satifies the proof-of-work
-- `:estimated_time` the estimated time in seconds to come up with a nounce that satisfies the proof-of-work (only available when a hash rate is provided)
+- `:nonce` the nonce that satifies the proof-of-work
+- `:estimated_time` the estimated time in seconds to come up with a nonce that satisfies the proof-of-work (only available when a hash rate is provided)
 - `:time` the actual time spent in seconds
 - `:hasrate` the number of hashes computed per second
 
@@ -91,7 +91,7 @@ The table shows that my hash rate is around `130 000` hashes/s. I can run the sa
 ```elixir
 Blockchain.Difficulty.benchmark(130_000) # using 130_000 hashes/s
 +-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
-| :target         | :probab                | :estimated_trials     | :nounce       | :estimated_time         | :time         | :hashrate             |
+| :target         | :probab                | :estimated_trials     | :nonce        | :estimated_time         | :time         | :hashrate             |
 +-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
 | "2^252.0"       | 0.0625                 | 16.0                  | 41            | 1.2307692307692307e-4   | 0.001         | "n/a"                 |
 +-----------------+------------------------+-----------------------+---------------+-------------------------+---------------+-----------------------+
@@ -121,7 +121,7 @@ With a hash rate of `130 000`, the above target should make the proof-of-work la
 ```elixir
 Blockchain.Difficulty.test_target("00000CE7D22CDAB6BB8000000000000000000000000000000000000000000000", 130_000)
 +-------------------------+------------------------+----------------------+---------------+--------------------+-------------+-----------------------+
-| :target                 | :probab                | :estimated_trials    | :nounce       | :estimated_time    | :time       | :hashrate             |
+| :target                 | :probab                | :estimated_trials    | :nonce        | :estimated_time    | :time       | :hashrate             |
 +-------------------------+------------------------+----------------------+---------------+--------------------+-------------+-----------------------+
 | "2^235.6899198074221"   | 7.692307692307693e-7   | 1.3e6                | 1262283       | 10.0               | 9.682       | 130374.19954554843    |
 +-------------------------+------------------------+----------------------+---------------+--------------------+-------------+-----------------------+
