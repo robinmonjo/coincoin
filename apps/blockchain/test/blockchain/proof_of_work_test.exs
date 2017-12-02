@@ -9,7 +9,7 @@ defmodule Blockchain.ProofOfWorkTest do
       |> Block.generate_next_block()
       |> ProofOfWork.compute()
 
-    assert b.nounce != nil
+    assert b.nonce != nil
     assert ProofOfWork.verify(b.hash)
   end
 

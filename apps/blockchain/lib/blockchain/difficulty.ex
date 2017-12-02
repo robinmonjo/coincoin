@@ -16,7 +16,7 @@ defmodule Blockchain.Difficulty do
           estimated_trials: float,
           estimated_time: optional_float,
           time: float,
-          nounce: non_neg_integer,
+          nonce: non_neg_integer,
           hashrate: optional_float
         }
 
@@ -52,7 +52,7 @@ defmodule Blockchain.Difficulty do
   defp compute_data(target, block, hashrate) do
     probab = target / max_target()
     estimated_trials = 1 / probab
-    {%Block{nounce: nounce}, time} = benchmarked_proof_of_work(block, target)
+    {%Block{nonce: nonce}, time} = benchmarked_proof_of_work(block, target)
 
     %{
       target: target,
@@ -60,8 +60,8 @@ defmodule Blockchain.Difficulty do
       estimated_trials: estimated_trials,
       estimated_time: calculate_estimated_time(estimated_trials, hashrate),
       time: time,
-      nounce: nounce,
-      hashrate: calculate_hashrate(time, nounce)
+      nonce: nonce,
+      hashrate: calculate_hashrate(time, nonce)
     }
   end
 
@@ -70,7 +70,7 @@ defmodule Blockchain.Difficulty do
   defp calculate_estimated_time(estimated_trials, hashrate), do: estimated_trials / hashrate
 
   @spec calculate_estimated_time(float, integer) :: nil | float
-  defp calculate_hashrate(time, nounce) when time >= 1, do: nounce / time
+  defp calculate_hashrate(time, nonce) when time >= 1, do: nonce / time
   defp calculate_hashrate(_, _), do: nil
 
   @spec print_data(t | [t]) :: :ok
@@ -79,7 +79,7 @@ defmodule Blockchain.Difficulty do
       {:target, &"2^#{:math.log2(&1.target)}"},
       :probab,
       :estimated_trials,
-      :nounce,
+      :nonce,
       :estimated_time,
       :time,
       :hashrate
