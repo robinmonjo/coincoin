@@ -44,7 +44,7 @@ Data will be broadcasted on the network so nodes can start to mine it (i.e: comp
 Blockchain.connect("host:port")
 
 # list direct peers
-Blockchain.list_peers()
+Blockchain.peers()
 
 # add data to the blockchain. It will appear once mined
 Blockchain.add("some data")
