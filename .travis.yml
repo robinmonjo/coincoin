@@ -1,15 +1,10 @@
-language: erlang
+language: elixir
 sudo: false
 
+elixir:
+  - '1.6.1'
 otp_release:
   - 20.1
-
-before_install:
-  - git clone https://github.com/elixir-lang/elixir
-  - cd elixir && make compile && cd ..
-
-before_script:
-  - export PATH=`pwd`/elixir/bin:$PATH
 
 script:
   - make test
