@@ -1,4 +1,4 @@
-FROM elixir:1.5.2-alpine
+FROM elixir:1.6.1-alpine
 
 RUN apk update && apk add bash make git
 
