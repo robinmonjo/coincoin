@@ -4,10 +4,11 @@ defmodule Token.TransactionTest do
   alias Token.{Transaction, Wallet, Crypto}
 
   setup do
-    {:ok, %{
-      alice: Wallet.generate(),
-      bob: Wallet.generate()
-    }}
+    {:ok,
+     %{
+       alice: Wallet.generate(),
+       bob: Wallet.generate()
+     }}
   end
 
   test "create transaction", %{alice: alice, bob: bob} do
